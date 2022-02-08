@@ -38,63 +38,33 @@ const MenuWidgetList = (props) => {
 }
 
 class FooterMenu extends Component {
-    data = {
-        menuData: [
-            {
-                id: 3,
-                title: 'KURUMSAl',
-                items: [
-                    { title: 'Hakkımızda', url: '' },
-                    { title: 'Hizmetlerimiz', url: '' },
-                    { title: 'Bizden Haberler', url: '' },
-                    { title: 'İnsan Kaynakları', url: '' },
-                    { title: 'Kullanım Kılavuzu', url: '' },
-                ]
+    constructor(props) {
+        super(props);
+        this.state = {
+            error: null,
+            isLoaded: false,
+            data: [],
+        };
+    }
+    componentDidMount(){
+        fetch(`${process.env.REACT_APP_BASE}/api/site/footer-menu`)
+        .then((res) => res.json())
+        .then(
+            (result) => {
+                this.setState({ isLoaded: true, data: result });
             },
-            {
-                id: 3,
-                title: '',
-                items: [
-
-                    { title: 'Çerez Politikası', url: '' },
-                    { title: 'Satış Sözleşmesi', url: '' },
-                    { title: 'Bize Ulaşın', url: '' },
-                    { title: 'S.S.S.', url: '' }
-                ]
-            },
-
-
-            {
-                id: 1,
-                title: 'HIZLI ERİŞİM',
-                items: [
-                    { title: 'Süper Teklif', url: '' },
-                    { title: 'Telefonlar', url: '' },
-                    { title: 'Tabletler', url: '' },
-                    { title: 'Aksesuarlar', url: '' },
-                    { title: 'Apple', url: '' },
-                    { title: 'Samsung', url: '' },
-                ]
-            }, {
-                id: 2,
-                title: 'İŞLEMLER',
-                items: [
-                    { title: 'Telefon Sat', url: '' },
-                    { title: 'Telefon Onar / Yenile', url: '' },
-                    { title: 'IMEI Sorgula', url: '' },
-                    { title: 'Üye Ol', url: '' },
-                    { title: 'Üye Grişi', url: '' },
-                    { title: 'Sipariş Takibi', url: '' },
-                    { title: 'İade Formu', url: '' },
-                ]
-            },
-
-        ]
+            (error) => {
+                this.setState({
+                    isLoaded: true,
+                    error,
+                });
+            }
+        );
     }
     render() {
         return (
             <div className="col-lg-7 col-12 form-inline footer-widgets pb-4 mt-5 footer-content footer-m">
-                <MenuWidgetList data={this.data} />
+                {this.state.isLoaded &&<MenuWidgetList data={this.state.data} />}
             </div>
         )
     }
