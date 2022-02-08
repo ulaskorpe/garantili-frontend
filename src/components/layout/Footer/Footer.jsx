@@ -4,15 +4,44 @@ import FooterMenu from "./FooterMenu";
 import React, { Component } from 'react';
 
 class Footer extends Component {
-    state = {
-        socialIcons: [
-            { id: 1, url: 'https://facebook.com', icon: 'fa fa-facebook' },
-            { id: 2, url: 'https://twitter.com', icon: 'fa fa-twitter' },
-            { id: 3, url: 'https://instagram.com', icon: 'fa fa-instagram' },
-            { id: 4, url: 'https://linkedin.com', icon: 'fa fa-linkedin' },
-            { id: 5, url: 'https://youtube.com', icon: 'fa fa-youtube-play' },
-        ]
+
+//
+
+ 
+
+    constructor(props) {
+        super(props);
+        this.state = {
+            error: null,
+            isLoaded: false,
+            socialIcons: [],
+        };
     }
+    componentDidMount() {
+         fetch("https://buyback.garantiliteknoloji.com/api/site/social-icons", {
+       // fetch("http://buyback.test/api/site/social-icons", {
+
+        
+            headers: {
+                'x-api-key': '5c35640a3da4f1e3970bacbbf7b20e6c'
+            }
+        })
+            .then((res) => res.json())
+            .then(
+                (result) => {
+
+                    this.setState({ isLoaded: true, socialIcons: result });
+                },
+                (error) => {
+                    this.setState({
+                        isLoaded: true,
+                        error,
+                    });
+                }
+            );
+    }
+
+    
     render() {
         return (
             <footer className="site-footer footer-v1">

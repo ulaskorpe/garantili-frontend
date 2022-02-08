@@ -38,63 +38,41 @@ const MenuWidgetList = (props) => {
 }
 
 class FooterMenu extends Component {
-    data = {
-        menuData: [
-            {
-                id: 3,
-                title: 'KURUMSAl',
-                items: [
-                    { title: 'Hakkımızda', url: '' },
-                    { title: 'Hizmetlerimiz', url: '' },
-                    { title: 'Bizden Haberler', url: '' },
-                    { title: 'İnsan Kaynakları', url: '' },
-                    { title: 'Kullanım Kılavuzu', url: '' },
-                ]
-            },
-            {
-                id: 3,
-                title: '',
-                items: [
+    constructor(props) {
+        super(props);
+        this.state = {
+            error: null,
+            isLoaded: false,
+            footer_data: { menuData: [] },
+        };
+    }
+    componentDidMount() {
+        //fetch("https://buyback.garantiliteknoloji.com/api/site/left-menu", {
+        var dat = fetch("https://buyback.garantiliteknoloji.com/api/site/footer-menu", {
+            headers: {
+                'x-api-key': '5c35640a3da4f1e3970bacbbf7b20e6c'
+            }
+        })
+            .then((res) => res.json())
+            .then(
+                (result) => {
 
-                    { title: 'Çerez Politikası', url: '' },
-                    { title: 'Satış Sözleşmesi', url: '' },
-                    { title: 'Bize Ulaşın', url: '' },
-                    { title: 'S.S.S.', url: '' }
-                ]
-            },
+                    this.setState({ isLoaded: true, footer_data: result });
+                },
+                (error) => {
+                    this.setState({
+                        isLoaded: true,
+                        error,
+                    });
+                }
+            );
 
-
-            {
-                id: 1,
-                title: 'HIZLI ERİŞİM',
-                items: [
-                    { title: 'Süper Teklif', url: '' },
-                    { title: 'Telefonlar', url: '' },
-                    { title: 'Tabletler', url: '' },
-                    { title: 'Aksesuarlar', url: '' },
-                    { title: 'Apple', url: '' },
-                    { title: 'Samsung', url: '' },
-                ]
-            }, {
-                id: 2,
-                title: 'İŞLEMLER',
-                items: [
-                    { title: 'Telefon Sat', url: '' },
-                    { title: 'Telefon Onar / Yenile', url: '' },
-                    { title: 'IMEI Sorgula', url: '' },
-                    { title: 'Üye Ol', url: '' },
-                    { title: 'Üye Grişi', url: '' },
-                    { title: 'Sipariş Takibi', url: '' },
-                    { title: 'İade Formu', url: '' },
-                ]
-            },
-
-        ]
+       // console.log(this.state.footer_data);
     }
     render() {
         return (
             <div className="col-lg-7 col-12 form-inline footer-widgets pb-4 mt-5 footer-content footer-m">
-                <MenuWidgetList data={this.data} />
+                <MenuWidgetList data={this.state.footer_data} />
             </div>
         )
     }

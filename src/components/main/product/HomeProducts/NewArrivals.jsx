@@ -80,7 +80,7 @@ class NewArrivals extends React.Component {
         this.state = {
             error: null,
             isLoaded: false,
-            products: {
+         products: {
                 title: 'Son Eklenenler',
                 headers: [
                     { id: 1, title: "Telefonlar", tabUrl: "#weeklydeals" },
@@ -90,6 +90,14 @@ class NewArrivals extends React.Component {
                 tabs: [
                     {
                         id: 1, tabId: "weeklydeals", products: [
+                            {
+                                 id: 2,
+                                title: "Qui qui quam maxime et.",
+                                listPrice: 200,
+                                price: 260,
+                                imageUrl: "http://buyback.test/images/products/2.jpg",
+                                discount: 60
+                            },
                             { id: 8, title: "Bluetooth on-ear PureBass Headphones", listPrice: "300.00", price: "500.00", url: "", imageUrl: "assets/images/products/7.jpg", discount: "150" },
                             { id: 9, title: "Bluetooth on-ear PureBass Headphones", listPrice: "300.00", price: "500.00", url: "", imageUrl: "assets/images/products/7.jpg", discount: "150" },
                             { id: 10, title: "Bluetooth on-ear PureBass Headphones", listPrice: "300.00", price: "500.00", url: "", imageUrl: "assets/images/products/7.jpg", discount: "150" },
@@ -106,11 +114,13 @@ class NewArrivals extends React.Component {
                         ]
                     }
                 ]
-            },
+            }, 
+
+            
         };
     }
     componentDidMount() {
-        console.log('mounted')
+    //alert("ok");
         //fetch("http://buyback.test/api/site/super-offer")
         // fetch("https://buyback.garantiliteknoloji.com/api/site/super-offer")
         // fetch("https://buyback.garantiliteknoloji.com/api/products/new-arrivals", {
@@ -131,6 +141,28 @@ class NewArrivals extends React.Component {
         //             });
         //         }
         //     );
+
+        fetch("http://buyback.test/api/products/new-arrivals", {
+            headers: {
+                'x-api-key': '5c35640a3da4f1e3970bacbbf7b20e6c'
+            }
+        })
+            .then((res) => res.json())
+            .then(
+                (result) => {
+
+                    this.setState({ isLoaded: true, products5: result });
+
+                    
+                },
+                (error) => {
+                    this.setState({
+                        isLoaded: true,
+                        error,
+                    });
+                }
+            );
+
     }
 
     render() {

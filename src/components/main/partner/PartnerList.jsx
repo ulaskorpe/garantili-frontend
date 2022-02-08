@@ -33,7 +33,7 @@ class PartnerList extends Component {
     }
     componentDidMount() {
         //fetch("http://buyback.test/api/site/brands-list")
-        fetch("https://buyback.garantiliteknoloji.com/api/site/brands-list", {
+        fetch("http://buyback.test/api/site/brands-list", {
             headers: {
                 'x-api-key': '5c35640a3da4f1e3970bacbbf7b20e6c'
             }
