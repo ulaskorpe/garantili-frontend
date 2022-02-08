@@ -109,6 +109,13 @@ class DealList extends Component {
 
         });
     }
+    // handleClick(className){
+    //    if(className == "next"){
+    //        $('#deal-slick').slick('slickNext');
+    //    }else{
+    //        $('#deal-slick').slick('slickPrev');
+    //    }
+    // }
 
     render() {
         return (
@@ -135,10 +142,10 @@ class DealList extends Component {
                     </div>
                     <footer className="section-footer">
                         <nav className="custom-slick-pagination">
-                            <a className="slider-prev left" href="#">
+                            <a className="slider-prev left">
                                 <i className="tm tm-arrow-left"></i>Önceki ürün
                             </a>
-                            <a className="slider-next right" href="#" >
+                            <a className="slider-next right" href="#">
                                 Sonraki ürün<i className="tm tm-arrow-right"></i>
                             </a>
                         </nav>
