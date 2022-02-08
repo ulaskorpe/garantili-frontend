@@ -86,11 +86,9 @@ class Leftmenu extends Component {
         };
     }
     componentDidMount() {
-        //fetch("http://buyback.test/api/site/super-offer")
-        // fetch("https://buyback.garantiliteknoloji.com/api/site/super-offer")
-        fetch("https://buyback.garantiliteknoloji.com/api/site/left-menu", {
+        fetch(`${process.env.REACT_APP_BASE}/api/site/left-menu `, {
             headers: {
-                'x-api-key': '5c35640a3da4f1e3970bacbbf7b20e6c'
+                'x-api-key': process.env.REACT_APP_API_KEY
             }
         })
             .then((res) => res.json())
