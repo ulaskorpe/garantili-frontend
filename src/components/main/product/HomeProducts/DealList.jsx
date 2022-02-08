@@ -76,7 +76,11 @@ class DealList extends Component {
 
     componentDidMount() {
         //fetch("http://buyback.test/api/site/super-offer")
-        fetch("https://buyback.garantiliteknoloji.com/api/site/super-offer")
+        fetch(`${process.env.REACT_APP_BASE}/api/site/super-offer`,{
+            headers: {
+                'x-api-key': process.env.REACT_APP_API_KEY
+            }
+        })
             .then((res) => res.json())
             .then(
                 (result) => {

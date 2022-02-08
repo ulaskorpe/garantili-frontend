@@ -56,7 +56,11 @@ class Banner extends Component {
 
     componentDidMount() {
         // fetch("http://buyback.test/api/site/banners")
-        fetch(`${process.env.REACT_APP_BASE}/api/site/banners`)
+        fetch(`${process.env.REACT_APP_BASE}/api/site/banners`,{
+            headers: {
+                'x-api-key': process.env.REACT_APP_API_KEY
+            }
+        })
             .then((res) => res.json())
             .then(
                 (result) => {

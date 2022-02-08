@@ -47,7 +47,11 @@ class FooterMenu extends Component {
         };
     }
     componentDidMount(){
-        fetch(`${process.env.REACT_APP_BASE}/api/site/footer-menu`)
+        fetch(`${process.env.REACT_APP_BASE}/api/site/footer-menu`,{
+            headers: {
+                'x-api-key': process.env.REACT_APP_API_KEY
+            }
+        })
         .then((res) => res.json())
         .then(
             (result) => {

@@ -1,36 +1,39 @@
-import React, { Component } from 'react';
+import React from 'react';
 
 
 
 class MobileNav extends React.Component {
-    mobileNav = [
-        { id: 1, title: "Süper Teklif", url: "#" },
-        { id: 2, title: "Telefonlar", url: "#" },
-        { id: 3, title: "Tabletler", url: "#" },
-        { id: 4, title: "Aksesuarlar", url: "#" },
-        { id: 5, title: "Telefon Sat", url: "#" },
-        { id: 6, title: "Telefon Onar / Yenile", url: "#" },
-        {
-            id: 7, title: "Kurumsal", url: "#",
-            subs: [
-                { id: 71, title: 'Hakkımızda', url: '#' },
-                { id: 72, title: 'Hizmetlerimiz', url: '#' },
-                { id: 73, title: 'Bizden Haberler', url: '#' },
-                { id: 74, title: 'İnsan Kaynakları', url: '#' },
-            ]
-        },
-        { id: 8, title: "Garantili Sorgula", url: "#" },
-        { id: 9, title: "IMEI Sorgula", url: "#" },
-        { id: 10, title: "İade Formu", url: "#" },
-        { id: 11, title: "S.S.S.", url: "#" },
-        { id: 11, title: "Bize Ulaşın", url: "#" },
-    ]
+  state = {
+      mobileNav : [],
+      isLoaded:false
+  }
+  componentDidMount(){
+    fetch(`${process.env.REACT_APP_BASE}/api/site/mobile-menu`,{
+        headers: {
+            'x-api-key': process.env.REACT_APP_API_KEY
+        }
+    })
+        .then((res) => res.json())
+        .then(
+            (result) => {
+
+                this.setState({ isLoaded: true, mobileNav: result });
+            },
+            (error) => {
+                this.setState({
+                    isLoaded: true,
+                    error,
+                });
+            }
+        );
+  }
 
     logoStyle = {
         height: 39
     }
     render() {
         const { basket } = this.props
+        console.log(this.state.mobileNav);
         return (
             <div className="col-full handheld-only">
                 <div className="handheld-header">
@@ -61,7 +64,7 @@ class MobileNav extends React.Component {
                                     <span className="tmhm-close">Kapat</span>
                                     <ul id="menu-departments-menu-1" className="nav">
                                         {
-                                            this.mobileNav.map((item, i) => {
+                                            this.state.mobileNav.map((item, i) => {
                                                 if (!item.subs) return (
                                                     <li key={i} className="highlight menu-item animate-dropdown"><a title={item.title} href={item.url}>{item.title}</a></li>)
 
