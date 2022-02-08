@@ -20,65 +20,6 @@ function App() {
             { id: 10, title: "iPhone 13 Pro 128 GB", price: "21.499.00", url: "/urun-detay/iphone-13-pro-128-10", imageUrl: "/assets/images/products/L10.jpg", details: ['128 GB Depolama', '4 GB RAM', '6.5" Ekran Boyutu', '8MP Ön Kamera'] }
         ]
     )
-
-    const [homeContent, setHomeContent] = useState({
-        newProducts: {
-            title: 'Son Eklenenler',
-            headers: [
-                { id: 1, title: "Telefonlar", tabUrl: "#weeklydeals" },
-                { id: 2, title: "Tabletler", tabUrl: "#topsales" },
-                { id: 3, title: "Aksesuarlar", tabUrl: "#newproducts" }
-            ],
-            tabs: [
-                {
-                    id: 1, tabId: "weeklydeals", products: [
-                        { id: 8, title: "Bluetooth on-ear PureBass Headphones", listPrice: "300.00", price: "500.00", url: "", imageUrl: "assets/images/products/7.jpg", discount: "150" },
-                        { id: 9, title: "Bluetooth on-ear PureBass Headphones", listPrice: "300.00", price: "500.00", url: "", imageUrl: "assets/images/products/7.jpg", discount: "150" },
-                        { id: 10, title: "Bluetooth on-ear PureBass Headphones", listPrice: "300.00", price: "500.00", url: "", imageUrl: "assets/images/products/7.jpg", discount: "150" },
-                        { id: 11, title: "Bluetooth on-ear PureBass Headphones", listPrice: "300.00", price: "500.00", url: "", imageUrl: "assets/images/products/7.jpg", discount: "150" },
-                        { id: 12, title: "Bluetooth on-ear PureBass Headphones", listPrice: "300.00", price: "500.00", url: "", imageUrl: "assets/images/products/7.jpg", discount: "150" },
-                        { id: 13, title: "Bluetooth on-ear PureBass Headphones", listPrice: "300.00", price: "500.00", url: "", imageUrl: "assets/images/products/7.jpg", discount: "150" },
-                        { id: 14, title: "Bluetooth on-ear PureBass Headphones", listPrice: "300.00", price: "500.00", url: "", imageUrl: "assets/images/products/7.jpg", discount: "150" },
-                        { id: 15, title: "Bluetooth on-ear PureBass Headphones", listPrice: "300.00", price: "500.00", url: "", imageUrl: "assets/images/products/7.jpg", discount: "150" },
-                        { id: 16, title: "Bluetooth on-ear PureBass Headphones", listPrice: "300.00", price: "500.00", url: "", imageUrl: "assets/images/products/7.jpg", discount: "150" },
-                        { id: 17, title: "Bluetooth on-ear PureBass Headphones", listPrice: "300.00", price: "500.00", url: "", imageUrl: "assets/images/products/7.jpg", discount: "150" },
-                        { id: 18, title: "Bluetooth on-ear PureBass Headphones", listPrice: "300.00", price: "500.00", url: "", imageUrl: "assets/images/products/7.jpg", discount: "150" },
-                        { id: 19, title: "Bluetooth on-ear PureBass Headphones", listPrice: "300.00", price: "500.00", url: "", imageUrl: "assets/images/products/7.jpg", discount: "150" },
-                        { id: 20, title: "Bluetooth on-ear PureBass Headphones", listPrice: "300.00", price: "500.00", url: "", imageUrl: "assets/images/products/7.jpg", discount: "150" },
-                    ]
-                }
-            ]
-        },
-        products: {
-            headers: [
-                { id: 1, title: "Haftanın Fırsatları", tabUrl: "#weeklydeals" },
-                { id: 2, title: "Çok Satanlar", tabUrl: "#topsales" },
-                { id: 3, title: "Yeni Ürünler", tabUrl: "#newproducts" },
-                { id: 4, title: "En Yüksek Puanlı", tabUrl: "#highrated" }
-            ],
-            tabs: [
-                {
-                    id: 1, tabId: "weeklydeals", products: [
-                        { id: 21, title: "Bluetooth on-ear PureBass Headphones", listPrice: "300.00", price: "500.00", url: "", imageUrl: "assets/images/products/7.jpg", discount: "150" },
-                        { id: 22, title: "Bluetooth on-ear PureBass Headphones", listPrice: "300.00", price: "500.00", url: "", imageUrl: "assets/images/products/7.jpg", discount: "150" },
-                        { id: 23, title: "Bluetooth on-ear PureBass Headphones", listPrice: "300.00", price: "500.00", url: "", imageUrl: "assets/images/products/7.jpg", discount: "150" },
-                        { id: 24, title: "Bluetooth on-ear PureBass Headphones", listPrice: "300.00", price: "500.00", url: "", imageUrl: "assets/images/products/7.jpg", discount: "150" },
-                        { id: 25, title: "Bluetooth on-ear PureBass Headphones", listPrice: "300.00", price: "500.00", url: "", imageUrl: "assets/images/products/7.jpg", discount: "150" },
-                        { id: 26, title: "Bluetooth on-ear PureBass Headphones", listPrice: "300.00", price: "500.00", url: "", imageUrl: "assets/images/products/7.jpg", discount: "150" },
-                        { id: 27, title: "Bluetooth on-ear PureBass Headphones", listPrice: "300.00", price: "500.00", url: "", imageUrl: "assets/images/products/7.jpg", discount: "150" },
-                        { id: 28, title: "Bluetooth on-ear PureBass Headphones", listPrice: "300.00", price: "500.00", url: "", imageUrl: "assets/images/products/7.jpg", discount: "150" },
-                        { id: 29, title: "Bluetooth on-ear PureBass Headphones", listPrice: "300.00", price: "500.00", url: "", imageUrl: "assets/images/products/7.jpg", discount: "150" },
-                        { id: 30, title: "Bluetooth on-ear PureBass Headphones", listPrice: "300.00", price: "500.00", url: "", imageUrl: "assets/images/products/7.jpg", discount: "150" },
-                        { id: 31, title: "Bluetooth on-ear PureBass Headphones", listPrice: "300.00", price: "500.00", url: "", imageUrl: "assets/images/products/7.jpg", discount: "150" },
-                        { id: 22, title: "Bluetooth on-ear PureBass Headphones", listPrice: "300.00", price: "500.00", url: "", imageUrl: "assets/images/products/7.jpg", discount: "150" },
-                        { id: 33, title: "Bluetooth on-ear PureBass Headphones", listPrice: "300.00", price: "500.00", url: "", imageUrl: "assets/images/products/7.jpg", discount: "150" },
-                    ]
-                }
-            ]
-        }
-    }
-    )
-
     const removeFromBasket = (productId) => {
         const basketItem = basket.basketItems.find(_ => _.id === productId)
         basket.basketItems = basket.basketItems.filter(p => p.id !== productId)
@@ -113,7 +54,7 @@ function App() {
     return (
         <BrowserRouter>
             <Routes>
-                <Route path='/' element={<HomePage basket={basket} addToBasket={addToBasket} removeFromBasket={removeFromBasket} homeContent={homeContent} />} />
+                <Route path='/' element={<HomePage basket={basket} addToBasket={addToBasket} removeFromBasket={removeFromBasket} />} />
                 <Route path='/urunler' element={<ShopPage basket={basket} addToBasket={addToBasket} removeFromBasket={removeFromBasket} />} />
                 <Route path='/urunler/:category-:categoryId' element={<ShopPage basket={basket} addToBasket={addToBasket} removeFromBasket={removeFromBasket} allProducts={allProduct} />} />
                 <Route path='/urun-detay/:category-:productId' element={<ProductPage basket={basket} addToBasket={addToBasket} removeFromBasket={removeFromBasket} allProducts={allProduct} />} />

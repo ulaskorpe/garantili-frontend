@@ -11,7 +11,7 @@ import Slider from "../main/slider/Slider";
 
 class HomePage extends Component {
     render() {
-        const { basket, onAddToBasket, removeFromBasket, homeContent } = this.props;
+        const { basket, onAddToBasket, removeFromBasket } = this.props;
         return (
             <div className="woocommerce-active garantili-design-pattern-homepage-v1 can-uppercase">
                 <div id="page" className="hfeed site">
@@ -28,13 +28,12 @@ class HomePage extends Component {
                                         <Slider />
                                         <FullMessage />
                                         <Banner />
-                                        <HomeProductList content={homeContent}
+                                        <HomeProductList
                                             onAddToBasket={onAddToBasket}
                                             removeFromBasket={removeFromBasket}
                                         />
                                         <PartnerList />
                                         <NewArrivals
-                                            products={homeContent.newProducts}
                                             onAddToBasket={onAddToBasket}
                                         />
                                         <Banner />
