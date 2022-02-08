@@ -5,12 +5,10 @@ import ProductPage from './components/pages/ProductPage';
 import ShopPage from './components/pages/ShopPage';
 
 function App() {
-//    const [server_url,setServerUrl]=useState
-const server_url ='http://buyback.test/';
     const [basket, setBasket] = useState({ totalPrice: 0, basketItems: [] })
     const [allProduct, setProducts] = useState(
         [
-            { id: 1, title: "4224 Galaxy M52 5G 128 GB (Samsung Türkiye Garantili) ", listPrice: "5799.00", price: "5299.00", url: "/urun-detay/samsung-m2-1", imageUrl: "/assets/images/products/L1.jpg", discount: "300.000", details: ['128 GB Depolama', '8 GB RAM', '6.7" Retina Ekran', '5000mAh'] },
+            { id: 1, title: "Samsung Galaxy M52 5G 128 GB (Samsung Türkiye Garantili) ", listPrice: "5799.00", price: "5299.00", url: "/urun-detay/samsung-m2-1", imageUrl: "/assets/images/products/L1.jpg", discount: "300.000", details: ['128 GB Depolama', '8 GB RAM', '6.7" Retina Ekran', '5000mAh'] },
             { id: 2, title: "iPhone 11 64 GB", listPrice: "10.525,00", price: "9837,77", url: "/urun-detay/iphone-11-64-gb-2", imageUrl: "/assets/images/products/L2.jpg", discount: "150", details: ['64 GB Depolama', '4 GB RAM', '6.1 Ekran Boyutu" pil', '12 MP Ön Kamera'] },
             { id: 3, title: "iPhone 12 Mini 64 GB", listPrice: "13.300,00", price: "12.480,00", url: "/urun-detay/iphone-12-mini-64-gb-3", imageUrl: "/assets/images/products/L3.jpg", discount: "150", details: ['64 GB Depolama', '4 GB RAM', '5.4 Ekran Boyutu" ', '12 MP Ön Kamera'] },
             { id: 4, title: "Oppo Reno 5 Lite 128 GB (Oppo Türkiye Garantili)", listPrice: "4.699,00", price: "4.523,30", url: "/urun-detay/oppo-reno-5-1", imageUrl: "/assets/images/products/L4.jpg", discount: "150", details: ['128 GB Depolama', '8 GB RAM', '6.4" Ekran Boyutu', '32 MP Ön Kamera'] },
@@ -27,7 +25,7 @@ const server_url ='http://buyback.test/';
         newProducts: {
             title: 'Son Eklenenler',
             headers: [
-                { id: 1, title: "Telefonladdr", tabUrl: "#weeklydeals" },
+                { id: 1, title: "Telefonlar", tabUrl: "#weeklydeals" },
                 { id: 2, title: "Tabletler", tabUrl: "#topsales" },
                 { id: 3, title: "Aksesuarlar", tabUrl: "#newproducts" }
             ],

@@ -43,36 +43,28 @@ class FooterMenu extends Component {
         this.state = {
             error: null,
             isLoaded: false,
-            footer_data: { menuData: [] },
+            data: [],
         };
     }
-    componentDidMount() {
-        //fetch("https://buyback.garantiliteknoloji.com/api/site/left-menu", {
-        var dat = fetch("https://buyback.garantiliteknoloji.com/api/site/footer-menu", {
-            headers: {
-                'x-api-key': '5c35640a3da4f1e3970bacbbf7b20e6c'
+    componentDidMount(){
+        fetch(`${process.env.REACT_APP_BASE}/api/site/footer-menu`)
+        .then((res) => res.json())
+        .then(
+            (result) => {
+                this.setState({ isLoaded: true, data: result });
+            },
+            (error) => {
+                this.setState({
+                    isLoaded: true,
+                    error,
+                });
             }
-        })
-            .then((res) => res.json())
-            .then(
-                (result) => {
-
-                    this.setState({ isLoaded: true, footer_data: result });
-                },
-                (error) => {
-                    this.setState({
-                        isLoaded: true,
-                        error,
-                    });
-                }
-            );
-
-       // console.log(this.state.footer_data);
+        );
     }
     render() {
         return (
             <div className="col-lg-7 col-12 form-inline footer-widgets pb-4 mt-5 footer-content footer-m">
-                <MenuWidgetList data={this.state.footer_data} />
+                {this.state.isLoaded &&<MenuWidgetList data={this.state.data} />}
             </div>
         )
     }

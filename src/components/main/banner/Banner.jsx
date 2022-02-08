@@ -55,8 +55,8 @@ class Banner extends Component {
 
 
     componentDidMount() {
-         fetch("http://buyback.test/api/site/banners")
-       // fetch("https://buyback.garantiliteknoloji.com/api/site/banners")
+        // fetch("http://buyback.test/api/site/banners")
+        fetch(`${process.env.REACT_APP_BASE}/api/site/banners`)
             .then((res) => res.json())
             .then(
                 (result) => {

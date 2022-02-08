@@ -4,28 +4,12 @@ import FooterMenu from "./FooterMenu";
 import React, { Component } from 'react';
 
 class Footer extends Component {
-
-//
-
- 
-
-    constructor(props) {
-        super(props);
-        this.state = {
-            error: null,
-            isLoaded: false,
-            socialIcons: [],
-        };
+    state = {
+        socialIcons: [],
+        isLoaded:false
     }
     componentDidMount() {
-         fetch("https://buyback.garantiliteknoloji.com/api/site/social-icons", {
-       // fetch("http://buyback.test/api/site/social-icons", {
-
-        
-            headers: {
-                'x-api-key': '5c35640a3da4f1e3970bacbbf7b20e6c'
-            }
-        })
+        fetch(`${process.env.REACT_APP_BASE}/api/site/social-icons`)
             .then((res) => res.json())
             .then(
                 (result) => {
@@ -40,8 +24,6 @@ class Footer extends Component {
                 }
             );
     }
-
-    
     render() {
         return (
             <footer className="site-footer footer-v1">
@@ -71,7 +53,7 @@ class Footer extends Component {
                             </div>
                             <div className="footer-social-icons">
                                 <ul className="social-icons nav">
-                                    {this.state.socialIcons.map((_, i) => {
+                                    {this.state.isLoaded && this.state.socialIcons.map((_, i) => {
                                         return <li className="nav-item" key={i}>
                                             <a className="sm-icon-label-link nav-link" href={_.url}>
                                                 <i className={_.icon}></i>

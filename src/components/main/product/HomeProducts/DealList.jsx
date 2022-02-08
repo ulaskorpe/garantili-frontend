@@ -75,8 +75,8 @@ class DealList extends Component {
     }
 
     componentDidMount() {
-        fetch("http://buyback.test/api/site/super-offer")
-      //  fetch("https://buyback.garantiliteknoloji.com/api/site/super-offer")
+        //fetch("http://buyback.test/api/site/super-offer")
+        fetch("https://buyback.garantiliteknoloji.com/api/site/super-offer")
             .then((res) => res.json())
             .then(
                 (result) => {

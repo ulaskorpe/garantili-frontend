@@ -49,28 +49,26 @@ const MenuItem = (props) => {
 
 
 class MainNavigation extends Component {
-    menuItems = [
-        {
-            id: 2, isDropdown: true, title: 'TELEFONLAR', url: '#', subItems: [
-                { id: 11, isDropdown: false, 'title': 'Apple', url: '/urunler/telefonlar-2?brand=apple' },
-                { id: 12, isDropdown: false, 'title': 'Samsung', url: '/urunler/telefonlar-2?brand=samsung' },
-                { id: 13, isDropdown: false, 'title': 'Xiaomi', url: '/urunler/telefonlar-2?brand=xiaomi' },
-                { id: 14, isDropdown: false, 'title': 'Huawei', url: '/urunler/telefonlar-2?brand=huawei' }
-            ]
-        },
-        {
-            id: 3, isDropdown: true, title: 'TABLETLER', url: '#', subItems: [
-                { id: 21, isDropdown: false, 'title': 'Apple', url: '/urunler/tabletler-3?brand=apple' },
-                { id: 22, isDropdown: false, 'title': 'Samsung', url: '/urunler/telefonlar-3?brand=samsung' },
-                { id: 23, isDropdown: false, 'title': 'Xiaomi', url: '/urunler/telefonlar-3?brand=xiaomi' },
-                { id: 24, isDropdown: false, 'title': 'Huawei', url: '/urunler/telefonlar-3?brand=huawei' }
-            ]
-        },
-        { id: 3, isDropdown: false, title: 'TELEFON SAT', url: '/sell-phone', subItems: [] },
-        { id: 4, isDropdown: false, title: 'TELEFON ONAR / YENİLE', url: '/repair-phone', subItems: [] },
-        { id: 5, isDropdown: false, title: 'GARANTİ SORGULA', url: '/warrany', subItems: [] },
-    ];
+    state = {
+        menuItems: [],
+        isLoaded:false
+    }
+    componentDidMount() {
+        fetch(`${process.env.REACT_APP_BASE}/api/site/top-menu`)
+            .then((res) => res.json())
+            .then(
+                (result) => {
 
+                    this.setState({ isLoaded: true, menuItems: result });
+                },
+                (error) => {
+                    this.setState({
+                        isLoaded: true,
+                        error,
+                    });
+                }
+            );
+    }
     render() {
         return (
             <nav id="primary-navigation" className="primary-navigation" aria-label="Primary Navigation" data-nav="flex-menu">
@@ -78,7 +76,7 @@ class MainNavigation extends Component {
                     <li className="sale-clr yamm-fw menu-item animate-dropdown"><a title="Süper Teklif" href="/urunler/super-teklif-1">SÜPER
                         TEKLİF</a>&nbsp;
                     </li>
-                    <MenuItem menuData={this.menuItems} />
+                    {this.state.isLoaded && <MenuItem menuData={this.state.menuItems} />}
                     <li className="garantili-flex-more-menu-item dropdown">
                         <a title="..." href="#" data-toggle="dropdown" className="dropdown-toggle">...</a>
                         <ul className="overflow-items dropdown-menu"></ul>

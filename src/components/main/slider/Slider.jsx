@@ -46,8 +46,7 @@ class Slider extends Component {
 
     componentDidMount() {
         //   fetch("http://buyback.test/api/site/slider-list")
-      fetch("https://buyback.garantiliteknoloji.com/api/site/slider-list", {
-        //fetch("http://buyback.test/api/site/slider-list", {
+        fetch("https://buyback.garantiliteknoloji.com/api/site/slider-list", {
             headers: {
                 'x-api-key': '5c35640a3da4f1e3970bacbbf7b20e6c'
             }
@@ -65,7 +64,7 @@ class Slider extends Component {
                     });
                 }
             )
-    //    console.log('cc did mount')
+        console.log('cc did mount')
     }
 
     componentDidUpdate() {
