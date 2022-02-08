@@ -5,6 +5,7 @@ import ProductPage from './components/pages/ProductPage';
 import ShopPage from './components/pages/ShopPage';
 
 function App() {
+    console.log(process.env.REACT_APP_BASE);
     const [basket, setBasket] = useState({ totalPrice: 0, basketItems: [] })
     const [allProduct, setProducts] = useState(
         [
