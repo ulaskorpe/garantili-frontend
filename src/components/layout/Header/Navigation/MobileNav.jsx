@@ -33,7 +33,6 @@ class MobileNav extends React.Component {
     }
     render() {
         const { basket } = this.props
-        console.log(this.state.mobileNav);
         return (
             <div className="col-full handheld-only">
                 <div className="handheld-header">

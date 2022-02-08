@@ -53,19 +53,20 @@ class NewArrivals extends React.Component {
     render() {
         const { onAddToBasket } = this.props
         const { isLoaded , products} = this.state
+        console.log(products)
         return (
             <section className="section-hot-new-arrivals section-products-carousel-tabs techmarket-tabs">
                 <header className="section-header">
-                  {/* <h2 className="section-title arrival-title" >{this.state.products.title}</h2> */}
+                  {isLoaded && <h2 className="section-title arrival-title" >{products.title}</h2>}
                     <ul role="tablist" className="nav justify-content-end">
-                        {isLoaded && products !== null && products.products.headers.map((item, i) => {
+                        {isLoaded && products !== null && products.headers.map((item, i) => {
                             let classes = i === 0 ? "nav-link active" : "nav-link"
                             return (<li className="nav-item" key={i}><a className={classes} href={item.tabUrl} data-toggle="tab">{item.title}</a></li>)
                         })}
                     </ul>
                 </header>
                 <div className="tab-content">
-                    {isLoaded && products !== null && products.products.tabs.map((item, i) => {
+                    {isLoaded && products !== null && products.tabs.map((item, i) => {
                         let classes = i === 0 ? "tab-pane active" : "tab-pane"
                         return (<div className={classes} id={item.tabId} role="tabpanel" key={i}>
                             <div className="products-carousel" data-ride="tm-slick-carousel" data-wrap=".products"
