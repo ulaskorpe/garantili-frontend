@@ -38027,3 +38027,13 @@ form.track_order input[type="submit"] {
 .w-40{ width:40%;}
 .w-20{ width:20%;}
 .w-0{ width:0%;}
+.tab-content > .tab-pane:not(.active), 
+.pill-content > .pill-pane:not(.active) {
+    display: block;
+    height: 0;
+    overflow-y: hidden;
+}
+.tab-pane.passive{
+    overflow-y: hidden!important;
+    height:0!important;
+}
