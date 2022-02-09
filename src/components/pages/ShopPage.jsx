@@ -25,7 +25,12 @@ function ShopPage(props) {
         { id: 7, filterData: [{ filterType: 'brand', value: 'honor' }, { filterType: 'color', value: 'green' }], title: "Honor 50 128 GB 8 GB Ram 5G (Honor Türkiye Garantili)", price: "9.999,00", url: "/urun-detay/honor-50-128GB-7", imageUrl: "/assets/images/products/L7.jpg", details: ['128 GB Dahili Hafıza', '8 GB RAM', '4300mAh', '32MP Ön Kamera'] },
         { id: 8, filterData: [{ filterType: 'brand', value: 'apple' }, { filterType: 'color', value: 'black' }], title: "iPhone SE 64 GB", listPrice: "6.985,00", price: "6.705,60", url: "/urun-detay/iphone-se-64-gb-8", imageUrl: "/assets/images/products/L8.jpg", discount: "150", details: ['256 GB Depolama', '8 GB RAM', '6.67" Ekran Boyutu', '20MP Ön Kamera'] },
         { id: 9, filterData: [{ filterType: 'brand', value: 'xiaomi' }, { filterType: 'color', value: 'blue' }], title: "Xiaomi Redmi 9c 64 GB (Xiaomi Türkiye Garantili) ", listPrice: "3.099,00", price: "2.578,75", url: "/urun-detay/xiaomi-red-mi-9c-64-gb-9", imageUrl: "/assets/images/products/L9.jpg", discount: "150", details: ['256 GB Depolama', '8 GB RAM', '6.67" Ekran Boyutu', '20MP Ön Kamera'] },
-        { id: 10, filterData: [{ filterType: 'brand', value: 'apple' }, { filterType: 'color', value: 'spacegray' }], title: "iPhone 13 Pro 128 GB", price: "21.499.00", url: "/urun-detay/iphone-13-pro-128-10", imageUrl: "/assets/images/products/L10.jpg", details: ['128 GB Depolama', '4 GB RAM', '6.5" Ekran Boyutu', '8MP Ön Kamera'] }
+        { id: 10, filterData: [{ filterType: 'brand', value: 'apple' }, { filterType: 'color', value: 'spacegray' }], title: "iPhone 13 Pro 128 GB", price: "21.499.00", url: "/urun-detay/iphone-13-pro-128-10", imageUrl: "/assets/images/products/L10.jpg", details: ['128 GB Depolama', '4 GB RAM', '6.5" Ekran Boyutu', '8MP Ön Kamera'] },
+        { id: 11, filterData: [{ filterType: 'brand', value: 'apple' }, { filterType: 'color', value: 'spacegray' }], title: "iPhone 13 Pro 128 GB", price: "21.499.00", url: "/urun-detay/iphone-13-pro-128-10", imageUrl: "/assets/images/products/L10.jpg", details: ['128 GB Depolama', '4 GB RAM', '6.5" Ekran Boyutu', '8MP Ön Kamera'] },
+        { id: 12, filterData: [{ filterType: 'brand', value: 'apple' }, { filterType: 'color', value: 'spacegray' }], title: "iPhone 13 Pro 128 GB", price: "21.499.00", url: "/urun-detay/iphone-13-pro-128-10", imageUrl: "/assets/images/products/L10.jpg", details: ['128 GB Depolama', '4 GB RAM', '6.5" Ekran Boyutu', '8MP Ön Kamera'] },
+        { id: 13, filterData: [{ filterType: 'brand', value: 'apple' }, { filterType: 'color', value: 'spacegray' }], title: "iPhone 13 Pro 128 GB", price: "21.499.00", url: "/urun-detay/iphone-13-pro-128-10", imageUrl: "/assets/images/products/L10.jpg", details: ['128 GB Depolama', '4 GB RAM', '6.5" Ekran Boyutu', '8MP Ön Kamera'] },
+        { id: 14, filterData: [{ filterType: 'brand', value: 'apple' }, { filterType: 'color', value: 'spacegray' }], title: "iPhone 13 Pro 128 GB", price: "21.499.00", url: "/urun-detay/iphone-13-pro-128-10", imageUrl: "/assets/images/products/L10.jpg", details: ['128 GB Depolama', '4 GB RAM', '6.5" Ekran Boyutu', '8MP Ön Kamera'] }
+    
     ]
     const [filters, setFilters] = useState(
         [
@@ -55,7 +60,7 @@ function ShopPage(props) {
     const [products, setProducts] = useState(data)
 
     const [bar, setBar] = useState({
-        totalResult: 10,
+        totalResult: data.length,
         result: 10,
         pages: [
             { page: 1, selected: true },
@@ -106,7 +111,7 @@ function ShopPage(props) {
     const [header, setHeader] = useState(
         {
             title: 'Sanal Gerçeklik Gözlükleri',
-            content: 'Nullam dignissim elit ut urna rutrum, a fermentum<a href="#">İncele <i class="tm tm-long-arrow-right"></i></a>',
+            content: 'Nullam dignissim elit ut urna rutrum, a fermentum<a href="#">İncele <i className="tm tm-long-arrow-right"></i></a>',
             imageUrl: '/assets/images/products/jumbo.jpg'
         }
     )
@@ -121,6 +126,7 @@ function ShopPage(props) {
         })
 
         console.log('status', filters)
+       
 
         const filterdProducts = []
         filters.forEach(_ => {
@@ -141,7 +147,6 @@ function ShopPage(props) {
             setProducts(data)
             return
         }
-
         setProducts(products.slice(0, event.target.value))
     }
 
@@ -246,7 +251,7 @@ function ShopPage(props) {
                                         <div id="grid" className="tab-pane active" role="tabpanel">
                                             <div className="woocommerce columns-4">
                                                 <div className="products">
-                                                    <ProductList products={products} onAddToBasket={onAddToBasket} listType="grid" />
+                                                    <ProductList products={products.slice(0,bar.result)} onAddToBasket={onAddToBasket} listType="grid" />
                                                 </div>
                                             </div>
                                         </div>
