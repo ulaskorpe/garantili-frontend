@@ -13045,6 +13045,7 @@ a#variations_clear:before {
     display: inline-block;
 }
 
+.primary-navigation .nav > li >div,
 .primary-navigation .nav > li > a,
 .navbar-primary .nav > li > a {
     color: #444;

@@ -1,14 +1,15 @@
 import React, { Component } from "react";
+import { Link } from "react-router-dom";
 
 const MenuItemWithChild = (props) => {
     return (
         <li className="menu-item menu-item-has-children animate-dropdown dropdown">
-            <a title={props.data.title} data-toggle="dropdown" className="dropdown-toggle"
-                aria-haspopup="true" href={props.data.url}>{props.data.title}<span className="caret"></span>
+            <div data-toggle="dropdown" className="dropdown-toggle"
+                aria-haspopup="true"to={props.data.url}>{props.data.title}<span className="caret"></span>
                 <ul role="menu" className=" dropdown-menu">
                     <SubItem row={props.data.subItems} />
                 </ul>
-            </a>
+            </div>
         </li>
     )
 }
@@ -17,9 +18,9 @@ const SubItem = (props) => {
     const items = props.row.map((item, index) => {
         return (
             <li className="menu-item animate-dropdown" key={index}>
-                <a title={item.url} href={item.url}>
+                <Link to={item.url}>
                     {item.title}
-                </a>
+                </Link>
             </li>
         )
     })
@@ -29,7 +30,7 @@ const SubItem = (props) => {
 const MenuItemNoChild = (props) => {
     return (
         <li className="menu-item animate-dropdown">
-            <a title={props.data.title} href={props.data.url}>{props.data.title}</a>
+            <Link  to={props.data.url}>{props.data.title}</Link>
         </li>
     )
 }
@@ -81,10 +82,10 @@ class MainNavigation extends Component {
                         TEKLİF</a>&nbsp;
                     </li>
                     {this.state.isLoaded && <MenuItem menuData={this.state.menuItems} />}
-                    <li className="garantili-flex-more-menu-item dropdown">
+                    {/* <li className="garantili-flex-more-menu-item dropdown">
                         <a title="..." href="#" data-toggle="dropdown" className="dropdown-toggle">...</a>
                         <ul className="overflow-items dropdown-menu"></ul>
-                    </li>
+                    </li> */}
                 </ul>
             </nav>
         )
