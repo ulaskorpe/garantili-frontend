@@ -106,7 +106,7 @@ function ShopPage(props) {
     const [header, setHeader] = useState(
         {
             title: 'Sanal Gerçeklik Gözlükleri',
-            content: 'Nullam dignissim elit ut urna rutrum, a fermentum mi auctor. Mauris efficitur magna orci, et dignissim lacus scelerisque sit <a href="#">İncele <i class="tm tm-long-arrow-right"></i></a>',
+            content: 'Nullam dignissim elit ut urna rutrum, a fermentum<a href="#">İncele <i class="tm tm-long-arrow-right"></i></a>',
             imageUrl: '/assets/images/products/jumbo.jpg'
         }
     )
@@ -304,7 +304,6 @@ function ShopPage(props) {
                                         }
                                     </div>
                                 </div>
-
                                 <LatestProductList products={data} />
                             </div>
                         </div>
