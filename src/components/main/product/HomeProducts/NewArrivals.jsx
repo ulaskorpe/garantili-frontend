@@ -53,7 +53,6 @@ class NewArrivals extends React.Component {
     render() {
         const { onAddToBasket } = this.props
         const { isLoaded , products} = this.state
-        console.log(products)
         return (
             <section className="section-hot-new-arrivals section-products-carousel-tabs techmarket-tabs">
                 <header className="section-header">
