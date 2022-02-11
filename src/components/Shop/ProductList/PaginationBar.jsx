@@ -7,7 +7,7 @@ class PaginationBar extends Component {
         return (
             <div className="shop-control-bar-bottom">
                 <form className="form-techmarket-wc-ppp" method="POST">
-                    <select className="techmarket-wc-wppp-select c-select" onchange={onChangeProductCount} name="ppp">
+                    <select className="techmarket-wc-wppp-select c-select" onChange={onChangeProductCount} name="ppp">
                         <option value="2">4</option>
                         <option value="4">8</option>
                         <option value="-1">Hepsi</option>
@@ -24,9 +24,11 @@ class PaginationBar extends Component {
                         {
                             bar.pages.map((p, index) => {
                                 if (p.selected) {
-                                    return (<li key={index}><span className="page-numbers current">{p.page}</span></li>)
+                                    console.log(p.page);
+                                    return (<li key={p.page}><span className="page-numbers current">{p.page}</span></li>)
                                 }
-                                return (<li><button class="page-numbers" onClick={() => changePage(p.page)}>{p.page}</button></li>)
+                                console.log(p.page);
+                                return (<li><button key={p.page} className="page-numbers" onClick={() => changePage(p.page)}>{p.page}</button></li>)
                             })
                         }
                         {/* <li><a href="#" className="next page-numbers">→</a></li> */}

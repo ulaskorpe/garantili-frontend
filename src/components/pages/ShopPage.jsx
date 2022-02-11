@@ -80,8 +80,7 @@ function ShopPage(props) {
             .then((res) => res.json())
             .then(
                 (result) => {
-                    setFilters(result);
-                    console.log(result);
+                    setFilters(Object.values(result));
                 },
                 (error) => {
                     console.error(error);
@@ -89,10 +88,20 @@ function ShopPage(props) {
             );
     }
     const fetchProducts = async () => {
+        const formData = new URLSearchParams();
+        formData.append('min_price', '0');
+        formData.append('max_price', '0');
+        formData.append('brand', '');
+        formData.append('colors','');
+        formData.append('memories','0');
+        formData.append('page','0');
         await fetch(`${process.env.REACT_APP_BASE}/api/products/all-products`, {
+            method:'POST',
              headers: {
-                 'x-api-key': process.env.REACT_APP_API_KEY
-             }
+                 'x-api-key': process.env.REACT_APP_API_KEY,
+                 'Content-Type':'application/form-data'
+             },
+             body:formData.toString()
          })
              .then((res) => res.json())
              .then(
@@ -270,7 +279,7 @@ function ShopPage(props) {
                                         <button className="button" type="submit" onClick={() => console.log("aaa")}>Filtrele</button>
                                     </div>
                                 </div>
-                                {products !== null && <LatestProductList products={products} />}
+                                {/* {products !== null && <LatestProductList products={products} />} */}
                             </div>
                         </div>
                     </div>

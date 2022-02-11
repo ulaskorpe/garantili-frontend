@@ -658,7 +658,7 @@
 			'speed': 500,
 			'moreText': '+ Daha fazla',
 			'lessText': '- Daha az',
-			'moreHTML': '<p class="maxlist-more"><a href="#"></a></p>'
+			'moreHTML': '<p class="maxlist-more"></p>'
 		});
 
 
