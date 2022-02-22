@@ -24,11 +24,10 @@ class PaginationBar extends Component {
                         {
                             bar.pages.map((p, index) => {
                                 if (p.selected) {
-                                    console.log(p.page);
                                     return (<li key={p.page}><span className="page-numbers current">{p.page}</span></li>)
                                 }
-                                console.log(p.page);
-                                return (<li><button key={p.page} className="page-numbers" onClick={() => changePage(p.page)}>{p.page}</button></li>)
+                                // console.log(p.page);
+                                return (<li key={p.page}><button className="page-numbers" onClick={() => changePage(p.page)}>{p.page}</button></li>)
                             })
                         }
                         {/* <li><a href="#" className="next page-numbers">→</a></li> */}

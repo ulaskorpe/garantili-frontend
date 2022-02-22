@@ -4,21 +4,62 @@ import BreadCrumb from '../layout/BreadCrumb';
 import Footer from '../layout/Footer/Footer';
 import HeaderMain from '../layout/Header/Header';
 import Topbar from '../layout/Topbar';
-import LatestProductList from '../Shop/ProductList/LatestProductList';
 import PaginationBar from '../Shop/ProductList/PaginationBar';
 import ProductList from '../Shop/ProductList/ProductList';
 import ShopPriceFilter from '../Shop/ProductList/ShopPriceFilter';
 import ShopCategoryList from '../Shop/ShopFilters/ShopCategoryList';
 import ShopFilterItem from '../Shop/ShopFilters/ShopFilterItem';
 import ShopHeader from '../Shop/ShopHeader';
+import {useQuery} from "react-query";
+import {GET_ALL_PRODUCTS} from "../../api";
+import {fetchThis} from "../../api/utils/fetchTools";
+
+/* Initial Values */
+const INITIAL_PRICE_LIMIT = { minPriceValue: 0, maxPriceValue: 100000 };
+const INITIAL_CRUMBS = [{ url: '/', title: 'Ürünler' }];
+const INITIAL_HEADER = {
+    title: 'Sanal Gerçeklik Gözlükleri',
+    content: 'Nullam dignissim elit ut urna rutrum, a fermentum<a href="#">İncele <i class="tm tm-long-arrow-right"></i></a>',
+    imageUrl: '/assets/images/products/jumbo.jpg'
+};
+const INITIAL_CATEGORIES = [
+    { id: 0, title: 'Mağaza' },
+    { id: 1, title: 'Süper Teklif' },
+    { id: 2, title: 'Telefonlar' },
+    { id: 3, title: 'Tabletler' },
+    { id: 4, title: 'Aksesuarlar' },
+];
 
 
 function ShopPage(props) {
+    /* Props */
+    const {
+        addToBasket
+    } = props;
 
+    /* States */
     const [filters, setFilters] = useState(null);
     const [products, setProducts] = useState(null);
     const [bar, setBar] = useState(null);
+    const [priceLimit, setPriceLimit] = useState(INITIAL_PRICE_LIMIT);
+    const [crumbs, setCrumb] = useState(INITIAL_CRUMBS);
+    const [header, setHeader] = useState(INITIAL_HEADER);
+    const [categories, setCategories] = useState(INITIAL_CATEGORIES)
 
+    /* React Router DOM hooks */
+    const { categoryId } = useParams();
+    const getFilters = useQuery(
+        'getFilters',
+        () => (
+            fetchThis(
+                GET_ALL_PRODUCTS,
+                {},
+                '5c35640a3da4f1e3970bacbbf7b20e6c',
+            )
+        ),
+    );
+
+    /* Handlers */
     function handlePage(pageNumber) {
         const pages = {
             totalResult: bar.totalResult,
@@ -26,53 +67,26 @@ function ShopPage(props) {
             result: bar.result
         }
         pages.pages = bar.pages.map((_) => {
-            _.selected = (pageNumber === _.page) ? true : false
+            _.selected = pageNumber === _.page
             return _
         })
         setBar(pages)
     }
+
+    /* Utils */
     function alertOnClick() {
         console.log('hi')
     }
-    const searchParams = new URLSearchParams(useLocation().search)
-    const onAddToBasket = props.addToBasket
-    const [header, setHeader] = useState(
-        {
-            title: 'Sanal Gerçeklik Gözlükleri',
-            content: 'Nullam dignissim elit ut urna rutrum, a fermentum<a href="#">İncele <i className="tm tm-long-arrow-right"></i></a>',
-            imageUrl: '/assets/images/products/jumbo.jpg'
-        }
-    )
-    function changeProductCount(event) {
-        if (event.target.value === 'Hepsi') {
-            setProducts(products)
-            return
-        }
-        setProducts(products.slice(0, event.target.value))
-    }
-
     function sortProductsBy(event) {
         console.log(event.target.value)
     }
-
-    const [categories, setCategories] = useState(
-        [
-            { id: 0, title: 'Mağaza' },
-            { id: 1, title: 'Süper Teklif' },
-            { id: 2, title: 'Telefonlar' },
-            { id: 3, title: 'Tabletler' },
-            { id: 4, title: 'Aksesuarlar' },
-        ]
-    )
-
     function filterByPrice(min, max) {
         setProducts(products.filter(l => l.price >= min && l.price <= max))
     }
-    const [priceLimit, setLimits] = useState({ minPriceValue: 0, maxPriceValue: 100000 })
-    const [crumbs, setCrumb] = useState([{ url: '/', title: 'Ürünler' }])
-    const { categoryId } = useParams()
+
+    /* Fetches */
     const fetchFilters = async () => {
-       await fetch(`${process.env.REACT_APP_BASE}/api/products/product-filters`, {
+        await fetch(`${process.env.REACT_APP_BASE}/api/products/product-filters`, {
             headers: {
                 'x-api-key': process.env.REACT_APP_API_KEY
             }
@@ -97,38 +111,49 @@ function ShopPage(props) {
         formData.append('page','0');
         await fetch(`${process.env.REACT_APP_BASE}/api/products/all-products`, {
             method:'POST',
-             headers: {
-                 'x-api-key': process.env.REACT_APP_API_KEY,
-                 'Content-Type':'application/form-data'
-             },
-             body:formData.toString()
-         })
-             .then((res) => res.json())
-             .then(
-                 (result) => {
-                     setProducts(result);
-                 },
-                 (error) => {
-                     console.error(error);
-                 }
-             );
-     }
-     const setFilterValues = (filterType,filterArray) =>{
-        let index = filters.findIndex(x=> x.filterName === filterType); 
-            if (index !== -1){
-                let temporaryarray = filters.slice();
-                temporaryarray[index].items = filterArray;
-                setFilters(temporaryarray);
-            }
-            else {
-                console.log('no match');
-            }
+            headers: {
+                'x-api-key': process.env.REACT_APP_API_KEY,
+                'Content-Type':'application/form-data'
+            },
+            body:formData.toString()
+        })
+            .then((res) => res.json())
+            .then(
+                (result) => {
+                    setProducts(result);
+                },
+                (error) => {
+                    console.error(error);
+                }
+            );
+    }
+
+    /* Setters */
+    function changeProductCount(event) {
+        if (event.target.value === 'Hepsi') {
+            setProducts(products)
+            return
         }
-    let category = categories.find(_ => _.id == categoryId)
-    if (category === undefined) category = categories[0]
-    useEffect(() => {
-       fetchProducts();
-       fetchFilters();
+        setProducts(products.slice(0, event.target.value))
+    }
+    const setFilterValues = (filterType,filterArray) =>{
+        let index = filters.findIndex((x)=> x.filterName === filterType);
+        if (index !== -1){
+            let temporaryArray = filters.slice();
+            temporaryArray[index].items = filterArray;
+            setFilters(temporaryArray);
+        }
+        else {
+            console.log('no match');
+        }
+    }
+    let category = categories.find(_ => _.id === categoryId);
+    if (category === undefined) category = categories[0];
+
+    /* Effects */
+    useEffect(async () => {
+        await fetchProducts();
+        await fetchFilters();
     },[]);
     useEffect(()=>{
         if(products !== null){
@@ -143,7 +168,8 @@ function ShopPage(props) {
                 ]
             })
         }
-    },[products])
+    },[products]);
+
     return (
         <div className="woocommerce-active left-sidebar" >
             <div id="page" className="hfeed site">
@@ -159,7 +185,7 @@ function ShopPage(props) {
                                     <div className="shop-control-bar">
                                         <div className="handheld-sidebar-toggle">
                                             <button type="button" className="btn sidebar-toggler">
-                                                <i className="fa fa-sliders"></i>
+                                                <i className="fa fa-sliders" />
                                                 <span>Filtre</span>
                                             </button>
                                         </div>
@@ -167,29 +193,29 @@ function ShopPage(props) {
                                         <ul role="tablist" className="shop-view-switcher nav nav-tabs">
                                             <li className="nav-item">
                                                 <a href="#grid" title="Grid View" data-toggle="tab" className="nav-link active">
-                                                    <i className="tm tm-grid-small"></i>
+                                                    <i className="tm tm-grid-small" />
                                                 </a>
                                             </li>
                                             <li className="nav-item">
                                                 <a href="#grid-extended" title="Grid Extended View" data-toggle="tab"
-                                                    className="nav-link">
-                                                    <i className="tm tm-grid"></i>
+                                                   className="nav-link">
+                                                    <i className="tm tm-grid" />
                                                 </a>
                                             </li>
                                             <li className="nav-item">
                                                 <a href="#list-view-large" title="List View Large" data-toggle="tab" className="nav-link ">
-                                                    <i className="tm tm-listing-large"></i>
+                                                    <i className="tm tm-listing-large" />
                                                 </a>
                                             </li>
                                             <li className="nav-item">
                                                 <a href="#list-view" title="List View" data-toggle="tab" className="nav-link ">
-                                                    <i className="tm tm-listing"></i>
+                                                    <i className="tm tm-listing" />
                                                 </a>
                                             </li>
                                             <li className="nav-item">
                                                 <a href="#list-view-small" title="List View Small" data-toggle="tab"
-                                                    className="nav-link ">
-                                                    <i className="tm tm-listing-small"></i>
+                                                   className="nav-link ">
+                                                    <i className="tm tm-listing-small" />
                                                 </a>
                                             </li>
                                         </ul>
@@ -220,35 +246,35 @@ function ShopPage(props) {
                                         <div id="grid" className="tab-pane active" role="tabpanel">
                                             <div className="woocommerce columns-4">
                                                 <div className="products">
-                                                    {products !== null && bar !== null && <ProductList products={products.slice(0,bar.result)} onAddToBasket={onAddToBasket} listType="grid" />}
+                                                    {products !== null && bar !== null && <ProductList products={products.slice(0,bar.result)} onAddToBasket={addToBasket} listType="grid" />}
                                                 </div>
                                             </div>
                                         </div>
                                         <div id="grid-extended" className="tab-pane" role="tabpanel">
                                             <div className="woocommerce columns-4">
                                                 <div className="products">
-                                                    {products !==null && <ProductList products={products} onAddToBasket={onAddToBasket} listType="grid-extended" />}
+                                                    {products !==null && <ProductList products={products} onAddToBasket={addToBasket} listType="grid-extended" />}
                                                 </div>
                                             </div>
                                         </div>
                                         <div id="list-view-large" className="tab-pane" role="tabpanel">
                                             <div className="woocommerce columns-1">
                                                 <div className="products">
-                                                    {products !==null && <ProductList products={products} onAddToBasket={onAddToBasket} listType="large-list" />}
+                                                    {products !==null && <ProductList products={products} onAddToBasket={addToBasket} listType="large-list" />}
                                                 </div>
                                             </div>
                                         </div>
                                         <div id="list-view" className="tab-pane" role="tabpanel">
                                             <div className="woocommerce columns-1">
                                                 <div className="products">
-                                                    {products !==null && <ProductList products={products} onAddToBasket={onAddToBasket} listType="list" />}
+                                                    {products !==null && <ProductList products={products} onAddToBasket={addToBasket} listType="list" />}
                                                 </div>
                                             </div>
                                         </div>
                                         <div id="list-view-small" className="tab-pane" role="tabpanel">
                                             <div className="woocommerce columns-1">
                                                 <div className="products">
-                                                    {products !==null && <ProductList products={products} onAddToBasket={onAddToBasket} listType="list-small" />}
+                                                    {products !==null && <ProductList products={products} onAddToBasket={addToBasket} listType="list-small" />}
                                                 </div>
                                             </div>
                                         </div>
