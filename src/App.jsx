@@ -3,6 +3,11 @@ import { BrowserRouter, Route, Router, Routes } from 'react-router-dom';
 import HomePage from './components/pages/HomePage';
 import ProductPage from './components/pages/ProductPage';
 import ShopPage from './components/pages/ShopPage';
+import Cart from "./components/pages/Cart";
+import Payment from "./components/pages/Payment";
+import OrderSummary from "./components/pages/OrderSummary";
+import Login from "./components/pages/Login";
+import Faq from "./components/pages/Faq";
 
 function App() {
     const [basket, setBasket] = useState({ totalPrice: 0, basketItems: [] })
@@ -65,10 +70,10 @@ function App() {
 
 <BrowserRouter>
 <Routes>
-    <Route path='/' element={<HomePage basket={basket} addToBasket={addToBasket} removeFromBasket={removeFromBasket} homeContent={homeContent} />} />
+    <Route path='/' element={<HomePage basket={basket} addToBasket={addToBasket} removeFromBasket={removeFromBasket} />} />
     <Route path='/urunler' element={<ShopPage basket={basket} addToBasket={addToBasket} removeFromBasket={removeFromBasket} />} />
-    <Route path='/urunler/:category-:categoryId' element={<ShopPage basket={basket} addToBasket={addToBasket} removeFromBasket={removeFromBasket} allProducts={allProduct} />} />
-    <Route path='/urun-detay/:category-:productId' element={<ProductPage basket={basket} addToBasket={addToBasket} removeFromBasket={removeFromBasket} allProducts={allProduct} />} />
+    <Route path='/urunler/:category-:categoryId' element={<ShopPage basket={basket} addToBasket={addToBasket} removeFromBasket={removeFromBasket} />} />
+    <Route path='/urun-detay/:category-:productId' element={<ProductPage basket={basket} addToBasket={addToBasket} removeFromBasket={removeFromBasket} />} />
 
     <Route path='/sepet' element={<Cart basket={basket} removeFromBasket={removeFromBasket} />} />
     <Route path='/odeme' element={<Payment basket={basket} removeFromBasket={removeFromBasket}  />} />
