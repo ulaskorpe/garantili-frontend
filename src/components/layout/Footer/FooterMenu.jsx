@@ -48,7 +48,7 @@ class FooterMenu extends Component {
     }
     componentDidMount() {
         //fetch("https://buyback.garantiliteknoloji.com/api/site/left-menu", {
-        var dat = fetch("https://buyback.garantiliteknoloji.com/api/site/footer-menu", {
+        let dat = fetch("https://buyback.garantiliteknoloji.com/api/site/footer-menu", {
             headers: {
                 'x-api-key': '5c35640a3da4f1e3970bacbbf7b20e6c'
             }
@@ -66,8 +66,6 @@ class FooterMenu extends Component {
                     });
                 }
             );
-
-        console.log(dat);
     }
     render() {
         return (

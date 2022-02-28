@@ -1,10 +1,25 @@
-import React  from 'react';
+import React, {useCallback, useRef} from 'react';
 
 const ShopPriceFilter = (props) => {
+    const inputRef = useRef();
     const {
         priceLimit,
         filterByPrice
     } = props;
+
+    const valueToInt = (value) => parseInt(value.replace(/[^0-9.]+/g, '')) || 0;
+    const handleSubmit = useCallback(() => {
+        const inputValue = inputRef?.current?.value || '0-0';
+        const [
+            minString = '0',
+            maxString = '0',
+        ] = inputValue.split('-');
+
+        filterByPrice(
+            valueToInt(minString),
+            valueToInt(maxString),
+        )
+    }, [inputRef, filterByPrice]);
 
     return (
         <>
@@ -24,6 +39,8 @@ const ShopPriceFilter = (props) => {
                     defaultValue={priceLimit.maxPriceValue}
                     name="min_price"
                     className="hidden"
+                    ref={inputRef}
+                    readOnly
                 />
                 <div
                     id="slider-range"
@@ -32,7 +49,8 @@ const ShopPriceFilter = (props) => {
                 <button
                     className="button"
                     type="submit"
-                    onClick={() => filterByPrice(priceLimit.minPriceValue, priceLimit.maxPriceValue)}
+                    // onClick={() => filterByPrice(priceLimit.minPriceValue, priceLimit.maxPriceValue)}
+                    onClick={handleSubmit}
                 >
                     Fiyat uygula
                 </button>

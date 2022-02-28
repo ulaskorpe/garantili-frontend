@@ -117,8 +117,6 @@ export const fetchThis = async (
             .then(async (res) => {
                 if (res.status === 200) res = await res.json();
                 else return res.error()
-
-                if (res?.status && res?.data) res = res.data;
                 return res;
             })
     );

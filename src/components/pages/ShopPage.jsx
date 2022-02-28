@@ -1,4 +1,4 @@
-import React, {useState, useCallback, useMemo} from 'react';
+import React, {useState, useCallback, useMemo, useEffect} from 'react';
 import { useParams } from 'react-router-dom';
 import BreadCrumb from '../layout/BreadCrumb';
 import Footer from '../layout/Footer/Footer';
@@ -11,7 +11,7 @@ import ShopCategoryList from '../Shop/ShopFilters/ShopCategoryList';
 import ShopFilterItem from '../Shop/ShopFilters/ShopFilterItem';
 import ShopHeader from '../Shop/ShopHeader';
 import {useQuery} from "react-query";
-import {GET_PRODUCT_FILTERS, fetchThis, retry, GET_ALL_PRODUCTS} from "../../api";
+import {GET_PRODUCT_FILTERS, fetchThis, retry, GET_ALL_PRODUCTS, DEFAULT_AUTH_TOKEN} from "../../api";
 
 /* Initial Values */
 const INITIAL_PRICE_LIMIT = { minPriceValue: 0, maxPriceValue: 100000 };
@@ -30,7 +30,6 @@ const INITIAL_CATEGORIES = [
 ];
 
 // constants
-const TOTAL_COUNT = 120;
 const perPages = [
     {
         key: 'per_page_5',
@@ -62,8 +61,8 @@ function ShopPage(props) {
     const [crumbs] = useState(INITIAL_CRUMBS);
     const [header] = useState(INITIAL_HEADER);
     const [categories] = useState(INITIAL_CATEGORIES);
+    const [totalCount, setTotalCount] = useState(0);
     const [pagination, setPagination] = useState({
-        totalCount: TOTAL_COUNT, /* todo */
         page: { value: 1 },
         perPage: perPages[0],
     });
@@ -74,27 +73,35 @@ function ShopPage(props) {
     /* */
     const filtersToString = useCallback(() => {
         const filterList = {};
-        Object.keys((filterKey) => {
-            const values = filterQuery[filterKey] || [];
-            filterList[filterKey] = values.join(',');
-        })
+        Object.keys(filterQuery).forEach((filterKey) => {
+            const values = filterQuery[filterKey];
+            if (typeof values === 'undefined') return;
+            let value = null;
+            if (Array.isArray(values)) value = values.join(',');
+            else value = values;
+            filterList[filterKey] = value;
+        });
         return filterList;
     }, [filterQuery])
 
     /**/
     const getFilters = useQuery(
-        'getFilters',
+        ['filters'],
         () => (
             fetchThis(
                 GET_PRODUCT_FILTERS,
                 {},
-                '5c35640a3da4f1e3970bacbbf7b20e6c',
+                DEFAULT_AUTH_TOKEN,
             )
         ),
-        {retry},
+        {retry, refetchOnWindowFocus: false },
     );
     const products = useQuery(
-        ['getProducts', pagination.page, pagination.perPage, filterQuery],
+        [
+            'products',
+            pagination.page, pagination.perPage,
+            filterQuery, filtersToString,
+        ],
         () => (
             fetchThis(
                 GET_ALL_PRODUCTS,
@@ -103,10 +110,10 @@ function ShopPage(props) {
                     page_count: pagination.perPage.value,
                     ...(filtersToString() || {}),
                 },
-                '5c35640a3da4f1e3970bacbbf7b20e6c',
+                DEFAULT_AUTH_TOKEN,
             )
         ),
-        {retry},
+        {retry, refetchOnWindowFocus: false },
     );
 
     /* Memos */
@@ -124,8 +131,11 @@ function ShopPage(props) {
         )
     );
     const totalPageCount = useMemo(() => (
-        calcPageCount(pagination.totalCount, pagination.perPage.value)
-    ), [pagination.totalCount, pagination.perPage]);
+        calcPageCount(
+            products?.data?.item_count || 0,
+            pagination.perPage.value
+        )
+    ), [products.data, pagination.perPage]);
 
     /* Handlers */
     const handlePerPageChange = useCallback((event) => {
@@ -136,11 +146,11 @@ function ShopPage(props) {
             perPage,
         }
 
-        const maxPageCount = calcPageCount(pagination.totalCount, perPage.value);
+        const maxPageCount = calcPageCount(totalCount, perPage.value);
         if (maxPageCount < pagination.page.value) newPagination.page = { value: maxPageCount };
 
         setPagination(newPagination);
-    }, [pagination, perPagesObject]);
+    }, [totalCount, pagination, perPagesObject]);
     const handlePageChange = useCallback((page) => {
         setPagination({
             ...pagination,
@@ -167,9 +177,16 @@ function ShopPage(props) {
     function sortProductsBy(event) {
         console.log(event.target.value);
     }
-    function filterByPrice(min, max) {
-        // setProducts(products.filter(l => l.price >= min && l.price <= max))
-    }
+    const filterByPrice = useCallback((min, max) => {
+        if (
+            filterQuery?.min_price !== min
+            || filterQuery?.max_price !== max
+        ) setFilterQuery({
+            ...filterQuery,
+            min_price: min,
+            max_price: max,
+        });
+    }, [filterQuery])
 
     /* Setters */
     let category = categories.find(_ => _.id === categoryId);
@@ -264,13 +281,19 @@ function ShopPage(props) {
                                             <div className="woocommerce columns-4">
                                                 <div className="products">
                                                     {products.isLoading && (
-                                                        <div>
-                                                            <span>Loading...</span>
+                                                        <div style={{
+                                                            display: 'flex',
+                                                            justifyContent: 'center',
+                                                            alignItems: 'center',
+                                                            width: '100%',
+                                                            padding: '40px 20px',
+                                                        }}>
+                                                            <span>Veriler alınıyor, lütfen bekleyiniz...</span>
                                                         </div>
                                                     )}
                                                     {products.isSuccess && (
                                                         <ProductList
-                                                            products={products.data}
+                                                            products={products.data.data}
                                                             onAddToBasket={addToBasket}
                                                             listType="grid"
                                                         />
@@ -283,7 +306,7 @@ function ShopPage(props) {
                                                 <div className="products">
                                                     {products.isSuccess && (
                                                         <ProductList
-                                                            products={products.data}
+                                                            products={products.data.data}
                                                             onAddToBasket={addToBasket}
                                                             listType="grid-extended"
                                                         />
@@ -296,7 +319,7 @@ function ShopPage(props) {
                                                 <div className="products">
                                                     {products.isSuccess && (
                                                         <ProductList
-                                                            products={products.data}
+                                                            products={products.data.data}
                                                             onAddToBasket={addToBasket}
                                                             listType="large-list"
                                                         />
@@ -309,7 +332,7 @@ function ShopPage(props) {
                                                 <div className="products">
                                                     {products.isSuccess && (
                                                         <ProductList
-                                                            products={products.data}
+                                                            products={products.data.data}
                                                             onAddToBasket={addToBasket}
                                                             listType="list"
                                                         />
@@ -322,7 +345,7 @@ function ShopPage(props) {
                                                 <div className="products">
                                                     {products.isSuccess && (
                                                         <ProductList
-                                                            products={products.data}
+                                                            products={products.data.data}
                                                             onAddToBasket={addToBasket}
                                                             listType="list-small"
                                                         />
@@ -370,7 +393,7 @@ function ShopPage(props) {
                                                 )}
                                             </div>
                                         )}
-                                        {getFilters.isSuccess && Object.entries(getFilters.data || {}).map(([filterIDX, filter]) => (
+                                        {getFilters.isSuccess && Object.entries(getFilters.data.data || {}).map(([filterIDX, filter]) => (
                                             <ShopFilterItem
                                                 filter={filter}
                                                 key={`filterItem_${filterIDX}_id_${filter.id}`}

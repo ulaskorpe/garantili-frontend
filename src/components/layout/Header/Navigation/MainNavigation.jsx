@@ -1,14 +1,28 @@
-import React, { Component } from "react";
+import React, {Component, useCallback} from "react";
 
 const MenuItemWithChild = (props) => {
+
+    const push = useCallback((route) => () => {
+        console.log(route);
+        // window.location.replace(route);
+    }, []);
+
     return (
         <li className="menu-item menu-item-has-children animate-dropdown dropdown">
-            <a title={props.data.title} data-toggle="dropdown" className="dropdown-toggle"
-                aria-haspopup="true" href={props.data.url}>{props.data.title}<span className="caret"></span>
+            <div
+                aria-hidden="true"
+                title={props.data.title}
+                data-toggle="dropdown"
+                className="dropdown-toggle"
+                aria-haspopup="true"
+                onClick={push(props.data.url)}
+            >
+                {props.data.title}
+                <span className="caret" />
                 <ul role="menu" className=" dropdown-menu">
                     <SubItem row={props.data.subItems} />
                 </ul>
-            </a>
+            </div>
         </li>
     )
 }
