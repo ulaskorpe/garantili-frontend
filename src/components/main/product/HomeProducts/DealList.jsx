@@ -76,11 +76,7 @@ class DealList extends Component {
 
     componentDidMount() {
         //fetch("http://buyback.test/api/site/super-offer")
-        fetch(`${process.env.REACT_APP_BASE}/api/site/super-offer`,{
-            headers: {
-                'x-api-key': process.env.REACT_APP_API_KEY
-            }
-        })
+        fetch("https://buyback.garantiliteknoloji.com/api/site/super-offer")
             .then((res) => res.json())
             .then(
                 (result) => {
@@ -113,13 +109,6 @@ class DealList extends Component {
 
         });
     }
-    // handleClick(className){
-    //    if(className == "next"){
-    //        $('#deal-slick').slick('slickNext');
-    //    }else{
-    //        $('#deal-slick').slick('slickPrev');
-    //    }
-    // }
 
     render() {
         return (
@@ -146,10 +135,10 @@ class DealList extends Component {
                     </div>
                     <footer className="section-footer">
                         <nav className="custom-slick-pagination">
-                            <a className="slider-prev left">
+                            <a className="slider-prev left" href="#">
                                 <i className="tm tm-arrow-left"></i>Önceki ürün
                             </a>
-                            <a className="slider-next right" href="#">
+                            <a className="slider-next right" href="#" >
                                 Sonraki ürün<i className="tm tm-arrow-right"></i>
                             </a>
                         </nav>

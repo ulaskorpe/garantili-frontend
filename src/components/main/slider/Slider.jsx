@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import $ from 'jquery'
+import slick from "slick-carousel";
 const SliderItem = (props) => {
     const backgroundImageUrl = 'url('.concat(props.item.backgroundImageUrl, ')')
     const sliderStyle = {
@@ -38,16 +39,16 @@ class Slider extends Component {
         this.state = {
             error: null,
             isLoaded: false,
-            sliders: null,
+            sliders: [],
         };
     }
 
 
     componentDidMount() {
         //   fetch("http://buyback.test/api/site/slider-list")
-        fetch(`${process.env.REACT_APP_BASE}/api/site/slider-list`, {
+        fetch("https://buyback.garantiliteknoloji.com/api/site/slider-list", {
             headers: {
-                'x-api-key': process.env.REACT_APP_API_KEY
+                'x-api-key': '5c35640a3da4f1e3970bacbbf7b20e6c'
             }
         })
             .then((res) => res.json())
@@ -63,15 +64,16 @@ class Slider extends Component {
                     });
                 }
             )
+        console.log('cc did mount')
     }
 
     componentDidUpdate() {
         $('.home-slider').slick({
             dots: true,
-            infinite: true,
+            infinite: false,
             speed: 300,
             slidesToShow: 1,
-            autoplay: true,
+            autoplay: false,
             pauseOnHover: false,
             arrows: false,
             autoplaySpeed: 3000,
@@ -87,7 +89,8 @@ class Slider extends Component {
     render() {
         return (
             <div className="home-v1-slider home-slider">
-               {this.state.isLoaded&& this.state.sliders !== null && <SliderList data={this.state.sliders} />}
+                <SliderList data={this.state.sliders} />
+
             </div>
         )
     }

@@ -5,28 +5,13 @@ import React, { Component } from 'react';
 
 class Footer extends Component {
     state = {
-        socialIcons: [],
-        isLoaded:false
-    }
-    componentDidMount() {
-        fetch(`${process.env.REACT_APP_BASE}/api/site/social-icons`, {
-            headers: {
-                'x-api-key': process.env.REACT_APP_API_KEY
-            }
-        })
-            .then((res) => res.json())
-            .then(
-                (result) => {
-
-                    this.setState({ isLoaded: true, socialIcons: result });
-                },
-                (error) => {
-                    this.setState({
-                        isLoaded: true,
-                        error,
-                    });
-                }
-            );
+        socialIcons: [
+            { id: 1, url: 'https://facebook.com', icon: 'fa fa-facebook' },
+            { id: 2, url: 'https://twitter.com', icon: 'fa fa-twitter' },
+            { id: 3, url: 'https://instagram.com', icon: 'fa fa-instagram' },
+            { id: 4, url: 'https://linkedin.com', icon: 'fa fa-linkedin' },
+            { id: 5, url: 'https://youtube.com', icon: 'fa fa-youtube-play' },
+        ]
     }
     render() {
         return (
@@ -57,7 +42,7 @@ class Footer extends Component {
                             </div>
                             <div className="footer-social-icons">
                                 <ul className="social-icons nav">
-                                    {this.state.isLoaded && this.state.socialIcons.map((_, i) => {
+                                    {this.state.socialIcons.map((_, i) => {
                                         return <li className="nav-item" key={i}>
                                             <a className="sm-icon-label-link nav-link" href={_.url}>
                                                 <i className={_.icon}></i>

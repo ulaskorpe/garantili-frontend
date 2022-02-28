@@ -8,7 +8,7 @@ class OrderReview extends Component {
         return (
             <div class="woocommerce-checkout-review-order" id="order_review">
                 <div class="order-review-wrapper">
-                    <h3 class="order_review_heading">Your Order</h3>
+                    <h3 class="order_review_heading">Siparişiniz</h3>
                    <OrderReviewItemList />
                     <div class="woocommerce-checkout-payment" id="payment">
                         <PaymentMethodList />

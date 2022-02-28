@@ -5,11 +5,11 @@ import Footer from "../layout/Footer/Footer"
 import HeaderMain from "../layout/Header/Header"
 import Topbar from "../layout/Topbar"
 
-function Login(props) {
+function OrderFollow(props) {
     const { basket, onAddToBasket, removeFromBasket } = props
 
     const [crumb, setCrumb] = useState([
-        { url: '#', title: 'Giriş Yap / Kayıt Ol' }
+        { url: '#', title: 'Sipariş Takibi' }
     ])
 
     return (
@@ -33,63 +33,60 @@ function Login(props) {
                                         <div class="woocommerce">
                                             <div class="customer-login-form">
                                                 <div id="customer_login" class="u-columns col2-set">
-                                                    <div class="u-column1 col-1">
-                                                        <h2>Giriş Yap</h2>
+                                                    <div class="col-md-4 col-sm-12 plr-6 right-seperator">
+                                                        <h2>Sipariş Takip</h2>
                                                         <form method="post" class="woocomerce-form woocommerce-form-login login">
                                                             <p class="before-login-text form-text-cb">
-                                                                Siparşinizi takip etmek, ve daha önceki siparişleriniz oylamak için giriş yapın.
+                                                                Siparşinizi kargo takibinizi yapabilirsiniz.
                                                             </p>
                                                             <p class="form-row form-row-wide">
-                                                                <label for="username">E-Posta
+                                                                <label for="username">Sipariş Takip Numarası
                                                                     <span class="required">*</span>
                                                                 </label>
                                                                 <input type="text" class="input-text" name="username" id="username" value="" />
                                                             </p>
-                                                            <p class="form-row form-row-wide mt-2">
-                                                                <label for="password">Parola
-                                                                    <span class="required">*</span>
-                                                                </label>
-                                                                <input class="input-text" type="password" name="password" id="password" />
-                                                            </p>
                                                             <p class="form-row">
-                                                                <input class="woocommerce-Button button btn-navy" type="submit" value="Giriş Yap"
+                                                                <input class="woocommerce-Button button btn-navy" type="submit" value="Ara"
                                                                     name="login" />
-                                                                    <label for="rememberme"
-                                                                        class="woocommerce-form__label woocommerce-form__label-for-checkbox inline">
-                                                                        <input class="woocommerce-form__input woocommerce-form__input-checkbox"
-                                                                            name="rememberme" type="checkbox" id="rememberme" value="forever" />
-                                                                        Beni hatırla &nbsp;&nbsp;
-                                                                    </label>
-                                                            <p class="woocommerce-LostPassword lost_password">
-                                                                <a href="#">|&nbsp;&nbsp;Parolanı unuttun mu?</a>
-                                                            </p>
                                                             </p>
                                                         </form>
                                                     </div>
-                                                    <div class="u-column2 col-2">
-                                                        <h2>Kayıt Ol</h2>
+                                                    <div class="col-md-4 col-sm-12 plr-6 right-seperator">
+                                                        <h2>Onarım Takip</h2>
                                                         <form class="woocommerce-form woocommerce-form-login register" method="post">
                                                             <p class="before-register-text form-text-cb mb-4">
-                                                            Kişiselleştirilmiş bir alışverişin avantajlarından yararlanmak için bugün yeni bir hesap oluşturun.
+                                                                Cihaz Onarım Takibinizi Yapabilirsiniz
                                                             </p>
-                                                            
+
                                                             <p class="form-row form-row-wide">
-                                                                <label for="reg_email">E-Posta
+                                                                <label for="reg_email">Onarım Takip Numarası
                                                                     <span class="required">*</span>
                                                                 </label>
                                                                 <input type="email" value="" id="reg_email" name="email"
                                                                     class="woocommerce-Input woocommerce-Input--text input-text" />
                                                             </p>
-                                                            <p class="form-row form-row-wide mt-2">
-                                                                <label for="reg_password">Parola
+                                                            <p class="form-row">
+                                                                <input type="submit" class="woocommerce-Button button btn-navy" name="register"
+                                                                    value="Ara" />
+                                                            </p>
+                                                        </form>
+                                                    </div>
+                                                    <div class="col-md-4 col-sm-12 plr-6">
+                                                        <h2>Telefon Sat Takip</h2>
+                                                        <form class="woocommerce-form woocommerce-form-login register" method="post">
+                                                            <p class="before-register-text form-text-cb mb-4">Telefon Sat Kargo Takibinizi Yapabilirsiniz</p>
+
+                                                            <p class="form-row form-row-wide">
+                                                                <label for="reg_email">Telefon Satış Takip Numarası
                                                                     <span class="required">*</span>
                                                                 </label>
-                                                                <input type="password" id="reg_password" name="password"
+                                                                <input type="email" value="" id="reg_email" name="email"
                                                                     class="woocommerce-Input woocommerce-Input--text input-text" />
                                                             </p>
+                                                           
                                                             <p class="form-row">
-                                                                <input type="submit" class="woocommerce-Button button" name="register"
-                                                                    value="Kayıt Ol" />
+                                                                <input type="submit" class="woocommerce-Button button btn-navy" name="register"
+                                                                    value="Ara" />
                                                             </p>
                                                         </form>
                                                     </div>
@@ -108,4 +105,4 @@ function Login(props) {
     )
 }
 
-export default Login
+export default OrderFollow

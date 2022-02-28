@@ -1,16 +1,27 @@
-import { useState } from "react"
-import OrderReview from "../cart/OrderReview"
-import BreadCrumb from "../layout/BreadCrumb"
-import Footer from "../layout/Footer/Footer"
-import HeaderMain from "../layout/Header/Header"
-import Topbar from "../layout/Topbar"
+import { useState } from "react";
+import { useParams } from "react-router-dom";
+import BreadCrumb from "../layout/BreadCrumb";
+import Footer from "../layout/Footer/Footer";
+import HeaderMain from "../layout/Header/Header";
+import Topbar from "../layout/Topbar";
 
-function Faq(props) {
+export default function ContentPage(props) {
+
+
     const { basket, onAddToBasket, removeFromBasket } = props
 
-    const [crumb, setCrumb] = useState([
-        { url: '#', title: 'Ödeme' }
+
+    const { id } = useParams()
+
+    const [faq, setFaqs] = useState([
+        { title: 'Yenilenmiş cep telefonu nedir?', content: 'Yenilenmiş cep telefonu; uzman teknik ekip kadromuz tarafından TSE Standardlarına göre 32 kontrol noktada testlerden geçen, sıfır telefon gibi fonksiyonları %100 çalışan, IMEI numarası hukuksal hiçbir sorun teşkil etmeyen, özel kutuya sahip ve 1 yıl garantilli olan üründür. Kullanılmış cep telefonlarının belirli bir standartta yenilenerek, garantili ve sertifikalı bir şekilde “yenilenmiş ürün” olarak tekrar satışa sunulmasına ilişkin usul ve esasları düzenleyen Yenilenmiş Ürünlerin Satışı Hakkında Yönetmelik 22.08.2020 tarihli ve 31221 sayılı Resmî Gazetede yayımlanarak yürürlüğe girmiştir. Anılan Yönetmelik hükümleri uyarınca, “yenileme” işlemlerini yapma ve “yenilenmiş ürün” piyasaya arz etme faaliyetleri Ticaret Bakanlığı tarafınca yetkilendirilen Garantili Teknoloji tarafından yapılabilecektir. ' },
+        { title: 'Yenilenmiş cep telefonu nedir?', content: 'Yenilenmiş cep telefonu; uzman teknik ekip kadromuz tarafından TSE Standardlarına göre 32 kontrol noktada testlerden geçen, sıfır telefon gibi fonksiyonları %100 çalışan, IMEI numarası hukuksal hiçbir sorun teşkil etmeyen, özel kutuya sahip ve 1 yıl garantilli olan üründür. Kullanılmış cep telefonlarının belirli bir standartta yenilenerek, garantili ve sertifikalı bir şekilde “yenilenmiş ürün” olarak tekrar satışa sunulmasına ilişkin usul ve esasları düzenleyen Yenilenmiş Ürünlerin Satışı Hakkında Yönetmelik 22.08.2020 tarihli ve 31221 sayılı Resmî Gazetede yayımlanarak yürürlüğe girmiştir. Anılan Yönetmelik hükümleri uyarınca, “yenileme” işlemlerini yapma ve “yenilenmiş ürün” piyasaya arz etme faaliyetleri Ticaret Bakanlığı tarafınca yetkilendirilen Garantili Teknoloji tarafından yapılabilecektir. ' },
+        { title: 'Yenilenmiş cep telefonu nedir?', content: 'Yenilenmiş cep telefonu; uzman teknik ekip kadromuz tarafından TSE Standardlarına göre 32 kontrol noktada testlerden geçen, sıfır telefon gibi fonksiyonları %100 çalışan, IMEI numarası hukuksal hiçbir sorun teşkil etmeyen, özel kutuya sahip ve 1 yıl garantilli olan üründür. Kullanılmış cep telefonlarının belirli bir standartta yenilenerek, garantili ve sertifikalı bir şekilde “yenilenmiş ürün” olarak tekrar satışa sunulmasına ilişkin usul ve esasları düzenleyen Yenilenmiş Ürünlerin Satışı Hakkında Yönetmelik 22.08.2020 tarihli ve 31221 sayılı Resmî Gazetede yayımlanarak yürürlüğe girmiştir. Anılan Yönetmelik hükümleri uyarınca, “yenileme” işlemlerini yapma ve “yenilenmiş ürün” piyasaya arz etme faaliyetleri Ticaret Bakanlığı tarafınca yetkilendirilen Garantili Teknoloji tarafından yapılabilecektir. ' },
+        { title: 'Yenilenmiş cep telefonu nedir?', content: 'Yenilenmiş cep telefonu; uzman teknik ekip kadromuz tarafından TSE Standardlarına göre 32 kontrol noktada testlerden geçen, sıfır telefon gibi fonksiyonları %100 çalışan, IMEI numarası hukuksal hiçbir sorun teşkil etmeyen, özel kutuya sahip ve 1 yıl garantilli olan üründür. Kullanılmış cep telefonlarının belirli bir standartta yenilenerek, garantili ve sertifikalı bir şekilde “yenilenmiş ürün” olarak tekrar satışa sunulmasına ilişkin usul ve esasları düzenleyen Yenilenmiş Ürünlerin Satışı Hakkında Yönetmelik 22.08.2020 tarihli ve 31221 sayılı Resmî Gazetede yayımlanarak yürürlüğe girmiştir. Anılan Yönetmelik hükümleri uyarınca, “yenileme” işlemlerini yapma ve “yenilenmiş ürün” piyasaya arz etme faaliyetleri Ticaret Bakanlığı tarafınca yetkilendirilen Garantili Teknoloji tarafından yapılabilecektir. ' },
+        { title: 'Yenilenmiş cep telefonu nedir?', content: 'Yenilenmiş cep telefonu; uzman teknik ekip kadromuz tarafından TSE Standardlarına göre 32 kontrol noktada testlerden geçen, sıfır telefon gibi fonksiyonları %100 çalışan, IMEI numarası hukuksal hiçbir sorun teşkil etmeyen, özel kutuya sahip ve 1 yıl garantilli olan üründür. Kullanılmış cep telefonlarının belirli bir standartta yenilenerek, garantili ve sertifikalı bir şekilde “yenilenmiş ürün” olarak tekrar satışa sunulmasına ilişkin usul ve esasları düzenleyen Yenilenmiş Ürünlerin Satışı Hakkında Yönetmelik 22.08.2020 tarihli ve 31221 sayılı Resmî Gazetede yayımlanarak yürürlüğe girmiştir. Anılan Yönetmelik hükümleri uyarınca, “yenileme” işlemlerini yapma ve “yenilenmiş ürün” piyasaya arz etme faaliyetleri Ticaret Bakanlığı tarafınca yetkilendirilen Garantili Teknoloji tarafından yapılabilecektir. ' },
     ])
+
+    const [crumbs, setCrumb] = useState([{ url: '/', title: 'Sıkça Sorulan Sorular' }])
 
     return (
         <div className="woocommerce-active single-product full-width normal">
@@ -23,76 +34,39 @@ function Faq(props) {
             <div id="content" className="site-content" tabIndex="-1">
                 <div className="col-full">
                     <div className="row">
-                        <BreadCrumb crumbs={crumb} />
+                        <BreadCrumb crumbs={crumbs} />
                         <div id="primary" class="content-area">
                             <main id="main" class="site-main">
                                 <div class="type-page hentry">
-                                    <div class="entry-content">
-                                        <div class="woocommerce">
-                                            <div class="customer-login-form">
-                                                <span class="or-text">veya</span>
-                                                <div id="customer_login" class="u-columns col2-set">
-                                                    <div class="u-column1 col-1">
-                                                        <h2>Giriş Yap</h2>
-                                                        <form method="post" class="woocomerce-form woocommerce-form-login login">
-                                                            <p class="before-login-text">
-                                                                Siparşinizi takip etmek, ve daha önceki siparişleriniz oylamak için giriş yapın.
-                                                            </p>
-                                                            <p class="form-row form-row-wide">
-                                                                <label for="username">E-Posta
-                                                                    <span class="required">*</span>
-                                                                </label>
-                                                                <input type="text" class="input-text" name="username" id="username" value="" />
-                                                            </p>
-                                                            <p class="form-row form-row-wide">
-                                                                <label for="password">Parola
-                                                                    <span class="required">*</span>
-                                                                </label>
-                                                                <input class="input-text" type="password" name="password" id="password" />
-                                                            </p>
-                                                            <p class="form-row">
-                                                                <input class="woocommerce-Button button" type="submit" value="Giriş Yap"
-                                                                    name="login" />
-                                                                    <label for="rememberme"
-                                                                        class="woocommerce-form__label woocommerce-form__label-for-checkbox inline">
-                                                                        <input class="woocommerce-form__input woocommerce-form__input-checkbox"
-                                                                            name="rememberme" type="checkbox" id="rememberme" value="forever" />
-                                                                        Beni hatırla
-                                                                    </label>
-                                                            </p>
-                                                            <p class="woocommerce-LostPassword lost_password">
-                                                                <a href="#">Parolanı unuttun mu?</a>
-                                                            </p>
-                                                        </form>
-                                                    </div>
-                                                    <div class="u-column2 col-2">
-                                                        <h2>Kayıt Ol</h2>
-                                                        <form class="register" method="post">
-                                                            <p class="before-register-text">
-                                                            Kişiselleştirilmiş bir alışverişin avantajlarından yararlanmak için bugün yeni bir hesap oluşturun.
-                                                            </p>
-                                                            <p class="form-row form-row-wide">
-                                                                <label for="reg_email">E-Posta
-                                                                    <span class="required">*</span>
-                                                                </label>
-                                                                <input type="email" value="" id="reg_email" name="email"
-                                                                    class="woocommerce-Input woocommerce-Input--text input-text" />
-                                                            </p>
-                                                            <p class="form-row form-row-wide">
-                                                                <label for="reg_password">Parola
-                                                                    <span class="required">*</span>
-                                                                </label>
-                                                                <input type="password" id="reg_password" name="password"
-                                                                    class="woocommerce-Input woocommerce-Input--text input-text" />
-                                                            </p>
-                                                            <p class="form-row">
-                                                                <input type="submit" class="woocommerce-Button button" name="register"
-                                                                    value="Kayıt Ol" />
-                                                            </p>
-                                                        </form>
-                                                    </div>
-                                                </div>
-                                            </div>
+                                    <header class="entry-header mb-0">
+                                        <div class="page-header-caption text-center">
+                                            <h1 class="entry-title">Sıkça Sorulan Sorular</h1>
+                                            <br />
+                                        </div>
+                                    </header>
+                                    <div class="entry-content">                                       
+                                        <div id="accordion" class="faq-accordion-wrap" role="tablist" aria-multiselectable="true">
+                                            {
+                                                faq.map((item, i) => {
+                                                    return (
+                                                        <div class="card" key={i}>
+                                                            <div class="card-header" role="tab" id={'heading-' + i}>
+                                                                <h5 class="mb-0">
+                                                                    <a data-toggle="collapse" data-parent="#accordion" href={'#collapse-' + i} aria-expanded="true"
+                                                                        aria-controls={'collapse-' + i}>
+                                                                        <i class="icon"></i>
+                                                                        {item.title}
+                                                                    </a>
+                                                                </h5>
+                                                            </div>
+
+                                                            <div id={'collapse-' + i} class={i === 0 ? 'collapse show' : 'collapse'} role="tabpanel" aria-labelledby={'heading-' + i}>
+                                                                <div class="card-block" dangerouslySetInnerHTML={{ __html: [item.content] }} />
+                                                            </div>
+                                                        </div>
+                                                    )
+                                                })
+                                            }
                                         </div>
                                     </div>
                                 </div>
@@ -105,5 +79,3 @@ function Faq(props) {
         </div>
     )
 }
-
-export default Faq

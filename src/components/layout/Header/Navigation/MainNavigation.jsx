@@ -1,15 +1,14 @@
 import React, { Component } from "react";
-import { Link } from "react-router-dom";
 
 const MenuItemWithChild = (props) => {
     return (
         <li className="menu-item menu-item-has-children animate-dropdown dropdown">
-            <div data-toggle="dropdown" className="dropdown-toggle"
-                aria-haspopup="true"to={props.data.url}>{props.data.title}<span className="caret"></span>
+            <a title={props.data.title} data-toggle="dropdown" className="dropdown-toggle"
+                aria-haspopup="true" href={props.data.url}>{props.data.title}<span className="caret"></span>
                 <ul role="menu" className=" dropdown-menu">
                     <SubItem row={props.data.subItems} />
                 </ul>
-            </div>
+            </a>
         </li>
     )
 }
@@ -18,9 +17,9 @@ const SubItem = (props) => {
     const items = props.row.map((item, index) => {
         return (
             <li className="menu-item animate-dropdown" key={index}>
-                <Link to={item.url}>
+                <a title={item.url} href={item.url}>
                     {item.title}
-                </Link>
+                </a>
             </li>
         )
     })
@@ -30,7 +29,7 @@ const SubItem = (props) => {
 const MenuItemNoChild = (props) => {
     return (
         <li className="menu-item animate-dropdown">
-            <Link  to={props.data.url}>{props.data.title}</Link>
+            <a title={props.data.title} href={props.data.url}>{props.data.title}</a>
         </li>
     )
 }
@@ -50,30 +49,28 @@ const MenuItem = (props) => {
 
 
 class MainNavigation extends Component {
-    state = {
-        menuItems: [],
-        isLoaded:false
-    }
-    componentDidMount() {
-        fetch(`${process.env.REACT_APP_BASE}/api/site/top-menu`,{
-            headers: {
-                'x-api-key': process.env.REACT_APP_API_KEY
-            }
-        })
-            .then((res) => res.json())
-            .then(
-                (result) => {
+    menuItems = [
+        {
+            id: 2, isDropdown: true, title: 'TELEFONLAR', url: '#', subItems: [
+                { id: 11, isDropdown: false, 'title': 'Apple', url: '/urunler/telefonlar-2?brand=apple' },
+                { id: 12, isDropdown: false, 'title': 'Samsung', url: '/urunler/telefonlar-2?brand=samsung' },
+                { id: 13, isDropdown: false, 'title': 'Xiaomi', url: '/urunler/telefonlar-2?brand=xiaomi' },
+                { id: 14, isDropdown: false, 'title': 'Huawei', url: '/urunler/telefonlar-2?brand=huawei' }
+            ]
+        },
+        {
+            id: 3, isDropdown: true, title: 'TABLETLER', url: '#', subItems: [
+                { id: 21, isDropdown: false, 'title': 'Apple', url: '/urunler/tabletler-3?brand=apple' },
+                { id: 22, isDropdown: false, 'title': 'Samsung', url: '/urunler/telefonlar-3?brand=samsung' },
+                { id: 23, isDropdown: false, 'title': 'Xiaomi', url: '/urunler/telefonlar-3?brand=xiaomi' },
+                { id: 24, isDropdown: false, 'title': 'Huawei', url: '/urunler/telefonlar-3?brand=huawei' }
+            ]
+        },
+        { id: 3, isDropdown: false, title: 'TELEFON SAT', url: '/telefon-sat', subItems: [] },
+        { id: 4, isDropdown: false, title: 'TELEFON ONAR / YENİLE', url: '/telefon-onar', subItems: [] },
+        { id: 5, isDropdown: false, title: 'GARANTİ SORGULA', url: '/garanti-sorgula', subItems: [] },
+    ];
 
-                    this.setState({ isLoaded: true, menuItems: result });
-                },
-                (error) => {
-                    this.setState({
-                        isLoaded: true,
-                        error,
-                    });
-                }
-            );
-    }
     render() {
         return (
             <nav id="primary-navigation" className="primary-navigation" aria-label="Primary Navigation" data-nav="flex-menu">
@@ -81,11 +78,11 @@ class MainNavigation extends Component {
                     <li className="sale-clr yamm-fw menu-item animate-dropdown"><a title="Süper Teklif" href="/urunler/super-teklif-1">SÜPER
                         TEKLİF</a>&nbsp;
                     </li>
-                    {this.state.isLoaded && <MenuItem menuData={this.state.menuItems} />}
-                    {/* <li className="garantili-flex-more-menu-item dropdown">
+                    <MenuItem menuData={this.menuItems} />
+                    <li className="garantili-flex-more-menu-item dropdown">
                         <a title="..." href="#" data-toggle="dropdown" className="dropdown-toggle">...</a>
                         <ul className="overflow-items dropdown-menu"></ul>
-                    </li> */}
+                    </li>
                 </ul>
             </nav>
         )

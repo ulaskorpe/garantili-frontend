@@ -25,10 +25,7 @@
     "extends": [
       "react-app",
       "react-app/jest"
-    ],
-    "rules": {
-      "eqeqeq": "off"
-    }
+    ]
   },
   "browserslist": {
     "production": [

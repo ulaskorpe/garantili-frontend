@@ -13045,7 +13045,6 @@ a#variations_clear:before {
     display: inline-block;
 }
 
-.primary-navigation .nav > li >div,
 .primary-navigation .nav > li > a,
 .navbar-primary .nav > li > a {
     color: #444;
@@ -29561,7 +29560,6 @@ p.available-on-backorder {
 }
 
 #secondary .widget .widget-title {
-    border-bottom: 1px solid #ebebeb;
     margin-bottom: 0.9em;
     padding-bottom: 0.25em;
     display: flex;
@@ -29826,9 +29824,9 @@ p.available-on-backorder {
         padding-top: 20px;
     }
 
-    #content #secondary.shop-sidebar > .widget:not(.widget_garantili_products_filter) {
+    /* #content #secondary.shop-sidebar > .widget:not(.widget_garantili_products_filter) {
         display: none;
-    }
+    } */
 
     #content.active-hh-sidebar::before {
         font-family: garantili-icons;
@@ -32114,7 +32112,6 @@ ul.order_details li strong {
 
 @media (min-width: 768px) {
     #customer_login::before {
-        border-right: 1px solid #ddd;
         height: 100%;
         position: absolute;
         content: ' ';
@@ -32793,7 +32790,7 @@ p.stars.selected a:not(.active):before {
 p.no-comments {
     padding: 1em 1.618em;
     margin-bottom: 2.617924em;
-    background-color: #0f834d;
+    background-color: #3D9CD2;
     margin-left: 0;
     border-radius: 2px;
     color: #fff;
@@ -33581,8 +33578,8 @@ dl.variation dd {
 
 @media (min-width: 550px) and (min-width: 1200px) {
     .products .product {
-        padding-right: 15px;
-        padding-left: 15px;
+        padding-right: 25px;
+        padding-left: 25px;
     }
 }
 
@@ -38028,13 +38025,143 @@ form.track_order input[type="submit"] {
 .w-40{ width:40%;}
 .w-20{ width:20%;}
 .w-0{ width:0%;}
-.tab-content > .tab-pane:not(.active), 
-.pill-content > .pill-pane:not(.active) {
+
+
+.ml-auto {
+    margin-left: auto;
+    margin-right: auto;
     display: block;
-    height: 0;
-    overflow-y: hidden;
 }
-.tab-pane.passive{
-    overflow-y: hidden!important;
-    height:0!important;
+
+.pt-44 {
+    padding-top: 70px !important;
+}
+
+.border-bottom-1px {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    line-height: 2em;
+    font-size:1.5em;
+    font-weight: 400;
+}
+
+.border-no {
+    border-bottom: 0px !important;
+}
+
+.product-brand-list {
+    flex: 0 0 16.6%;
+    max-width: 16.6%;
+    border-right:1px solid rgba(0, 0, 0, 0.1);
+    border-left:1px solid rgba(0, 0, 0, 0.1);
+}
+
+.product-brand-list img {
+    width: auto;
+    margin-left:auto;
+    margin-right:auto;
+}
+
+.product-brand-list h2 {
+    font-size:12pt;
+    font-weight: 400;
+    margin-top:50px
+}
+
+.mb-200 {
+    margin-bottom :100px;
+    margin-top:40px;
+}
+
+.border-button {
+    border-radius:0px !important;
+    margin-top:33px;
+    height: 45px;
+}
+
+.form-text-cb{ 
+    font-size:14px;
+}
+
+.pr-6 {
+    padding-right: 4rem;
+}
+.pl-6 {
+    padding-left: 4rem;
+}
+.plr-6 {
+    padding-left: 4rem;
+    padding-right: 4rem;
+}
+
+.btn-navy {
+    background-color: #0063d1 !important;
+  }
+
+  @media only screen and (max-width: 600px) {
+      .pl-6 {
+          padding-left: 1rem;
+      }
+
+      .product-brand-list {
+        margin-bottom:5rem;
+        flex: 0 0 100%;
+        max-width: 100%;
+        border-right:1px solid rgba(0, 0, 0, 0.1);
+        border-left:1px solid rgba(0, 0, 0, 0.1);
+    }
+    .imei-button btn {
+        padding-top:10px !important;
+    }
+  } 
+
+  /* Small devices (portrait tablets and large phones, 600px and up) */
+@media only screen and (min-width: 600px) {
+    .pl-6 {
+        padding-left: 1rem;
+    }
+
+    .product-brand-list {
+      margin-bottom:5rem;
+      flex: 0 0 100%;
+      max-width: 100%;
+      border-right:1px solid rgba(0, 0, 0, 0.1);
+      border-left:1px solid rgba(0, 0, 0, 0.1);
+  }
+} 
+
+@media only screen and (min-width: 768px) {
+    .product-brand-list {
+        margin-bottom:5rem;
+        flex: 0 0 33%;
+        max-width: 33%;
+        border-right:1px solid rgba(0, 0, 0, 0.1);
+        border-left:1px solid rgba(0, 0, 0, 0.1);
+    }
+}
+
+@media only screen and (min-width: 1200px) {
+    .product-brand-list {
+        margin-bottom:5rem;
+        flex: 0 0 16%;
+        max-width: 16%;
+        border-right:1px solid rgba(0, 0, 0, 0.1);
+        border-left:1px solid rgba(0, 0, 0, 0.1);
+    }
+}
+
+
+.right-seperator{
+    border-right:1px solid #E0E0E0;
+}
+
+.m-tb {
+    margin-top:0px;
+    margin-bottom:7px;
+}
+
+.pb-0 {
+    padding-bottom:0px !important;
+}
+.mb-4 {
+    margin-bottom:3px !important;
 }

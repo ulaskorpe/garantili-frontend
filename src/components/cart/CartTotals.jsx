@@ -8,7 +8,7 @@ class CartTotals extends Component {
         return (
             <div class="cart-collaterals">
                 <div class="cart_totals">
-                    <h2>Cart totals</h2>
+                    <h2>Toplam</h2>
                     <table class="shop_table shop_table_responsive">
                         <tbody>
                             <tr class="cart-subtotal">
@@ -36,7 +36,7 @@ class CartTotals extends Component {
                     <div class="wc-proceed-to-checkout">
                         
                         <a class="checkout-button button alt wc-forward" href="/odeme">Ödemeye geçin</a>
-                        <a class="back-to-shopping" href="/">Back to Shopping</a>
+                        <a class="back-to-shopping" href="/">Alışverişe Devam Et</a>
                     </div>
                 </div>
             </div>

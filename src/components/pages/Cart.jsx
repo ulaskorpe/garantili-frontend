@@ -27,9 +27,12 @@ function Cart(props) {
                         <BreadCrumb crumbs={crumb} />
                         <div id="primary" className="content-area">
                             <main id="main" className="site-main">
+
                                 <div class="type-page hentry">
+
                                     <div class="entry-content">
                                         <div class="woocommerce">
+                                            <h3 className="border-bottom-1px">Alışveriş Sepeti</h3>
                                             <div class="cart-wrapper">
                                                 <CartList removeFromBasket={removeFromBasket} />
                                                 <CartTotals />

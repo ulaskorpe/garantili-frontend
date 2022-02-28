@@ -33,9 +33,9 @@ class PartnerList extends Component {
     }
     componentDidMount() {
         //fetch("http://buyback.test/api/site/brands-list")
-        fetch(`${process.env.REACT_APP_BASE}/api/site/brands-list`,{
+        fetch("https://buyback.garantiliteknoloji.com/api/site/brands-list", {
             headers: {
-                'x-api-key': process.env.REACT_APP_API_KEY
+                'x-api-key': '5c35640a3da4f1e3970bacbbf7b20e6c'
             }
         })
             .then((res) => res.json())
