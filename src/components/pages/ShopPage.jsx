@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { useLocation, useParams } from 'react-router-dom';
+import React, {useState, useCallback, useMemo} from 'react';
+import { useParams } from 'react-router-dom';
 import BreadCrumb from '../layout/BreadCrumb';
 import Footer from '../layout/Footer/Footer';
 import HeaderMain from '../layout/Header/Header';
-import Topbar from '../layout/Topbar';
+import TopBar from '../layout/Topbar';
 import PaginationBar from '../Shop/ProductList/PaginationBar';
 import ProductList from '../Shop/ProductList/ProductList';
 import ShopPriceFilter from '../Shop/ProductList/ShopPriceFilter';
@@ -11,8 +11,7 @@ import ShopCategoryList from '../Shop/ShopFilters/ShopCategoryList';
 import ShopFilterItem from '../Shop/ShopFilters/ShopFilterItem';
 import ShopHeader from '../Shop/ShopHeader';
 import {useQuery} from "react-query";
-import {GET_ALL_PRODUCTS} from "../../api";
-import {fetchThis} from "../../api/utils/fetchTools";
+import {GET_PRODUCT_FILTERS, fetchThis, retry, GET_ALL_PRODUCTS} from "../../api";
 
 /* Initial Values */
 const INITIAL_PRICE_LIMIT = { minPriceValue: 0, maxPriceValue: 100000 };
@@ -30,6 +29,26 @@ const INITIAL_CATEGORIES = [
     { id: 4, title: 'Aksesuarlar' },
 ];
 
+// constants
+const TOTAL_COUNT = 120;
+const perPages = [
+    {
+        key: 'per_page_5',
+        value: 5,
+    },
+    {
+        key: 'per_page_10',
+        value: 10,
+    },
+    {
+        key: 'per_page_20',
+        value: 20,
+    },
+    {
+        key: 'per_page_50',
+        value: 50,
+    },
+];
 
 function ShopPage(props) {
     /* Props */
@@ -38,142 +57,129 @@ function ShopPage(props) {
     } = props;
 
     /* States */
-    const [filters, setFilters] = useState(null);
-    const [products, setProducts] = useState(null);
-    const [bar, setBar] = useState(null);
-    const [priceLimit, setPriceLimit] = useState(INITIAL_PRICE_LIMIT);
-    const [crumbs, setCrumb] = useState(INITIAL_CRUMBS);
-    const [header, setHeader] = useState(INITIAL_HEADER);
-    const [categories, setCategories] = useState(INITIAL_CATEGORIES)
+    const [filterQuery, setFilterQuery] = useState({});
+    const [priceLimit] = useState(INITIAL_PRICE_LIMIT);
+    const [crumbs] = useState(INITIAL_CRUMBS);
+    const [header] = useState(INITIAL_HEADER);
+    const [categories] = useState(INITIAL_CATEGORIES);
+    const [pagination, setPagination] = useState({
+        totalCount: TOTAL_COUNT, /* todo */
+        page: { value: 1 },
+        perPage: perPages[0],
+    });
 
     /* React Router DOM hooks */
     const { categoryId } = useParams();
+
+    /* */
+    const filtersToString = useCallback(() => {
+        const filterList = {};
+        Object.keys((filterKey) => {
+            const values = filterQuery[filterKey] || [];
+            filterList[filterKey] = values.join(',');
+        })
+        return filterList;
+    }, [filterQuery])
+
+    /**/
     const getFilters = useQuery(
         'getFilters',
         () => (
             fetchThis(
-                GET_ALL_PRODUCTS,
+                GET_PRODUCT_FILTERS,
                 {},
                 '5c35640a3da4f1e3970bacbbf7b20e6c',
             )
         ),
+        {retry},
+    );
+    const products = useQuery(
+        ['getProducts', pagination.page, pagination.perPage, filterQuery],
+        () => (
+            fetchThis(
+                GET_ALL_PRODUCTS,
+                {
+                    page: pagination.page.value,
+                    page_count: pagination.perPage.value,
+                    ...(filtersToString() || {}),
+                },
+                '5c35640a3da4f1e3970bacbbf7b20e6c',
+            )
+        ),
+        {retry},
     );
 
+    /* Memos */
+    const perPagesObject = useMemo(() => {
+        const obj = {};
+        perPages.forEach((_perPage) => {
+            obj[_perPage.value] = _perPage;
+        });
+        return obj;
+    }, []);
+
+    const calcPageCount = (total = 0, perPage = 0) => (
+        Math.ceil(
+            total / (perPage)
+        )
+    );
+    const totalPageCount = useMemo(() => (
+        calcPageCount(pagination.totalCount, pagination.perPage.value)
+    ), [pagination.totalCount, pagination.perPage]);
+
     /* Handlers */
-    function handlePage(pageNumber) {
-        const pages = {
-            totalResult: bar.totalResult,
-            pages: [],
-            result: bar.result
+    const handlePerPageChange = useCallback((event) => {
+        const perPage = perPagesObject[event.target.value];
+
+        const newPagination = {
+            ...pagination,
+            perPage,
         }
-        pages.pages = bar.pages.map((_) => {
-            _.selected = pageNumber === _.page
-            return _
+
+        const maxPageCount = calcPageCount(pagination.totalCount, perPage.value);
+        if (maxPageCount < pagination.page.value) newPagination.page = { value: maxPageCount };
+
+        setPagination(newPagination);
+    }, [pagination, perPagesObject]);
+    const handlePageChange = useCallback((page) => {
+        setPagination({
+            ...pagination,
+            page,
         })
-        setBar(pages)
-    }
+    }, [pagination]);
+
+    const handleFilterClick = useCallback((
+        parentName,
+    ) => (item) => {
+        const parent = (filterQuery[parentName] || []);
+        const isAlreadySelected = parent.includes(item.id);
+        const _filters = parent.filter((itemId) => itemId !== item.id);
+        if (!isAlreadySelected) _filters.push(item.id);
+
+        setFilterQuery({
+            ...(filterQuery || {}),
+            [parentName]: _filters,
+        });
+    }, [filterQuery]);
+
 
     /* Utils */
-    function alertOnClick() {
-        console.log('hi')
-    }
     function sortProductsBy(event) {
-        console.log(event.target.value)
+        console.log(event.target.value);
     }
     function filterByPrice(min, max) {
-        setProducts(products.filter(l => l.price >= min && l.price <= max))
-    }
-
-    /* Fetches */
-    const fetchFilters = async () => {
-        await fetch(`${process.env.REACT_APP_BASE}/api/products/product-filters`, {
-            headers: {
-                'x-api-key': process.env.REACT_APP_API_KEY
-            }
-        })
-            .then((res) => res.json())
-            .then(
-                (result) => {
-                    setFilters(Object.values(result));
-                },
-                (error) => {
-                    console.error(error);
-                }
-            );
-    }
-    const fetchProducts = async () => {
-        const formData = new URLSearchParams();
-        formData.append('min_price', '0');
-        formData.append('max_price', '0');
-        formData.append('brand', '');
-        formData.append('colors','');
-        formData.append('memories','0');
-        formData.append('page','0');
-        await fetch(`${process.env.REACT_APP_BASE}/api/products/all-products`, {
-            method:'POST',
-            headers: {
-                'x-api-key': process.env.REACT_APP_API_KEY,
-                'Content-Type':'application/form-data'
-            },
-            body:formData.toString()
-        })
-            .then((res) => res.json())
-            .then(
-                (result) => {
-                    setProducts(result);
-                },
-                (error) => {
-                    console.error(error);
-                }
-            );
+        // setProducts(products.filter(l => l.price >= min && l.price <= max))
     }
 
     /* Setters */
-    function changeProductCount(event) {
-        if (event.target.value === 'Hepsi') {
-            setProducts(products)
-            return
-        }
-        setProducts(products.slice(0, event.target.value))
-    }
-    const setFilterValues = (filterType,filterArray) =>{
-        let index = filters.findIndex((x)=> x.filterName === filterType);
-        if (index !== -1){
-            let temporaryArray = filters.slice();
-            temporaryArray[index].items = filterArray;
-            setFilters(temporaryArray);
-        }
-        else {
-            console.log('no match');
-        }
-    }
     let category = categories.find(_ => _.id === categoryId);
     if (category === undefined) category = categories[0];
 
-    /* Effects */
-    useEffect(async () => {
-        await fetchProducts();
-        await fetchFilters();
-    },[]);
-    useEffect(()=>{
-        if(products !== null){
-            setBar({
-                totalResult: products.length,
-                result: 10,
-                pages: [
-                    { page: 1, selected: true },
-                    { page: 2, selected: false },
-                    { page: 3, selected: false },
-                    { page: 4, selected: false }
-                ]
-            })
-        }
-    },[products]);
 
     return (
         <div className="woocommerce-active left-sidebar" >
             <div id="page" className="hfeed site">
-                <Topbar />
+                <TopBar />
                 <HeaderMain basket={props.basket} onRemoveBasket={props.removeFromBasket} />
                 <div id="content" className="site-content" tabIndex="-1">
                     <div className="col-full">
@@ -219,15 +225,26 @@ function ShopPage(props) {
                                                 </a>
                                             </li>
                                         </ul>
-                                        <form className="form-techmarket-wc-ppp" method="GET" >
-                                            <select className="techmarket-wc-wppp-select c-select" name="ppp" onChange={changeProductCount}>
-                                                <option defaultValue="4">4</option>
-                                                <option defaultValue="8">8</option>
-                                                <option defaultValue="-1">Hepsi</option>
+                                        <form
+                                            className="form-techmarket-wc-ppp"
+                                            method="POST"
+                                            onSubmit={(e) => e.preventDefault()}
+                                        >
+                                            <select
+                                                className="techmarket-wc-wppp-select c-select"
+                                                name="per_page"
+                                                value={pagination.perPage.value}
+                                                onChange={handlePerPageChange}
+                                            >
+                                                {perPages.map((_perPage) => (
+                                                    <option
+                                                        key={_perPage.key}
+                                                        value={_perPage.value}
+                                                    >
+                                                        {_perPage.value}
+                                                    </option>
+                                                ))}
                                             </select>
-                                            <input type="hidden" defaultValue="5" name="shop_columns" />
-                                            <input type="hidden" defaultValue="15" name="shop_per_page" />
-                                            <input type="hidden" defaultValue="right-sidebar" name="shop_layout" />
                                         </form>
                                         <form method="get" className="woocommerce-ordering">
                                             <select className="orderby" name="orderby" defaultValue="date" onChange={sortProductsBy}>
@@ -246,40 +263,83 @@ function ShopPage(props) {
                                         <div id="grid" className="tab-pane active" role="tabpanel">
                                             <div className="woocommerce columns-4">
                                                 <div className="products">
-                                                    {products !== null && bar !== null && <ProductList products={products.slice(0,bar.result)} onAddToBasket={addToBasket} listType="grid" />}
+                                                    {products.isLoading && (
+                                                        <div>
+                                                            <span>Loading...</span>
+                                                        </div>
+                                                    )}
+                                                    {products.isSuccess && (
+                                                        <ProductList
+                                                            products={products.data}
+                                                            onAddToBasket={addToBasket}
+                                                            listType="grid"
+                                                        />
+                                                    )}
                                                 </div>
                                             </div>
                                         </div>
                                         <div id="grid-extended" className="tab-pane" role="tabpanel">
                                             <div className="woocommerce columns-4">
                                                 <div className="products">
-                                                    {products !==null && <ProductList products={products} onAddToBasket={addToBasket} listType="grid-extended" />}
+                                                    {products.isSuccess && (
+                                                        <ProductList
+                                                            products={products.data}
+                                                            onAddToBasket={addToBasket}
+                                                            listType="grid-extended"
+                                                        />
+                                                    )}
                                                 </div>
                                             </div>
                                         </div>
                                         <div id="list-view-large" className="tab-pane" role="tabpanel">
                                             <div className="woocommerce columns-1">
                                                 <div className="products">
-                                                    {products !==null && <ProductList products={products} onAddToBasket={addToBasket} listType="large-list" />}
+                                                    {products.isSuccess && (
+                                                        <ProductList
+                                                            products={products.data}
+                                                            onAddToBasket={addToBasket}
+                                                            listType="large-list"
+                                                        />
+                                                    )}
                                                 </div>
                                             </div>
                                         </div>
                                         <div id="list-view" className="tab-pane" role="tabpanel">
                                             <div className="woocommerce columns-1">
                                                 <div className="products">
-                                                    {products !==null && <ProductList products={products} onAddToBasket={addToBasket} listType="list" />}
+                                                    {products.isSuccess && (
+                                                        <ProductList
+                                                            products={products.data}
+                                                            onAddToBasket={addToBasket}
+                                                            listType="list"
+                                                        />
+                                                    )}
                                                 </div>
                                             </div>
                                         </div>
                                         <div id="list-view-small" className="tab-pane" role="tabpanel">
                                             <div className="woocommerce columns-1">
                                                 <div className="products">
-                                                    {products !==null && <ProductList products={products} onAddToBasket={addToBasket} listType="list-small" />}
+                                                    {products.isSuccess && (
+                                                        <ProductList
+                                                            products={products.data}
+                                                            onAddToBasket={addToBasket}
+                                                            listType="list-small"
+                                                        />
+                                                    )}
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    {bar !==null &&<PaginationBar bar={bar} changePage={handlePage} onChangeProductCount={changeProductCount} onAlert={alertOnClick} />}
+                                    {/* todo */}
+                                    <PaginationBar
+                                        totalPageCount={totalPageCount}
+                                        perPage={pagination.perPage}
+                                        page={pagination.page}
+                                        perPages={perPages}
+                                        onPerPageChange={handlePerPageChange}
+                                        onPageChange={handlePageChange}
+                                    />
                                 </main>
                             </div>
                             <div id="secondary" className="widget-area shop-sidebar" role="complementary">
@@ -296,13 +356,33 @@ function ShopPage(props) {
                                 <div id="techmarket_products_filter-3" className="widget widget_techmarket_products_filter">
                                     <span className="gamma widget-title">Filtre</span>
                                     <div className="widget woocommerce widget_price_filter" id="woocommerce_price_filter-2">
-                                        <ShopPriceFilter priceLimit={priceLimit} filterByPrice={filterByPrice} />
-                                        {
-                                            filters !== null && filters.map((filter, i) => {
-                                                return <ShopFilterItem filter={filter} key={i} setFilter={setFilterValues} />
-                                            })
-                                        }
-                                        <button className="button" type="submit" onClick={() => console.log("aaa")}>Filtrele</button>
+                                        <ShopPriceFilter
+                                            priceLimit={priceLimit}
+                                            filterByPrice={filterByPrice}
+                                        />
+                                        {(getFilters.isLoading || getFilters.isError) && (
+                                            <div>
+                                                {getFilters.isLoading && (
+                                                    <span>Filtreler yükleniyor...</span>
+                                                )}
+                                                {getFilters.isError && (
+                                                    <span>Bilinmeyen bir hata ile karşılaşıldı.</span>
+                                                )}
+                                            </div>
+                                        )}
+                                        {getFilters.isSuccess && Object.entries(getFilters.data || {}).map(([filterIDX, filter]) => (
+                                            <ShopFilterItem
+                                                filter={filter}
+                                                key={`filterItem_${filterIDX}_id_${filter.id}`}
+                                                queries={filterQuery[filter?.filterName] || []}
+                                                setFilter={handleFilterClick(filter.filterName)}
+                                            />
+                                        ))}
+                                        {getFilters.isSuccess && (
+                                            <button className="button" type="submit" onClick={() => console.log("aaa")}>
+                                                Filtrele
+                                            </button>
+                                        )}
                                     </div>
                                 </div>
                                 {/* {products !== null && <LatestProductList products={products} />} */}
