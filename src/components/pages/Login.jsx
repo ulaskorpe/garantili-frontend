@@ -1,16 +1,164 @@
-import { useState } from "react"
-import OrderReview from "../cart/OrderReview"
+import {useCallback, useEffect, useMemo, useState} from "react"
 import BreadCrumb from "../layout/BreadCrumb"
 import Footer from "../layout/Footer/Footer"
 import HeaderMain from "../layout/Header/Header"
 import Topbar from "../layout/Topbar"
+import { Formik } from "formik";
+import RegisterForm from "../Forms/RegisterForm";
+import LoginForm from "../Forms/LoginForm";
+import {useMutation} from "react-query";
+import {CREATE_CUSTOMER, DEFAULT_API_KEY, fetchThis, LOGIN_CUSTOMER} from "../../api";
 
 function Login(props) {
-    const { basket, onAddToBasket, removeFromBasket } = props
+    /* Props */
+    const { basket, removeFromBasket } = props;
 
-    const [crumb, setCrumb] = useState([
+    /* States */
+    const [loading, setLoading] = useState(false);
+    const [crumb] = useState([
         { url: '#', title: 'Giriş Yap / Kayıt Ol' }
-    ])
+    ]);
+
+    /* Mutations */
+    const loginMutation = useMutation((data) => {
+        return fetchThis(
+            LOGIN_CUSTOMER,
+            data,
+            DEFAULT_API_KEY,
+            [],
+        );
+    });
+    const registerMutation = useMutation((data) => {
+        return fetchThis(
+            CREATE_CUSTOMER,
+            data,
+            DEFAULT_API_KEY,
+            [],
+        );
+    });
+
+    /* Handlers */
+    const handleLoginFormSubmit = (values, { setSubmitting, resetForm }) => {
+        setSubmitting(true);
+        setLoading(true);
+        loginMutation?.mutate(values, {
+            onSuccess: (data, variables, context) => {
+                if (!data?.status) {
+                    alert(data?.errors?.msg || 'Bilinmeyen bir hata ile karşılaşıldı!');
+                } else {
+                    alert('Giriş başarılı.');
+                    resetForm();
+                }
+                setSubmitting(false);
+                setLoading(false);
+            },
+            onError: (error, variables, context) => {
+                alert('Bilinmeyen bir hata ile karşılaşıldı!');
+                setSubmitting(false);
+                setLoading(false);
+            },
+        });
+    };
+    const handleRegisterFormSubmit = (values, { setSubmitting, resetForm }) => {
+        setSubmitting(true);
+        setLoading(true);
+        registerMutation?.mutate(values, {
+            onSuccess: (data, variables, context) => {
+                if (!data?.status) {
+                    alert(data?.errors?.msg || 'Bilinmeyen bir hata ile karşılaşıldı!');
+                } else {
+                    alert('Kayıt başarılı.');
+                    resetForm();
+                }
+                setSubmitting(false);
+                setLoading(false);
+            },
+            onError: (error, variables, context) => {
+                alert('Bilinmeyen bir hata ile karşılaşıldı!');
+                setSubmitting(false);
+                setLoading(false);
+            },
+        });
+    };
+
+    /* Utils */
+    const isDisabled = useCallback((isSubmitting = false) => (
+        loading || isSubmitting || loginMutation?.isLoading || registerMutation?.isLoading
+    ), [loading, loginMutation, registerMutation]);
+
+    /* Validations */
+    const validateLoginForm = (values) => {
+        const errors = {};
+        const errorMessages = {
+            required: 'Bu alan zorunlu!',
+        }
+
+        /* E-posta kontrolleri */
+        if (!values.email) {
+            errors.email = errorMessages.required;
+        } else if (
+            !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(values.email)
+        ) {
+            errors.email = 'Hatalı e-posta adresi girildi';
+        }
+
+        /* Şifre kontrolleri */
+        if (!values.password) {
+            errors.password = errorMessages.required;
+        }
+
+        return errors;
+    }
+    const validateRegisterForm = (values) => {
+        const errors = {};
+        const errorMessages = {
+            required: 'Bu alan zorunlu!',
+        }
+
+        /* Ad kontrolleri */
+        if (!values.name) {
+            errors.name = errorMessages.required;
+        }
+
+        /* Soyad kontrolleri */
+        if (!values.surname) {
+            errors.surname = errorMessages.required;
+        }
+
+        /* E-posta kontrolleri */
+        if (!values.email) {
+            errors.email = errorMessages.required;
+        } else if (
+            !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(values.email)
+        ) {
+            errors.email = 'Hatalı e-posta adresi girildi';
+        }
+
+        /* Şifre kontrolleri */
+        if (!values.password) {
+            errors.password = errorMessages.required;
+        }
+
+        return errors;
+    }
+
+    /* Effects */
+    useEffect(() => {
+        if (
+            !loading
+            && (
+                loginMutation?.isLoading
+                || registerMutation?.isLoading
+            )
+            ) {
+            setLoading(true);
+        }
+    }, [loading, setLoading, loginMutation?.isLoading]);
+
+    /* Memos */
+    const defaultFormProps = useMemo(() => ({
+        isDisabled,
+    }),[isDisabled])
 
     return (
         <div className="woocommerce-active single-product full-width normal">
@@ -24,75 +172,23 @@ function Login(props) {
                 <div className="col-full">
                     <div className="row">
                         <BreadCrumb crumbs={crumb} />
-                        <div id="primary" class="content-area">
-                            <main id="main" class="site-main">
-                                <div class="type-page hentry">
-                                    <div class="entry-content">
-                                        <br />
-                                        <br />
-                                        <div class="woocommerce">
-                                            <div class="customer-login-form">
-                                                <div id="customer_login" class="u-columns col2-set">
-                                                    <div class="u-column1 col-1">
-                                                        <h2>Giriş Yap</h2>
-                                                        <form method="post" class="woocomerce-form woocommerce-form-login login">
-                                                            <p class="before-login-text form-text-cb">
-                                                                Siparşinizi takip etmek, ve daha önceki siparişleriniz oylamak için giriş yapın.
-                                                            </p>
-                                                            <p class="form-row form-row-wide">
-                                                                <label for="username">E-Posta
-                                                                    <span class="required">*</span>
-                                                                </label>
-                                                                <input type="text" class="input-text" name="username" id="username" value="" />
-                                                            </p>
-                                                            <p class="form-row form-row-wide mt-2">
-                                                                <label for="password">Parola
-                                                                    <span class="required">*</span>
-                                                                </label>
-                                                                <input class="input-text" type="password" name="password" id="password" />
-                                                            </p>
-                                                            <p class="form-row">
-                                                                <input class="woocommerce-Button button btn-navy" type="submit" value="Giriş Yap"
-                                                                    name="login" />
-                                                                    <label for="rememberme"
-                                                                        class="woocommerce-form__label woocommerce-form__label-for-checkbox inline">
-                                                                        <input class="woocommerce-form__input woocommerce-form__input-checkbox"
-                                                                            name="rememberme" type="checkbox" id="rememberme" value="forever" />
-                                                                        Beni hatırla &nbsp;&nbsp;
-                                                                    </label>
-                                                            <p class="woocommerce-LostPassword lost_password">
-                                                                <a href="#">|&nbsp;&nbsp;Parolanı unuttun mu?</a>
-                                                            </p>
-                                                            </p>
-                                                        </form>
-                                                    </div>
-                                                    <div class="u-column2 col-2">
-                                                        <h2>Kayıt Ol</h2>
-                                                        <form class="woocommerce-form woocommerce-form-login register" method="post">
-                                                            <p class="before-register-text form-text-cb mb-4">
-                                                            Kişiselleştirilmiş bir alışverişin avantajlarından yararlanmak için bugün yeni bir hesap oluşturun.
-                                                            </p>
-                                                            
-                                                            <p class="form-row form-row-wide">
-                                                                <label for="reg_email">E-Posta
-                                                                    <span class="required">*</span>
-                                                                </label>
-                                                                <input type="email" value="" id="reg_email" name="email"
-                                                                    class="woocommerce-Input woocommerce-Input--text input-text" />
-                                                            </p>
-                                                            <p class="form-row form-row-wide mt-2">
-                                                                <label for="reg_password">Parola
-                                                                    <span class="required">*</span>
-                                                                </label>
-                                                                <input type="password" id="reg_password" name="password"
-                                                                    class="woocommerce-Input woocommerce-Input--text input-text" />
-                                                            </p>
-                                                            <p class="form-row">
-                                                                <input type="submit" class="woocommerce-Button button" name="register"
-                                                                    value="Kayıt Ol" />
-                                                            </p>
-                                                        </form>
-                                                    </div>
+                        <div id="primary" className="content-area">
+                            <main id="main" className="site-main">
+                                <div className="type-page hentry">
+                                    <div className="entry-content">
+                                        <div className="woocommerce">
+                                            <div className="customer-login-form">
+                                                <div id="customer_login" className="u-columns col2-set">
+                                                    <LoginForm
+                                                        handleSubmit={handleLoginFormSubmit}
+                                                        validateForm={validateLoginForm}
+                                                        {...defaultFormProps}
+                                                    />
+                                                    <RegisterForm
+                                                        handleSubmit={handleRegisterFormSubmit}
+                                                        validateForm={validateRegisterForm}
+                                                        {...defaultFormProps}
+                                                    />
                                                 </div>
                                             </div>
                                         </div>

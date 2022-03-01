@@ -9,26 +9,31 @@ const isDev = process.env?.NODE_ENV === 'development';
  * @type function
  * @param {Endpoint} endpoint Talepte bulunulacak endpoint'in object hali
  * @param {Object.<{[key: string]: any}>} endpointBody
- * @param {OptionalString} auth_token Yetkilendirme tokeni
+ * @param {OptionalString} apiKey API tokeni
+ * @param {Object.<string, any>} endpointPathVars URL'e işlenecek parametreler
  */
 
 export const fetchThis = async (
     endpoint,
     endpointBody = {},
-    auth_token = undefined,
+    apiKey = undefined,
+    endpointPathVars = {},
 ) => {
     const {
-        authRequired = false,
+        path,
+        apiKeyRequired = false,
         body,
         method,
-        path,
+        pathVars,
     } = endpoint;
+    const pVals = {};
+
     if (
-        authRequired
-        && !Boolean(auth_token)
+        apiKeyRequired
+        && !Boolean(apiKey)
     ) {
         if (isDev) {
-            const errorMessage = `${path} endpointi için yetkilendirme zorunlu kılınmış ancak auth_token gönderilmemiş!`;
+            const errorMessage = `${path} endpointi için yetkilendirme zorunlu kılınmış ancak api_key gönderilmemiş!`;
             throw {
                 name: 'YetkiGerekliAncakYetkiBelirtilmedi',
                 message: errorMessage,
@@ -38,12 +43,32 @@ export const fetchThis = async (
         return;
     }
 
+    if (pathVars.length > 0) {
+        pathVars.forEach((pathVar) => {
+            const val = endpointPathVars && endpointPathVars[pathVar];
+            if (typeof val !== 'undefined') {
+                pVals[pathVar] = val;
+            } else {
+                if (isDev) {
+                    const errorMessage = `${path} pathvar gönderilmedi`;
+                    throw {
+                        name: 'PathVarError',
+                        message: errorMessage,
+                        code: 403,
+                    };
+                }
+            }
+        })
+    }
+    console.log(pVals);
+
+
     /* Headers */
     const headers = new Headers();
     if (
-        authRequired
-        && auth_token
-    ) headers.append('x-api-key', auth_token);
+        apiKeyRequired
+        && apiKey
+    ) headers.append('x-api-key', apiKey);
 
     const formData = new FormData();
 
@@ -111,12 +136,23 @@ export const fetchThis = async (
 
     return (
         fetch(
-            endpointToURL(endpoint),
+            endpointToURL(
+                endpoint,
+                pVals
+            ),
             fetchOptions
         )
             .then(async (res) => {
-                if (res.status === 200) res = await res.json();
-                else return res.error()
+                const successCodes = [
+                  200,
+                  201,
+                ];
+
+                if (successCodes.includes(res.status)) res = await res.json();
+                else {
+                    if (res?.error) return res.error();
+                    else throw new Error();
+                }
                 return res;
             })
     );
@@ -125,6 +161,7 @@ export const fetchThis = async (
 export const retry = (failureCount, error) => {
     const noRetryCodes = [
         403,
+        404,
     ];
     return !noRetryCodes.includes(error?.code);
 }

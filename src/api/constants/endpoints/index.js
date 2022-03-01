@@ -19,8 +19,10 @@
  * @readonly
  * @property {string} path
  * @property {RequestMethods} method
- * @property {OptionalBoolean} authRequired
+ * @property {OptionalBoolean} apiKeyRequired
  * @property {Array.<EndpointBody>} body
+ * @property {Array.<string>} pathVars
  */
 
+export * from './customers';
 export * from './products';

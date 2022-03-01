@@ -6,7 +6,7 @@ const Accessory = (props) => {
         <div className="product">
             <a className="woocommerce-LoopProduct-link woocommerce-loop-product__link"
                 href="#">
-                <img width="224" height="197" alt="" className="attachment-shop_catalog size-shop_catalog wp-post-image" src={product.imageUrl} />
+                <img width="224" height="197" alt="" className="attachment-shop_catalog size-shop_catalog wp-post-image" src={`https://buyback.garantiliteknoloji.com/${product.imageUrl}`} />
                 <span className="price">
                     <del>
                         <span className="woocommerce-Price-amount amount">
@@ -30,7 +30,7 @@ const Accessory = (props) => {
 
 class AccessoriesTab extends Component {
     render() {
-        const { tab, classes, tabName } = this.props
+        const { tab, classes } = this.props
         let totalPrice = 0.00
         return (
             <div className={classes} id={tab.name} role="tabpanel">

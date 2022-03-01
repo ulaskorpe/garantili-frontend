@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import AccessoriesTab from "./AccessoriesTab";
 import ContentTab from "./ContentTab";
 import ReviewTab from "./ReviewTab";
+import ProductTech from "./ProductTech";
 
 class DetailTabs extends Component {
     render() {
@@ -21,14 +22,15 @@ class DetailTabs extends Component {
                     {
                         tabs.map((tab, i) => {
                             let classes = i === 0 ? 'tab-pane active' : 'tab-pane'
-                            const tabName = 'tab-pd-' + i
                             switch (tab.type) {
                                 case 'accessory':
-                                    return <AccessoriesTab tab={tab} classes={classes} tabName={tabName} key={i} />
+                                    return <AccessoriesTab tab={tab} classes={classes} key={i} />
+                                case 'technique':
+                                    return <ProductTech tab={tab} classes={classes} key={i} />;
                                 case 'review':
-                                    return <ReviewTab tab={tab} classes={classes} tabName={tabName} key={i} />
+                                    return <ReviewTab tab={tab} classes={classes} key={i} />
                                 default:
-                                    return <ContentTab tab={tab} classes={classes} tabName={tabName} key={i} />
+                                    return <ContentTab tab={tab} classes={classes} key={i} />
                             }
                         })
                     }

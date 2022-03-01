@@ -4,8 +4,9 @@ import ReviewForm from "./ReviewForm";
 import ReviewRating from "./ReviewRating";
 
 class ReviewTab extends Component {
+
     render() {
-        const { tab, classes, tabName } = this.props
+        const { tab, classes } = this.props
         return (
             <div className={classes} id={tab.name} role="tabpanel">
                 <div className="techmarket-advanced-reviews" id="reviews">

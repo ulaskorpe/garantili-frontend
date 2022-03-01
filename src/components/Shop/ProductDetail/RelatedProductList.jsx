@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
 import Product from './Product';
-import $ from 'jquery'
-import slick from 'slick-carousel'
 
 class RelatedProductList extends Component {
     state = { products: [], compStatus: false }
@@ -15,14 +13,11 @@ class RelatedProductList extends Component {
         ]
         const compStatus = true
         this.setState({ products, compStatus })
-        console.log('mounted')
-
     }
 
 
 
     render() {
-        console.log(this.state)
         const { onAddToBasket } = this.props
         return (<div className="tm-related-products-carousel section-products-carousel" id="tm-related-products-carousel"
             data-ride="tm-related-slick-carousel" data-wrap=".products"

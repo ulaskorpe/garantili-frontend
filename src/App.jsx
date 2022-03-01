@@ -139,7 +139,7 @@ function App() {
                     <Route path='/' element={<HomePage basket={basket} addToBasket={addToBasket} removeFromBasket={removeFromBasket} homeContent={homeContent} />} />
                     <Route path='/urunler' element={<ShopPage basket={basket} addToBasket={addToBasket} removeFromBasket={removeFromBasket} />} />
                     <Route path='/urunler/:category-:categoryId' element={<ShopPage basket={basket} addToBasket={addToBasket} removeFromBasket={removeFromBasket} allProducts={allProduct} />} />
-                    <Route path='/urun-detay/:category-:productId' element={<ProductPage basket={basket} addToBasket={addToBasket} removeFromBasket={removeFromBasket} allProducts={allProduct} />} />
+                    <Route path='/urun-detay/:slug/:productId' element={<ProductPage basket={basket} addToBasket={addToBasket} removeFromBasket={removeFromBasket} allProducts={allProduct} />} />
                     <Route path='/telefon-sat/' element={<PhoneSell basket={basket} addToBasket={addToBasket} removeFromBasket={removeFromBasket} allProducts={allProduct} />} />
                     <Route path='/telefon-sat/:id' element={<PhoneSellDevice basket={basket} addToBasket={addToBasket} removeFromBasket={removeFromBasket} allProducts={allProduct} />} />
                     <Route path='/telefon-onar-yenile/' element={<DeviceRepair basket={basket} addToBasket={addToBasket} removeFromBasket={removeFromBasket} allProducts={allProduct} />} />

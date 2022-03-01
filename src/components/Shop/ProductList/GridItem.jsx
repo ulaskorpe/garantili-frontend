@@ -3,6 +3,7 @@ import React, { Component } from "react";
 class GridItem extends Component {
     render() {
         const { item, addToBasket, listCount } = this.props
+        console.log(item);
         return (
             <div className={this.getClassses(listCount)}>
                 <a className="woocommerce-LoopProduct-link woocommerce-loop-product__link" href={item.url}>

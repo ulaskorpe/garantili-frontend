@@ -2,7 +2,8 @@
 export const GET_ALL_PRODUCTS = {
     path: 'api/products/all-products',
     method: 'POST',
-    authRequired: true,
+    apiKeyRequired: true,
+    pathVars: [],
     body: [
         { name: 'min_price', type: Number, default: 0,  isRequired: false },
         { name: 'max_price', type: Number, default: 0,  isRequired: false },
@@ -20,6 +21,16 @@ export const GET_ALL_PRODUCTS = {
 export const GET_PRODUCT_FILTERS = {
     path: 'api/products/product-filters',
     method: 'GET',
-    authRequired: true,
+    apiKeyRequired: true,
+    pathVars: [],
+    body: [],
+};
+
+/** @type Endpoint */
+export const GET_PRODUCT_DETAIL = {
+    path: 'api/products/product-detail/{id}',
+    method: 'GET',
+    apiKeyRequired: true,
+    pathVars: [ 'id' ],
     body: [],
 };

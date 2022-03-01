@@ -11,7 +11,7 @@ import ShopCategoryList from '../Shop/ShopFilters/ShopCategoryList';
 import ShopFilterItem from '../Shop/ShopFilters/ShopFilterItem';
 import ShopHeader from '../Shop/ShopHeader';
 import {useQuery} from "react-query";
-import {GET_PRODUCT_FILTERS, fetchThis, retry, GET_ALL_PRODUCTS, DEFAULT_AUTH_TOKEN} from "../../api";
+import {GET_PRODUCT_FILTERS, fetchThis, retry, GET_ALL_PRODUCTS, DEFAULT_API_KEY} from "../../api";
 
 /* Initial Values */
 const INITIAL_PRICE_LIMIT = { minPriceValue: 0, maxPriceValue: 100000 };
@@ -91,7 +91,7 @@ function ShopPage(props) {
             fetchThis(
                 GET_PRODUCT_FILTERS,
                 {},
-                DEFAULT_AUTH_TOKEN,
+                DEFAULT_API_KEY,
             )
         ),
         {retry, refetchOnWindowFocus: false },
@@ -110,7 +110,7 @@ function ShopPage(props) {
                     page_count: pagination.perPage.value,
                     ...(filtersToString() || {}),
                 },
-                DEFAULT_AUTH_TOKEN,
+                DEFAULT_API_KEY,
             )
         ),
         {retry, refetchOnWindowFocus: false },
