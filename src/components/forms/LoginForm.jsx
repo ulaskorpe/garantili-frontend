@@ -1,9 +1,10 @@
-import React from 'react';
+import React, {useEffect, useRef} from 'react';
 import {Formik} from "formik";
+import {useLocation} from "react-router-dom";
 
 const initialValues = {
-    email: 'emintayfur@icloud.com',
-    password: '123456',
+    email: '',
+    password: '',
 };
 const LoginForm = (props) => {
     const {
@@ -11,12 +12,24 @@ const LoginForm = (props) => {
         isDisabled,
         validateForm,
     } = props;
+    const formikRef = useRef();
+    const location = useLocation();
+
+    useEffect(() => {
+        if (location?.state?.email) {
+            formikRef.current.setFieldValue(
+                'email',
+                location.state.email,
+            );
+        }
+    }, [location, formikRef])
 
     return (
         <div className="u-column1 col-1">
             <h2>Giriş Yap</h2>
             <Formik
                 initialValues={initialValues}
+                innerRef={formikRef}
                 validate={validateForm}
                 onSubmit={handleSubmit}
             >
@@ -78,24 +91,9 @@ const LoginForm = (props) => {
                                 value="Giriş Yap"
                                 name="login"
                             />
-                            <label
-                                htmlFor="rememberme"
-                                className="woocommerce-form__label woocommerce-form__label-for-checkbox inline"
-                            >
-                                {/* todo */}
-                                <input
-                                    disabled={isDisabled(isSubmitting)}
-                                    className="woocommerce-form__input woocommerce-form__input-checkbox"
-                                    name="rememberme"
-                                    type="checkbox"
-                                    id="rememberme"
-                                    value="forever"
-                                />
-                                Beni hatırla &nbsp;&nbsp;
-                            </label>
                             <p className="woocommerce-LostPassword lost_password">
                                 <a href="/forget-password">
-                                    |&nbsp;&nbsp;Parolanı unuttun mu?
+                                    Parolanı mı unuttun?
                                 </a>
                             </p>
                         </div>

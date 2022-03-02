@@ -41,6 +41,8 @@
     ]
   },
   "devDependencies": {
+    "chance": "^1.1.8",
+    "chancejs": "^0.0.8",
     "dotenv": "^16.0.0"
   }
 }

@@ -7,10 +7,17 @@ import RegisterForm from "../forms/RegisterForm";
 import LoginForm from "../forms/LoginForm";
 import {useMutation} from "react-query";
 import {CREATE_CUSTOMER, DEFAULT_API_KEY, fetchThis, LOGIN_CUSTOMER} from "../../api";
+import {useAuth} from "../../context/auth";
+import {useLocation, useNavigate} from "react-router-dom";
 
 function Login(props) {
     /* Props */
     const { basket, removeFromBasket } = props;
+    const navigate = useNavigate();
+    const location = useLocation();
+
+    /* context */
+    const { login, state } = useAuth();
 
     /* States */
     const [loading, setLoading] = useState(false);
@@ -37,17 +44,26 @@ function Login(props) {
     });
 
     /* Handlers */
-    const onError = (setSubmitting) => (error) => {
-        alert(error?.message || error || 'Bilinmeyen bir hata ile karşılaşıldı!');
+    const onError = (setSubmitting, cb = (err, data) => null) => (error, data) => {
+        if (!(error?.code === 'not_verified')) {
+            alert(error?.message || error || 'Bilinmeyen bir hata ile karşılaşıldı!');
+        }
         setSubmitting(false);
         setLoading(false);
+        cb(error, data);
     };
-    const onSuccess = (successMessage, resetForm, setSubmitting) => (data) => {
-        if (!data?.status) {
-            alert(data?.errors?.msg || 'Bilinmeyen bir hata ile karşılaşıldı!');
+    const onSuccess = (
+        successMessage,
+        resetForm,
+        setSubmitting,
+        cb = (data) => null
+    ) => ({ status = false, errors = { msg: '' }, data = {}}) => {
+        if (!status) {
+            alert(errors?.msg || 'Bilinmeyen bir hata ile karşılaşıldı!');
         } else {
             alert(successMessage || 'İşlem başarılı');
             resetForm();
+            cb(data);
         }
         setSubmitting(false);
         setLoading(false);
@@ -60,8 +76,25 @@ function Login(props) {
                 'Giriş başarılı',
                 resetForm,
                 setSubmitting,
+                (data) => {
+                    login(data);
+                }
             ),
-            onError: onError(setSubmitting),
+            onError: onError(
+                setSubmitting,
+                (err, data) => {
+                    if (err.code === 'not_verified') {
+                        navigate(
+                            '/verify-account',
+                            {
+                                fromTo: location,
+                                replace: true,
+                                state: { email: data.email }
+                            }
+                        );
+                    }
+                }
+            ),
         });
     };
     const handleRegisterFormSubmit = (values, { setSubmitting, resetForm }) => {
@@ -72,6 +105,15 @@ function Login(props) {
                 'Kayıt başarılı.',
                 resetForm,
                 setSubmitting,
+                () => {
+                  navigate('/verify-account', {
+                      fromTo: location,
+                      replace: true,
+                      state: {
+                          email: values.email
+                      },
+                  })
+                },
             ),
             onError: onError(setSubmitting),
         });

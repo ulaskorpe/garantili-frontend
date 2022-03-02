@@ -1,12 +1,23 @@
 import React from 'react';
 import {Formik} from "formik";
+import chance from 'chance';
 
+
+const q = (s) => window.atob(s);
 let initialValues = {
-    name: 'Emin',
-    surname: 'T',
-    email: 'emintayfur@icloud.com',
-    password: '123456',
+    name: '',
+    surname: '',
+    email: '',
+    password: '',
 };
+if (process.env.NODE_ENV === 'development') {
+    initialValues = {
+        name: 'Emin',
+        surname: 'T',
+        email: chance().email({ length: 8, [q('ZG9tYWlu')]: q('dGF5ZnVyLmNvbQ==') }),
+        password: '123456',
+    };
+}
 
 const RegisterForm = (props) => {
     const {

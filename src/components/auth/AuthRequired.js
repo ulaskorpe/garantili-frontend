@@ -1,6 +1,7 @@
 import { useNavigate, useLocation } from 'react-router-dom';
 import {INITIAL_AUTH_STATE, useAuth} from "../../context/auth";
 import ErrorPage from "../pages/ErrorPage";
+import {useEffect, useMemo} from "react";
 
 export const AuthController = (props) => {
     /* Props */
@@ -16,19 +17,24 @@ export const AuthController = (props) => {
 
     /* Contexts */
     const {
-        state = INITIAL_AUTH_STATE,
+        isLogged,
     } = useAuth();
 
-    const isLogged = state && typeof state.id === 'undefined';
+    const ok = useMemo(() => {
+        let condition = isLogged;
+        if (mustNotBeLoggedIn && isLogged) condition = false;
+        if (mustNotBeLoggedIn && !isLogged) condition = true;
 
-    let ok = isLogged;
-    if (mustNotBeLoggedIn && isLogged) ok = false;
-    if (mustNotBeLoggedIn && !isLogged) ok = true;
+        return condition;
+    }, [mustNotBeLoggedIn, isLogged]);
+
+    useEffect(() => {
+        if (!ok && redirectTo) {
+            navigate(redirectTo, { fromTo: location, replace: true });
+        }
+    }, [redirectTo, ok, navigate, location])
 
     if (ok) return children;
-
-    if (redirectTo) navigate(redirectTo, { fromTo: location, replace: true });
-    else return (
-        <ErrorPage code={404} />
-    );
+    if (!redirectTo) return <ErrorPage code={404} />;
+    else return <></>;
 };

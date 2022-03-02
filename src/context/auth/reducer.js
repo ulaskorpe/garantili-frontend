@@ -1,15 +1,12 @@
-import {AUTH_LOGIN, AUTH_LOGOUT, INITIAL_AUTH_STATE} from "./constants";
+import {AUTH_SET, AUTH_LOGOUT, INITIAL_AUTH_STATE} from "./constants";
 
 export const authReducer = (
     prevState,
     action,
 ) => {
     switch (action.type) {
-        case AUTH_LOGIN: {
-            return {
-                access_token: action.payload.access_token,
-                user: action.payload.user
-            };
+        case AUTH_SET: {
+            return action.payload;
         }
 
         case AUTH_LOGOUT: {

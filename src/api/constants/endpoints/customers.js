@@ -38,3 +38,16 @@ export const CUSTOMER_FORGET_PASSWORD = {
         { name: 'ip_address', type: String, default: '1.1.1.1.',  isRequired: false },
     ],
 };
+
+/** @type Endpoint */
+export const CUSTOMER_ACTIVATION = {
+    path: 'api/customers/activate',
+    method: 'POST',
+    apiKeyRequired: true,
+    pathVars: [],
+    body: [
+        { name: 'email', type: String, default: '',  isRequired: true },
+        { name: 'activation_key', type: Number, default: 0,  isRequired: true },
+        { name: 'ip_address', type: String, default: '1.1.1.1.',  isRequired: false },
+    ],
+};

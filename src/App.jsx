@@ -27,6 +27,8 @@ import {AuthProvider} from "./context/auth";
 import {AuthController} from "./components/auth/AuthRequired";
 import ErrorPage from "./components/pages/ErrorPage";
 import ForgetPassword from "./components/pages/ForgetPassword";
+import VerifyAccount from "./components/pages/VerifyAccount";
+import LogOut from "./components/pages/LogOut";
 
 const queryClient = new QueryClient();
 
@@ -164,6 +166,7 @@ function App() {
                         <Route path='/sepet' element={<Cart basket={basket} removeFromBasket={removeFromBasket} />} />
                         <Route path='/odeme' element={<Payment basket={basket} removeFromBasket={removeFromBasket} />} />
                         <Route path='/siparis-ozeti' element={<OrderSummary basket={basket} removeFromBasket={removeFromBasket} />} />
+                        {/* /login => Login page */}
                         <Route path='/login' element={(
                             <AuthController
                                 mustNotBeLoggedIn
@@ -172,12 +175,33 @@ function App() {
                                 <Login basket={basket} removeFromBasket={removeFromBasket} />
                             </AuthController>
                         )} />
+
+                        {/* /log-out => Log-out page */}
+                        <Route
+                            path='/log-out'
+                            element={<LogOut />}
+                        />
+
+                        {/* /forget-password => Forget password page */}
                         <Route path='/forget-password' element={(
                             <AuthController
                                 mustNotBeLoggedIn
                                 redirectTo="/"
                             >
                                 <ForgetPassword
+                                    basket={basket}
+                                    removeFromBasket={removeFromBasket}
+                                />
+                            </AuthController>
+                        )} />
+
+                        {/* /verify-account => Verify account page */}
+                        <Route path='/verify-account' element={(
+                            <AuthController
+                                mustNotBeLoggedIn
+                                redirectTo="/"
+                            >
+                                <VerifyAccount
                                     basket={basket}
                                     removeFromBasket={removeFromBasket}
                                 />

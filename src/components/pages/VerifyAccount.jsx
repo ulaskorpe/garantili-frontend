@@ -3,10 +3,11 @@ import BreadCrumb from "../layout/BreadCrumb"
 import Footer from "../layout/Footer/Footer"
 import HeaderMain from "../layout/Header/Header"
 import Topbar from "../layout/Topbar"
-import ForgetForm from "../forms/ForgetForm";
 import {useMutation} from "react-query";
-import {CUSTOMER_FORGET_PASSWORD, DEFAULT_API_KEY, fetchThis} from "../../api";
+import {CUSTOMER_ACTIVATION, CUSTOMER_FORGET_PASSWORD, DEFAULT_API_KEY, fetchThis} from "../../api";
 import {useLocation, useNavigate} from "react-router-dom";
+import VerifyForm from "../forms/VerifyForm";
+import {useAuth} from "../../context/auth";
 
 function ForgetPassword(props) {
     /* Props */
@@ -17,37 +18,50 @@ function ForgetPassword(props) {
     /* States */
     const [loading, setLoading] = useState(false);
     const [crumb] = useState([
-        { url: '#', title: 'Şifremi Unuttum' }
+        { url: '#', title: 'Hesap Doğrulama' }
     ]);
 
+    const { state, isLogged } = useAuth();
+
     /* Mutations */
-    const forgetPasswordMutation = useMutation((data) => {
+    const verifyMutation = useMutation((data) => {
         return fetchThis(
-            CUSTOMER_FORGET_PASSWORD,
-            data,
+            CUSTOMER_ACTIVATION,
+            {
+                activation_key: parseInt(data.activation_key || '0'),
+                email: location?.state?.email,
+            },
             DEFAULT_API_KEY,
             [],
         );
     });
 
     /* Handlers */
-    const handleForgetFormSubmit = (values, { setSubmitting, resetForm }) => {
+    const handleVerifyFormSubmit = (values, { setSubmitting, resetForm }) => {
         setSubmitting(true);
         setLoading(true);
-        forgetPasswordMutation?.mutate(values, {
+        verifyMutation?.mutate(values, {
             onSuccess (data) {
                 if (!data?.status) {
                     alert(data?.errors?.msg || 'Bilinmeyen bir hata ile karşılaşıldı!');
                 } else {
-                    alert('Yeni şifre oluşturuldu ve hesabınıza mail gönderildi.');
+                    alert('Hesabınızı doğruladınız, teşekkürler.');
                     resetForm();
-                    navigate('/login', { fromTo: location, replace: true });
+                    navigate(
+                        '/login', {
+                            fromTo: location,
+                            state: {
+                                email: location?.state?.email,
+                            },
+                        },
+                    );
                 }
                 setSubmitting(false);
                 setLoading(false);
             },
             onError (error) {
                 alert(error?.message || error || 'Bilinmeyen bir hata ile karşılaşıldı!');
+                resetForm();
                 setSubmitting(false);
                 setLoading(false);
             },
@@ -56,23 +70,23 @@ function ForgetPassword(props) {
 
     /* Utils */
     const isDisabled = useCallback((isSubmitting = false) => (
-        loading || isSubmitting || forgetPasswordMutation?.isLoading
-    ), [loading, forgetPasswordMutation?.isLoading]);
+        loading || isSubmitting || verifyMutation?.isLoading
+    ), [loading, verifyMutation?.isLoading]);
 
     /* Validations */
-    const validateForgetForm = (values) => {
+    const validateVerifyForm = (values) => {
         const errors = {};
         const errorMessages = {
             required: 'Bu alan zorunlu!',
         }
 
-        /* E-posta kontrolleri */
-        if (!values.email) {
-            errors.email = errorMessages.required;
+        /* */
+        if (!values.activation_key) {
+            errors.activation_key = errorMessages.required;
         } else if (
-            !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(values.email)
+            !/^[0-9]{6}/g.test(values.activation_key.replace(' ', ''))
         ) {
-            errors.email = 'Hatalı e-posta adresi girildi';
+            errors.activation_key = 'Girilen kod hatalı';
         }
 
         return errors;
@@ -82,16 +96,36 @@ function ForgetPassword(props) {
     useEffect(() => {
         if (
             !loading
-            && forgetPasswordMutation?.isLoading
+            && verifyMutation?.isLoading
             ) {
             setLoading(true);
         }
-    }, [loading, setLoading, forgetPasswordMutation?.isLoading]);
+    }, [loading, setLoading, verifyMutation?.isLoading]);
+    useEffect(() => {
+        let redirect = !location.state?.email;
+        let redirectPath = '/login';
+
+        if (isLogged) {
+            if (state.status === 0) {
+                redirect = false;
+            } else {
+                redirect = true;
+                redirectPath = '/';
+            }
+        }
+
+        if (redirect) navigate(redirectPath, { fromTo: location, replace: true });
+
+    }, [location, state, isLogged])
 
     /* Memos */
     const defaultFormProps = useMemo(() => ({
         isDisabled,
-    }),[isDisabled])
+    }),[isDisabled]);
+
+    if (!location?.state?.email) {
+        return <></>;
+    }
 
     return (
         <div className="woocommerce-active single-product full-width normal">
@@ -112,9 +146,10 @@ function ForgetPassword(props) {
                                         <div className="woocommerce">
                                             <div className="customer-login-form">
                                                 <div id="customer_login" className="u-columns col2-set">
-                                                    <ForgetForm
-                                                        handleSubmit={handleForgetFormSubmit}
-                                                        validateForm={validateForgetForm}
+                                                    <VerifyForm
+                                                        handleSubmit={handleVerifyFormSubmit}
+                                                        validateForm={validateVerifyForm}
+                                                        email={location?.state?.email}
                                                         {...defaultFormProps}
                                                     />
                                                 </div>
