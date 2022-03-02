@@ -3,9 +3,8 @@ import BreadCrumb from "../layout/BreadCrumb"
 import Footer from "../layout/Footer/Footer"
 import HeaderMain from "../layout/Header/Header"
 import Topbar from "../layout/Topbar"
-import { Formik } from "formik";
-import RegisterForm from "../Forms/RegisterForm";
-import LoginForm from "../Forms/LoginForm";
+import RegisterForm from "../forms/RegisterForm";
+import LoginForm from "../forms/LoginForm";
 import {useMutation} from "react-query";
 import {CREATE_CUSTOMER, DEFAULT_API_KEY, fetchThis, LOGIN_CUSTOMER} from "../../api";
 
@@ -38,46 +37,43 @@ function Login(props) {
     });
 
     /* Handlers */
+    const onError = (setSubmitting) => (error) => {
+        alert(error?.message || error || 'Bilinmeyen bir hata ile karşılaşıldı!');
+        setSubmitting(false);
+        setLoading(false);
+    };
+    const onSuccess = (successMessage, resetForm, setSubmitting) => (data) => {
+        if (!data?.status) {
+            alert(data?.errors?.msg || 'Bilinmeyen bir hata ile karşılaşıldı!');
+        } else {
+            alert(successMessage || 'İşlem başarılı');
+            resetForm();
+        }
+        setSubmitting(false);
+        setLoading(false);
+    }
     const handleLoginFormSubmit = (values, { setSubmitting, resetForm }) => {
         setSubmitting(true);
         setLoading(true);
         loginMutation?.mutate(values, {
-            onSuccess: (data, variables, context) => {
-                if (!data?.status) {
-                    alert(data?.errors?.msg || 'Bilinmeyen bir hata ile karşılaşıldı!');
-                } else {
-                    alert('Giriş başarılı.');
-                    resetForm();
-                }
-                setSubmitting(false);
-                setLoading(false);
-            },
-            onError: (error, variables, context) => {
-                alert('Bilinmeyen bir hata ile karşılaşıldı!');
-                setSubmitting(false);
-                setLoading(false);
-            },
+            onSuccess: onSuccess(
+                'Giriş başarılı',
+                resetForm,
+                setSubmitting,
+            ),
+            onError: onError(setSubmitting),
         });
     };
     const handleRegisterFormSubmit = (values, { setSubmitting, resetForm }) => {
         setSubmitting(true);
         setLoading(true);
         registerMutation?.mutate(values, {
-            onSuccess: (data, variables, context) => {
-                if (!data?.status) {
-                    alert(data?.errors?.msg || 'Bilinmeyen bir hata ile karşılaşıldı!');
-                } else {
-                    alert('Kayıt başarılı.');
-                    resetForm();
-                }
-                setSubmitting(false);
-                setLoading(false);
-            },
-            onError: (error, variables, context) => {
-                alert('Bilinmeyen bir hata ile karşılaşıldı!');
-                setSubmitting(false);
-                setLoading(false);
-            },
+            onSuccess: onSuccess(
+                'Kayıt başarılı.',
+                resetForm,
+                setSubmitting,
+            ),
+            onError: onError(setSubmitting),
         });
     };
 
@@ -153,7 +149,7 @@ function Login(props) {
             ) {
             setLoading(true);
         }
-    }, [loading, setLoading, loginMutation?.isLoading]);
+    }, [loading, setLoading, loginMutation?.isLoading, registerMutation?.isLoading]);
 
     /* Memos */
     const defaultFormProps = useMemo(() => ({

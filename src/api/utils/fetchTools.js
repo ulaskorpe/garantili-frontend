@@ -60,8 +60,6 @@ export const fetchThis = async (
             }
         })
     }
-    console.log(pVals);
-
 
     /* Headers */
     const headers = new Headers();
@@ -148,11 +146,22 @@ export const fetchThis = async (
                   201,
                 ];
 
-                if (successCodes.includes(res.status)) res = await res.json();
-                else {
-                    if (res?.error) return res.error();
-                    else throw new Error();
+                const statusCode = res.status;
+                if (res?.json){
+                    try {
+                        res = await res.json();
+                    } catch {
+                        throw new Error('Dönen veri hatalı!');
+                    }
                 }
+
+                if (!res?.status) {
+                    throw new Error(res?.errors?.msg || 'Bilinmeyen bir hata ile karşılaşıldı!');
+                }
+                if (!successCodes.includes(statusCode)) {
+                    throw new Error(res?.errors?.msg || 'Bilinmeyen bir hata ile karşılaşıldı!');
+                }
+
                 return res;
             })
     );

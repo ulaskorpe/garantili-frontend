@@ -94,7 +94,9 @@ const LoginForm = (props) => {
                                 Beni hatırla &nbsp;&nbsp;
                             </label>
                             <p className="woocommerce-LostPassword lost_password">
-                                <a href="#">|&nbsp;&nbsp;Parolanı unuttun mu?</a>
+                                <a href="/forget-password">
+                                    |&nbsp;&nbsp;Parolanı unuttun mu?
+                                </a>
                             </p>
                         </div>
                     </form>

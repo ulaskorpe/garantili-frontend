@@ -23,5 +23,18 @@ export const LOGIN_CUSTOMER = {
     body: [
         { name: 'email', type: String, default: '',  isRequired: true },
         { name: 'password', type: String, default: '',  isRequired: true },
+        { name: 'ip_address', type: String, default: '1.1.1.1.',  isRequired: false },
+    ],
+};
+
+/** @type Endpoint */
+export const CUSTOMER_FORGET_PASSWORD = {
+    path: 'api/customers/forget-password',
+    method: 'POST',
+    apiKeyRequired: true,
+    pathVars: [],
+    body: [
+        { name: 'email', type: String, default: '',  isRequired: true },
+        { name: 'ip_address', type: String, default: '1.1.1.1.',  isRequired: false },
     ],
 };

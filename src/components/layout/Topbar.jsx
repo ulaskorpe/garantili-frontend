@@ -41,8 +41,10 @@ class Topbar extends Component {
                                 <i className="tm tm-order-tracking"></i>Sipariş Takibi</a>
                         </li>
                         <li className="menu-item">
-                            <a title="Hesabım" href="#">
-                                <i className="tm tm-login-register"></i>Üye Ol / Üye Girişi</a>
+                            <a title="Hesabım" href="/login">
+                                <i className="tm tm-login-register" />
+                                Üye Ol / Üye Girişi
+                            </a>
                         </li>
                     </ul>
                 </div>
