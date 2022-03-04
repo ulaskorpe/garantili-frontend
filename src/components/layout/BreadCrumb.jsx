@@ -2,7 +2,7 @@ import React, { Component } from "react";
 
 class BreadCrumb extends Component {
     render() {
-        const { crumbs } = this.props
+        const { crumbs } = this.props;
         return (
             <nav className="woocommerce-breadcrumb">
                 <a href="/">Anasayfa</a>

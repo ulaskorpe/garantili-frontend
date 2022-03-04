@@ -1,64 +1,101 @@
-import React, { Component } from "react";
+import React, {useCallback} from "react";
 import {useAuth} from "../../context/auth";
+import {useLocation, useNavigate} from "react-router-dom";
 
 const TopBar = () => {
     const { isLogged, state } = useAuth();
+
+    const MenuItem = (props) => {
+        const location = useLocation();
+        const navigate = useNavigate();
+
+        const {
+            className = "menu-item animate-dropdown",
+            title,
+            icon,
+            path,
+        } = props;
+
+        const go = useCallback((e) => {
+            e.preventDefault();
+            if (path && location.pathname !== path) {
+                navigate(path, { fromTo: location });
+            }
+        }, [location, navigate, path]);
+
+        return (
+            <li className={className}>
+                <a title={title} href={path} onClick={go} style={{ cursor: path ? 'pointer' : 'default' }}>
+                    {icon}
+                    <span>{title}</span>
+                </a>
+            </li>
+        );
+    }
 
     return (
         <div className="top-bar garantili-top-bar">
             <div className="col-full">
                 <ul id="menu-top-bar-left" className="nav menu-top-bar-left d-flex justify-content-start" data-nav="flex-menu">
-                    <li className="menu-item animate-dropdown">
-                        <a title="Hakkımızda" href="#">Hakkımızda</a>
-                    </li>
-                    <li className="menu-item animate-dropdown">
-                        <a title="Bizden Haberler" href="#">Bizden Haberler</a>
-                    </li>
-                    <li className="menu-item animate-dropdown">
-                        <a title="SSS" href="#">S.S.S.</a>
-                    </li>
-                    <li className="menu-item animate-dropdown">
-                        <a title="Hizmetlerimiz" href="#">Hizmetlerimiz</a>
-                    </li>
-                    <li className="menu-item animate-dropdown">
-                        <a title="İade Formu" href="#">İade Formu</a>
-                    </li>
-                    <li className="menu-item animate-dropdown">
-                        <a title="İnsan Kaynakları" href="#">İnsan Kaynakları</a>
-                    </li>
-                    <li className="menu-item animate-dropdown">
-                        <a title="IMEI Sorgulama" href="#">IMEI Sorgulama</a>
-                    </li>
-                    <li className="menu-item animate-dropdown">
-                        <a title="Kullanım Kılavuzu" href="#">Kullanım Kılavuzu</a>
-                    </li>
-                    <li className="garantili-flex-more-menu-item dropdown">
-                        <a title="..." href="#" data-toggle="dropdown" className="dropdown-toggle">...</a>
-                        <ul className="overflow-items dropdown-menu" />
-                    </li>
+                   <MenuItem
+                       title="Hakkımızda"
+                       path="/sayfa/hakkimizda/1"
+                   />
+                    <MenuItem
+                        title="Bizden Haberler"
+                        path="/bizden-haberler"
+                    />
+                    <MenuItem
+                        title="S.S.S."
+                        path="/sss"
+                    />
+                    <MenuItem
+                        title="Hizmetlerimiz"
+                        path="/sayfa/hizmetlerimiz/2"
+                    />
+                    <MenuItem
+                        title="İade Formu"
+                        path={null}
+                    />
+                    <MenuItem
+                        title="İnsan Kaynakları"
+                        path={null}
+                    />
+                    <MenuItem
+                        title="IMEI Sorgulama"
+                        path={null}
+                    />
+                    <MenuItem
+                        title="Kullanım Kılavuzu"
+                        path={null}
+                    />
+                    {/*<li className="garantili-flex-more-menu-item dropdown">*/}
+                    {/*    <a title="..." href="#" data-toggle="dropdown" className="dropdown-toggle">...</a>*/}
+                    {/*    <ul className="overflow-items dropdown-menu" />*/}
+                    {/*</li>*/}
                 </ul>
                 <ul id="menu-top-bar-right" className="nav menu-top-bar-right">
-                    <li className="hidden-sm-down menu-item animate-dropdown">
-                        <a title="Sipariş Takibi" href="#">
-                            <i className="tm tm-order-tracking" />
-                            Sipariş Takibi
-                        </a>
-                    </li>
+                    <MenuItem
+                        title="Sipariş Takibi"
+                        className="hidden-sm-down menu-item animate-dropdown"
+                        icon={<i className="tm tm-order-tracking" />}
+                        path={null}
+                    />
                     {isLogged && (
-                        <li className="menu-item">
-                            <a title="Hesabım" href="/log-out">
-                                <i className="tm tm-login-register" />
-                                Çıkış yap ({state.name})
-                            </a>
-                        </li>
+                        <MenuItem
+                            title={`Çıkış yap (${state.name})`}
+                            className="menu-item"
+                            icon={<i className="tm tm-login-register" />}
+                            path="/log-out"
+                        />
                     )}
                     {!isLogged && (
-                        <li className="menu-item">
-                            <a title="Hesabım" href="/login">
-                                <i className="tm tm-login-register" />
-                                Üye Ol / Üye Girişi
-                            </a>
-                        </li>
+                        <MenuItem
+                            title="Üye Ol / Üye Girişi"
+                            className="menu-item"
+                            icon={<i className="tm tm-login-register" />}
+                            path="/login"
+                        />
                     )}
                 </ul>
             </div>

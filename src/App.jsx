@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import {QueryClient, QueryClientProvider} from "react-query";
-import { BrowserRouter, Route, Router, Routes } from 'react-router-dom';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Cart from './components/pages/Cart';
 import Contact from './components/pages/Contact';
 import ContentPage from './components/pages/ContentPage';
@@ -34,7 +34,7 @@ const queryClient = new QueryClient();
 
 function App() {
     const [basket, setBasket] = useState({ totalPrice: 0, basketItems: [] })
-    const [allProduct, setProducts] = useState(
+    const [allProduct] = useState(
         [
             { id: 1, title: "Samsung Galaxy M52 5G 128 GB (Samsung Türkiye Garantili) ", listPrice: "5799.00", price: "5299.00", url: "/urun-detay/samsung-m2-1", imageUrl: "/assets/images/products/L1.jpg", discount: "300.000", details: ['128 GB Depolama', '8 GB RAM', '6.7" Retina Ekran', '5000mAh'] },
             { id: 2, title: "iPhone 11 64 GB", listPrice: "10.525,00", price: "9837,77", url: "/urun-detay/iphone-11-64-gb-2", imageUrl: "/assets/images/products/L2.jpg", discount: "150", details: ['64 GB Depolama', '4 GB RAM', '6.1 Ekran Boyutu" pil', '12 MP Ön Kamera'] },
@@ -48,8 +48,7 @@ function App() {
             { id: 10, title: "iPhone 13 Pro 128 GB", price: "21.499.00", url: "/urun-detay/iphone-13-pro-128-10", imageUrl: "/assets/images/products/L10.jpg", details: ['128 GB Depolama', '4 GB RAM', '6.5" Ekran Boyutu', '8MP Ön Kamera'] }
         ]
     )
-
-    const [homeContent, setHomeContent] = useState({
+    const [homeContent] = useState({
         newProducts: {
             title: 'Son Eklenenler',
             headers: [
@@ -156,7 +155,7 @@ function App() {
                         <Route path='/telefon-onar-yenile/:id' element={<DeviceRepairDetail basket={basket} addToBasket={addToBasket} removeFromBasket={removeFromBasket} allProducts={allProduct} />} />
                         <Route path='/iletisim' element={<Contact basket={basket} addToBasket={addToBasket} removeFromBasket={removeFromBasket} allProducts={allProduct} />} />
                         <Route path='/sayfa/:pagetitle/:id' element={<ContentPage basket={basket} addToBasket={addToBasket} removeFromBasket={removeFromBasket} allProducts={allProduct} />} />
-                        <Route path='/faq' element={<Faq basket={basket} addToBasket={addToBasket} removeFromBasket={removeFromBasket} allProducts={allProduct} />} />
+                        <Route path='/sss' element={<Faq basket={basket} addToBasket={addToBasket} removeFromBasket={removeFromBasket} allProducts={allProduct} />} />
                         <Route path='/kilavuz' element={<UserManual basket={basket} addToBasket={addToBasket} removeFromBasket={removeFromBasket} allProducts={allProduct} />} />
                         <Route path='/bizden-haberler' element={<News basket={basket} addToBasket={addToBasket} removeFromBasket={removeFromBasket} allProducts={allProduct} />} />
                         <Route path='/bizden-haberler/:id' element={<NewsDetails basket={basket} addToBasket={addToBasket} removeFromBasket={removeFromBasket} allProducts={allProduct} />} />
