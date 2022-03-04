@@ -3,7 +3,7 @@ import { useLocation, useParams, } from "react-router-dom";
 import BreadCrumb from "../layout/BreadCrumb";
 import Footer from "../layout/Footer/Footer";
 import HeaderMain from "../layout/Header/Header";
-import Topbar from "../layout/Topbar";
+import TopBar from "../layout/TopBar";
 import DetailTabs from "../Shop/ProductDetail/DetailTabs";
 import Product from "../Shop/ProductDetail/Product";
 import ProductGallery from "../Shop/ProductDetail/ProductGallery";
@@ -49,7 +49,7 @@ function ProductPage(props) {
     return (
         <div className="woocommerce-active single-product full-width normal">
             <div id="page" className="hfeed site">
-                <Topbar />
+                <TopBar />
                 <HeaderMain basket={basket}
                     onRemoveBasket={removeFromBasket}
                 />

@@ -1,10 +1,56 @@
 import React, { Component } from "react";
-    
+
+const Placeholder = ({ className }) => (
+    <div className={`is-placeholder ${className}`}>
+        <div className="media">
+            <div
+                className="attachment-shop_catalog size-shop_catalog wp-post-image"
+                style={{ width: 270, height: 300, backgroundColor: '#eaeaea', margin: '0 auto 6px', borderRadius: 5, }}
+            />
+
+            <div className="media-body">
+                <div className="product-info">
+                    <div
+                        className="woocommerce-LoopProduct-link woocommerce-loop-product__link"
+                        style={{ paddingLeft: 30, boxSizing: 'border-box' }}
+                    >
+                        <div
+                            style={{ display: 'block', width: 270, height: 12, backgroundColor: '#eaeaea', borderRadius: 4, }}
+                        />
+
+                        <div className="techmarket-product-rating" style={{ marginTop: 20, }}>
+                            <div className="star-rating">
+                                <span className="w-100">
+                                    <strong className="rating">5.00</strong> out of 5
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="product-actions">
+                    <div className="availability">
+                        <div
+                            style={{ display: 'block', width: 150, height: 12, backgroundColor: '#eaeaea', borderRadius: 4, }}
+                        />
+                    </div>
+                    <div
+                        style={{ display: 'block', width: 150, height: 18, backgroundColor: '#eaeaea', borderRadius: 4, }}
+                    />
+                </div>
+            </div>
+        </div>
+    </div>
+);
+
 class ListLarge extends Component {
     render() {
-        const { item, addToBasket, listCount } = this.props
+        const { item, addToBasket, isPlaceholder = false } = this.props;
+        const className = "product list-view-large first";
+
+        if (isPlaceholder) return <Placeholder className={className} />;
         return (
-            <div className="product list-view-large first ">
+            <div className={className}>
                 <div className="media">
                     <img width="224" height="197" alt="" className="attachment-shop_catalog size-shop_catalog wp-post-image"
                         src={item.imageUrl} />

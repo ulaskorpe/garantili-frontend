@@ -2,7 +2,7 @@ import {useCallback, useEffect, useMemo, useState} from "react"
 import BreadCrumb from "../layout/BreadCrumb"
 import Footer from "../layout/Footer/Footer"
 import HeaderMain from "../layout/Header/Header"
-import Topbar from "../layout/Topbar"
+import TopBar from "../layout/TopBar"
 import RegisterForm from "../forms/RegisterForm";
 import LoginForm from "../forms/LoginForm";
 import {useMutation} from "react-query";
@@ -17,7 +17,7 @@ function Login(props) {
     const location = useLocation();
 
     /* context */
-    const { login, state } = useAuth();
+    const { login } = useAuth();
 
     /* States */
     const [loading, setLoading] = useState(false);
@@ -120,9 +120,12 @@ function Login(props) {
     };
 
     /* Utils */
-    const isDisabled = useCallback((isSubmitting = false) => (
+    const isLoading = useCallback((isSubmitting = false) => (
         loading || isSubmitting || loginMutation?.isLoading || registerMutation?.isLoading
     ), [loading, loginMutation, registerMutation]);
+    const submitIsDisabled = useCallback((isSubmitting, errors = {}, values, validator) => (
+        isLoading(isSubmitting) || Boolean(Object.keys(errors).length) || Boolean(Object.keys(validator(values)).length)
+    ), [isLoading]);
 
     /* Validations */
     const validateLoginForm = (values) => {
@@ -195,13 +198,14 @@ function Login(props) {
 
     /* Memos */
     const defaultFormProps = useMemo(() => ({
-        isDisabled,
-    }),[isDisabled])
+        isLoading,
+        submitIsDisabled,
+    }),[isLoading, submitIsDisabled])
 
     return (
         <div className="woocommerce-active single-product full-width normal">
             <div id="page" className="hfeed site">
-                <Topbar />
+                <TopBar />
                 <HeaderMain basket={basket}
                     onRemoveBasket={removeFromBasket}
                 />
@@ -216,7 +220,7 @@ function Login(props) {
                                     <div className="entry-content">
                                         <div className="woocommerce">
                                             <div className="customer-login-form">
-                                                <div id="customer_login" className="u-columns col2-set">
+                                                <div className="u-columns col2-set">
                                                     <LoginForm
                                                         handleSubmit={handleLoginFormSubmit}
                                                         validateForm={validateLoginForm}

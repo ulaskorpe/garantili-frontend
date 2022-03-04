@@ -2,7 +2,7 @@ import {useCallback, useEffect, useMemo, useState} from "react"
 import BreadCrumb from "../layout/BreadCrumb"
 import Footer from "../layout/Footer/Footer"
 import HeaderMain from "../layout/Header/Header"
-import Topbar from "../layout/Topbar"
+import TopBar from "../layout/TopBar"
 import ForgetForm from "../forms/ForgetForm";
 import {useMutation} from "react-query";
 import {CUSTOMER_FORGET_PASSWORD, DEFAULT_API_KEY, fetchThis} from "../../api";
@@ -41,7 +41,7 @@ function ForgetPassword(props) {
                 } else {
                     alert('Yeni şifre oluşturuldu ve hesabınıza mail gönderildi.');
                     resetForm();
-                    navigate('/login', { fromTo: location, replace: true });
+                    navigate('/login', { fromTo: location, replace: true, state: { email: values.email } });
                 }
                 setSubmitting(false);
                 setLoading(false);
@@ -55,9 +55,12 @@ function ForgetPassword(props) {
     };
 
     /* Utils */
-    const isDisabled = useCallback((isSubmitting = false) => (
+    const isLoading = useCallback((isSubmitting = false) => (
         loading || isSubmitting || forgetPasswordMutation?.isLoading
-    ), [loading, forgetPasswordMutation?.isLoading]);
+    ), [loading, forgetPasswordMutation]);
+    const submitIsDisabled = useCallback((isSubmitting, errors = {}, values, validator) => (
+        isLoading(isSubmitting) || Boolean(Object.keys(errors).length) || Boolean(Object.keys(validator(values)).length)
+    ), [isLoading]);
 
     /* Validations */
     const validateForgetForm = (values) => {
@@ -90,13 +93,14 @@ function ForgetPassword(props) {
 
     /* Memos */
     const defaultFormProps = useMemo(() => ({
-        isDisabled,
-    }),[isDisabled])
+        isLoading,
+        submitIsDisabled,
+    }),[isLoading, submitIsDisabled])
 
     return (
         <div className="woocommerce-active single-product full-width normal">
             <div id="page" className="hfeed site">
-                <Topbar />
+                <TopBar />
                 <HeaderMain basket={basket}
                     onRemoveBasket={removeFromBasket}
                 />

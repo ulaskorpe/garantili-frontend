@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import Footer from "../layout/Footer/Footer";
 import HeaderMain from "../layout/Header/Header";
-import Topbar from "../layout/Topbar";
+import TopBar from "../layout/TopBar";
 import Banner from "../main/banner/Banner";
 import FullMessage from "../main/messageArea/FullMessage";
 import PartnerList from "../main/partner/PartnerList";
@@ -15,7 +15,7 @@ class HomePage extends Component {
         return (
             <div className="woocommerce-active garantili-design-pattern-homepage-v1 can-uppercase">
                 <div id="page" className="hfeed site">
-                    <Topbar />
+                    <TopBar />
                     <HeaderMain basket={basket}
                         onRemoveBasket={removeFromBasket}
                     />

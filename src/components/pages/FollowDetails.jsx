@@ -3,7 +3,7 @@ import OrderReview from "../cart/OrderReview"
 import BreadCrumb from "../layout/BreadCrumb"
 import Footer from "../layout/Footer/Footer"
 import HeaderMain from "../layout/Header/Header"
-import Topbar from "../layout/Topbar"
+import TopBar from "../layout/TopBar"
 
 function FollowDetails(props) {
     const { basket, onAddToBasket, removeFromBasket } = props
@@ -30,7 +30,7 @@ function FollowDetails(props) {
     return (
         <div className=" woocommerce-checkout woocommerce-page woocommerce-order-received can-uppercase woocommerce-active full-width">
             <div id="page" className="hfeed site">
-                <Topbar />
+                <TopBar />
                 <HeaderMain basket={basket}
                     onRemoveBasket={removeFromBasket}
                 />

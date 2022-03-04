@@ -155,7 +155,7 @@ function App() {
                         <Route path='/telefon-onar-yenile/' element={<DeviceRepair basket={basket} addToBasket={addToBasket} removeFromBasket={removeFromBasket} allProducts={allProduct} />} />
                         <Route path='/telefon-onar-yenile/:id' element={<DeviceRepairDetail basket={basket} addToBasket={addToBasket} removeFromBasket={removeFromBasket} allProducts={allProduct} />} />
                         <Route path='/iletisim' element={<Contact basket={basket} addToBasket={addToBasket} removeFromBasket={removeFromBasket} allProducts={allProduct} />} />
-                        <Route path='/sayfa/:pagetitle:id' element={<ContentPage basket={basket} addToBasket={addToBasket} removeFromBasket={removeFromBasket} allProducts={allProduct} />} />
+                        <Route path='/sayfa/:pagetitle/:id' element={<ContentPage basket={basket} addToBasket={addToBasket} removeFromBasket={removeFromBasket} allProducts={allProduct} />} />
                         <Route path='/faq' element={<Faq basket={basket} addToBasket={addToBasket} removeFromBasket={removeFromBasket} allProducts={allProduct} />} />
                         <Route path='/kilavuz' element={<UserManual basket={basket} addToBasket={addToBasket} removeFromBasket={removeFromBasket} allProducts={allProduct} />} />
                         <Route path='/bizden-haberler' element={<News basket={basket} addToBasket={addToBasket} removeFromBasket={removeFromBasket} allProducts={allProduct} />} />

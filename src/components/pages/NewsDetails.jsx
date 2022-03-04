@@ -2,7 +2,7 @@ import { useState } from "react";
 import BreadCrumb from "../layout/BreadCrumb";
 import Footer from "../layout/Footer/Footer";
 import HeaderMain from "../layout/Header/Header";
-import Topbar from "../layout/Topbar";
+import TopBar from "../layout/TopBar";
 import RecentPosts from "../RecentPosts";
 
 export default function NewsDetails(props) {
@@ -59,7 +59,7 @@ export default function NewsDetails(props) {
     return (
         <div id="content" class="right-sidebar single single-pos">
             <div id="page" className="hfeed site">
-                <Topbar />
+                <TopBar />
                 <HeaderMain basket={basket}
                     onRemoveBasket={removeFromBasket}
                 />

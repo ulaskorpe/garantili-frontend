@@ -2,9 +2,9 @@ import {useCallback, useEffect, useMemo, useState} from "react"
 import BreadCrumb from "../layout/BreadCrumb"
 import Footer from "../layout/Footer/Footer"
 import HeaderMain from "../layout/Header/Header"
-import Topbar from "../layout/Topbar"
+import TopBar from "../layout/TopBar"
 import {useMutation} from "react-query";
-import {CUSTOMER_ACTIVATION, CUSTOMER_FORGET_PASSWORD, DEFAULT_API_KEY, fetchThis} from "../../api";
+import {CUSTOMER_ACTIVATION, CUSTOMER_RESEND_ACTIVE_CODE, DEFAULT_API_KEY, fetchThis} from "../../api";
 import {useLocation, useNavigate} from "react-router-dom";
 import VerifyForm from "../forms/VerifyForm";
 import {useAuth} from "../../context/auth";
@@ -29,6 +29,16 @@ function ForgetPassword(props) {
             CUSTOMER_ACTIVATION,
             {
                 activation_key: parseInt(data.activation_key || '0'),
+                email: location?.state?.email,
+            },
+            DEFAULT_API_KEY,
+            [],
+        );
+    });
+    const resendCodeMutation = useMutation((data) => {
+        return fetchThis(
+            CUSTOMER_RESEND_ACTIVE_CODE,
+            {
                 email: location?.state?.email,
             },
             DEFAULT_API_KEY,
@@ -67,11 +77,37 @@ function ForgetPassword(props) {
             },
         });
     };
+    const handleClickResendLink = (resetForm) => (e) => {
+        e.preventDefault();
+        setLoading(true);
+        resendCodeMutation?.mutate({ email: location?.state?.email }, {
+            onSuccess (data) {
+                if (!data?.status) {
+                    alert(data?.errors?.msg || 'Bilinmeyen bir hata ile karşılaşıldı!');
+                } else {
+                    alert('Doğrulama mesajı tekrardan gönderildi, lütfen istenmeyen klasörünü kontrol edin..');
+                    resetForm();
+                }
+                setLoading(false);
+            },
+            onError (error) {
+                alert(error?.message || error || 'Bilinmeyen bir hata ile karşılaşıldı!');
+                resetForm();
+                setLoading(false);
+            },
+        });
+    };
 
     /* Utils */
-    const isDisabled = useCallback((isSubmitting = false) => (
-        loading || isSubmitting || verifyMutation?.isLoading
-    ), [loading, verifyMutation?.isLoading]);
+    const isLoading = useCallback((isSubmitting = false) => (
+        loading || isSubmitting || verifyMutation?.isLoading || resendCodeMutation?.isLoading
+    ), [loading, verifyMutation, resendCodeMutation]);
+    const disableResendButton = useCallback((isSubmitting = false) => (
+        isLoading(isSubmitting) || resendCodeMutation.isSuccess
+    ), [isLoading, resendCodeMutation]);
+    const submitIsDisabled = useCallback((isSubmitting, errors = {}, values, validator) => (
+        isLoading(isSubmitting) || Boolean(Object.keys(errors).length) || Boolean(Object.keys(validator(values)).length)
+    ), [isLoading]);
 
     /* Validations */
     const validateVerifyForm = (values) => {
@@ -116,12 +152,12 @@ function ForgetPassword(props) {
 
         if (redirect) navigate(redirectPath, { fromTo: location, replace: true });
 
-    }, [location, state, isLogged])
+    }, [location, navigate, state, isLogged])
 
     /* Memos */
     const defaultFormProps = useMemo(() => ({
-        isDisabled,
-    }),[isDisabled]);
+        isLoading, submitIsDisabled, handleClickResendLink, disableResendButton
+    }),[isLoading, submitIsDisabled]);
 
     if (!location?.state?.email) {
         return <></>;
@@ -130,7 +166,7 @@ function ForgetPassword(props) {
     return (
         <div className="woocommerce-active single-product full-width normal">
             <div id="page" className="hfeed site">
-                <Topbar />
+                <TopBar />
                 <HeaderMain basket={basket}
                     onRemoveBasket={removeFromBasket}
                 />

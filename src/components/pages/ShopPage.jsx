@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import BreadCrumb from '../layout/BreadCrumb';
 import Footer from '../layout/Footer/Footer';
 import HeaderMain from '../layout/Header/Header';
-import TopBar from '../layout/Topbar';
+import TopBar from '../layout/TopBar';
 import PaginationBar from '../Shop/ProductList/PaginationBar';
 import ProductList from '../Shop/ProductList/ProductList';
 import ShopPriceFilter from '../Shop/ProductList/ShopPriceFilter';
@@ -94,8 +94,22 @@ function ShopPage(props) {
                 DEFAULT_API_KEY,
             )
         ),
-        {retry, refetchOnWindowFocus: false },
+        { retry, refetchOnWindowFocus: false  },
     );
+
+    /**/
+    const generateFakeResponse = useMemo(() => {
+        const data = (new Array(
+            pagination?.perPage?.value || 5
+        ))
+            .fill(null)
+            .map((_, placeholderIDX) => ({
+                id: `placeholder_data_${placeholderIDX}`,
+                isPlaceholder: true,
+            }));
+        const item_count = totalCount;
+        return ({ status: true, data, item_count, });
+    }, [pagination.perPage, totalCount]);
     const products = useQuery(
         [
             'products',
@@ -113,7 +127,7 @@ function ShopPage(props) {
                 DEFAULT_API_KEY,
             )
         ),
-        {retry, refetchOnWindowFocus: false },
+        { retry, refetchOnWindowFocus: false, placeholderData: generateFakeResponse, },
     );
 
     /* Memos */
@@ -148,10 +162,12 @@ function ShopPage(props) {
 
         const maxPageCount = calcPageCount(totalCount, perPage.value);
         if (maxPageCount < pagination.page.value) newPagination.page = { value: maxPageCount };
+        console.log('2', newPagination, pagination, maxPageCount);
 
         setPagination(newPagination);
     }, [totalCount, pagination, perPagesObject]);
     const handlePageChange = useCallback((page) => {
+        console.log('1', page)
         setPagination({
             ...pagination,
             page,
@@ -191,6 +207,13 @@ function ShopPage(props) {
     /* Setters */
     let category = categories.find(_ => _.id === categoryId);
     if (category === undefined) category = categories[0];
+
+    useEffect(() => {
+        if (
+            products?.data?.item_count
+            && products.data.item_count !== totalCount
+        ) setTotalCount(products.data.item_count);
+    }, [products.data, totalCount])
 
 
     return (

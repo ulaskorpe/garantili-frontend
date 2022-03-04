@@ -7,7 +7,10 @@ const initialValues = {
 const VerifyForm = (props) => {
     const {
         handleSubmit,
-        isDisabled,
+        handleClickResendLink,
+        isLoading,
+        disableResendButton,
+        submitIsDisabled,
         validateForm,
         email,
     } = props;
@@ -28,6 +31,7 @@ const VerifyForm = (props) => {
                       handleBlur,
                       handleSubmit,
                       isSubmitting,
+                      resetForm,
                   }) => (
                     <form
                         className="woocomerce-form woocommerce-form-login login"
@@ -46,6 +50,7 @@ const VerifyForm = (props) => {
                             Doğrulama mailini alamadınız mı?
                             &nbsp;
                             <button
+                                disabled={disableResendButton(isSubmitting)}
                                 type="button"
                                 style={{
                                     color: '#e86708',
@@ -54,18 +59,19 @@ const VerifyForm = (props) => {
                                     backgroundColor: 'transparent',
                                     outline: 'none',
                                 }}
+                                onClick={handleClickResendLink(resetForm)}
                             >
                                 Yeni bir doğrulama kodu isteyin
                             </button>
                             .
                         </p>
-                        <div className="form-row form-row-wide">
-                            <label htmlFor="username">
+                        <div className="form-row form-row-wide" style={{ color: errors.activation_key && touched.activation_key && errors.activation_key ? '#F44336' : 'inherit' }}>
+                            <label htmlFor="activation_key">
                                 Doğrulama kodu
                                 <span className="required">*</span>
                             </label>
                             <input
-                                disabled={isDisabled(isSubmitting)}
+                                disabled={isLoading(isSubmitting)}
                                 type="text"
                                 className="input-text"
                                 name="activation_key"
@@ -74,12 +80,13 @@ const VerifyForm = (props) => {
                                 onChange={handleChange}
                                 onBlur={handleBlur}
                                 value={values.activation_key}
+                                style={{ borderColor: errors.activation_key && touched.activation_key && errors.activation_key ? '#F44336' : '#ebebeb' }}
                             />
                             {errors.activation_key && touched.activation_key && errors.activation_key}
                         </div>
                         <div className="form-row">
                             <input
-                                disabled={isDisabled(isSubmitting)}
+                                disabled={submitIsDisabled(isSubmitting, errors, values, validateForm)}
                                 readOnly
                                 className="woocommerce-Button button btn-navy"
                                 type="submit"

@@ -2,7 +2,7 @@ import { useState } from "react"
 import BreadCrumb from "../layout/BreadCrumb"
 import Footer from "../layout/Footer/Footer"
 import HeaderMain from "../layout/Header/Header"
-import Topbar from "../layout/Topbar"
+import TopBar from "../layout/TopBar"
 import DeviceList from "../phone-sell/DeviceList"
 import ProductList from "../Shop/ProductList/ProductList"
 import ShopPriceFilter from "../Shop/ProductList/ShopPriceFilter"
@@ -92,7 +92,7 @@ export default function PhoneSell(props) {
     return (
         <div className="woocommerce-active left-sidebar" >
             <div id="page" className="hfeed site">
-                <Topbar />
+                <TopBar />
                 <HeaderMain basket={basket}
                     onRemoveBasket={removeFromBasket}
                 />

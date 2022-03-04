@@ -33302,6 +33302,17 @@ dl.variation dd {
     line-height: 1.4;
 }
 
+.products .is-placeholder.product:focus, .products .is-placeholder.product:hover {
+    border-color: transparent !important;
+    cursor: wait;
+}
+#grid .products .is-placeholder.product:hover::before {
+    opacity: 1 !important;
+}
+.is-placeholder .star-rating span:before {
+    color: #eaeaea !important;
+}
+
 @media (min-width: 1140px) {
     .products .product:focus, .products .product:hover {
         border-color: #ebebeb;

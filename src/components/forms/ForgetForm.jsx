@@ -2,12 +2,16 @@ import React from 'react';
 import {Formik} from "formik";
 
 const initialValues = {
-    email: 'emintayfur@icloud.com',
+    email: '',
 };
+const initialErrors = {
+    email: '',
+}
 const ForgetForm = (props) => {
     const {
         handleSubmit,
-        isDisabled,
+        isLoading,
+        submitIsDisabled,
         validateForm,
     } = props;
 
@@ -16,6 +20,7 @@ const ForgetForm = (props) => {
             <h2>Şifremi Unuttum</h2>
             <Formik
                 initialValues={initialValues}
+                initialErrors={initialErrors}
                 validate={validateForm}
                 onSubmit={handleSubmit}
             >
@@ -35,25 +40,26 @@ const ForgetForm = (props) => {
                         <p className="before-login-text form-text-cb">
                             Lütfen şifrenizi sıfırlamak için e-posta adresinizi girin.
                         </p>
-                        <div className="form-row form-row-wide">
-                            <label htmlFor="username">E-Posta
+                        <div className="form-row form-row-wide" style={{ color: errors.email && touched.email && errors.email ? '#F44336' : 'inherit' }}>
+                            <label htmlFor="f_email">E-Posta
                                 <span className="required">*</span>
                             </label>
                             <input
-                                disabled={isDisabled(isSubmitting)}
+                                disabled={isLoading(isSubmitting)}
                                 type="text"
                                 className="input-text"
                                 name="email"
-                                id="login_email"
+                                id="f_email"
                                 onChange={handleChange}
                                 onBlur={handleBlur}
                                 value={values.email}
+                                style={{ borderColor: errors.email && touched.email && errors.email ? '#F44336' : '#ebebeb' }}
                             />
                             {errors.email && touched.email && errors.email}
                         </div>
                         <div className="form-row">
                             <input
-                                disabled={isDisabled(isSubmitting)}
+                                disabled={submitIsDisabled(isSubmitting, errors, values, validateForm)}
                                 readOnly
                                 className="woocommerce-Button button btn-navy"
                                 type="submit"

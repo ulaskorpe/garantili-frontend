@@ -93,6 +93,7 @@ const PaginationBar = (props) => {
     }, [bars, page]);
 
     //
+    // console.log(totalPageCount, page, page?.value);
     if (!totalPageCount || !page || !page?.value) return <></>;
 
     return (

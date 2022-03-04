@@ -22,8 +22,9 @@ if (process.env.NODE_ENV === 'development') {
 const RegisterForm = (props) => {
     const {
         handleSubmit,
-        isDisabled,
-        validateForm
+        isLoading,
+        submitIsDisabled,
+        validateForm,
     } = props;
 
     return (
@@ -52,13 +53,13 @@ const RegisterForm = (props) => {
                             yararlanmak için bugün yeni bir hesap oluşturun.
                         </p>
                         {/* Ad */}
-                        <div className="form-row form-row-wide">
-                            <label htmlFor="reg_email">
+                        <div className="form-row form-row-wide" style={{ color: errors.name && touched.name && errors.name ? '#F44336' : 'inherit' }}>
+                            <label htmlFor="reg_name">
                                 Ad
                                 <span className="required">*</span>
                             </label>
                             <input
-                                disabled={isDisabled(isSubmitting)}
+                                disabled={isLoading(isSubmitting)}
                                 type="text"
                                 id="reg_name"
                                 name="name"
@@ -66,37 +67,39 @@ const RegisterForm = (props) => {
                                 onChange={handleChange}
                                 onBlur={handleBlur}
                                 value={values.name}
+                                style={{ borderColor: errors.name && touched.name && errors.name ? '#F44336' : '#ebebeb' }}
                             />
                             {errors.name && touched.name && errors.name}
                         </div>
 
                         {/* Soyad */}
-                        <div className="form-row form-row-wide">
-                            <label htmlFor="reg_email">
+                        <div className="form-row form-row-wide" style={{ color: errors.surname && touched.surname && errors.surname ? '#F44336' : 'inherit' }}>
+                            <label htmlFor="reg_surname">
                                 Soyad
                                 <span className="required">*</span>
                             </label>
                             <input
-                                disabled={isDisabled(isSubmitting)}
+                                disabled={isLoading(isSubmitting)}
                                 type="text"
-                                id="reg_name"
+                                id="reg_surname"
                                 name="surname"
                                 className="woocommerce-Input woocommerce-Input--text input-text"
                                 onChange={handleChange}
                                 onBlur={handleBlur}
                                 value={values.surname}
+                                style={{ borderColor: errors.surname && touched.surname && errors.surname ? '#F44336' : '#ebebeb' }}
                             />
                             {errors.surname && touched.surname && errors.surname}
                         </div>
 
                         {/* E-posta */}
-                        <div className="form-row form-row-wide">
+                        <div className="form-row form-row-wide" style={{ color: errors.email && touched.email && errors.email ? '#F44336' : 'inherit' }}>
                             <label htmlFor="reg_email">
                                 E-Posta
                                 <span className="required">*</span>
                             </label>
                             <input
-                                disabled={isDisabled(isSubmitting)}
+                                disabled={isLoading(isSubmitting)}
                                 type="email"
                                 id="reg_email"
                                 name="email"
@@ -104,18 +107,19 @@ const RegisterForm = (props) => {
                                 onChange={handleChange}
                                 onBlur={handleBlur}
                                 value={values.email}
+                                style={{ borderColor: errors.email && touched.email && errors.email ? '#F44336' : '#ebebeb' }}
                             />
                             {errors.email && touched.email && errors.email}
                         </div>
 
                         {/* Şifre */}
-                        <div className="form-row form-row-wide mt-2">
+                        <div className="form-row form-row-wide mt-2" style={{ color: errors.password && touched.password && errors.password ? '#F44336' : 'inherit' }}>
                             <label htmlFor="reg_password">
                                 Şifre
                                 <span className="required">*</span>
                             </label>
                             <input
-                                disabled={isDisabled(isSubmitting)}
+                                disabled={isLoading(isSubmitting)}
                                 id="reg_password"
                                 type="password"
                                 name="password"
@@ -123,6 +127,7 @@ const RegisterForm = (props) => {
                                 onBlur={handleBlur}
                                 value={values.password}
                                 className="woocommerce-Input woocommerce-Input--text input-text"
+                                style={{ borderColor: errors.password && touched.password && errors.password ? '#F44336' : '#ebebeb' }}
                             />
                             {errors.password && touched.password && errors.password}
                         </div>
@@ -130,7 +135,7 @@ const RegisterForm = (props) => {
                         {/* Submit */}
                         <div className="form-row">
                             <input
-                                disabled={isDisabled(isSubmitting)}
+                                disabled={submitIsDisabled(isSubmitting, errors, values, validateForm)}
                                 type="submit"
                                 className="woocommerce-Button button"
                                 value="Kayıt Ol"
