@@ -6,6 +6,7 @@ import TopBar from "../layout/TopBar"
 import RegisterForm from "../forms/RegisterForm";
 import LoginForm from "../forms/LoginForm";
 import {useMutation} from "react-query";
+import sweetalert from 'sweetalert';
 import {CREATE_CUSTOMER, DEFAULT_API_KEY, fetchThis, LOGIN_CUSTOMER} from "../../api";
 import {useAuth} from "../../context/auth";
 import {useLocation, useNavigate} from "react-router-dom";
@@ -46,7 +47,12 @@ function Login(props) {
     /* Handlers */
     const onError = (setSubmitting, cb = (err, data) => null) => (error, data) => {
         if (!(error?.code === 'not_verified')) {
-            alert(error?.message || error || 'Bilinmeyen bir hata ile karşılaşıldı!');
+            sweetalert({
+                icon: 'error',
+                title: 'Hata',
+                text: error?.message || error || 'Bilinmeyen bir hata ile karşılaşıldı!',
+                button: null,
+            }).then();
         }
         setSubmitting(false);
         setLoading(false);
@@ -59,11 +65,22 @@ function Login(props) {
         cb = (data) => null
     ) => ({ status = false, errors = { msg: '' }, data = {}}) => {
         if (!status) {
-            alert(errors?.msg || 'Bilinmeyen bir hata ile karşılaşıldı!');
+            sweetalert({
+                icon: 'error',
+                title: 'Hata',
+                text: errors?.msg || 'Bilinmeyen bir hata ile karşılaşıldı!',
+                button: null,
+            }).then();
         } else {
-            alert(successMessage || 'İşlem başarılı');
-            resetForm();
-            cb(data);
+            sweetalert({
+                icon: 'success',
+                title: 'Başarılı',
+                text: successMessage || 'İşlem başarılı',
+                button: null,
+            }).then(() => {
+                resetForm();
+                cb(data);
+            });
         }
         setSubmitting(false);
         setLoading(false);

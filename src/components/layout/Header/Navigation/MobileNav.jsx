@@ -13,8 +13,8 @@ class MobileNav extends React.Component {
         {
             id: 7, title: "Kurumsal", url: "#",
             subs: [
-                { id: 71, title: 'Hakkımızda', url: '/sayfa/hakkimizda/1' },
-                { id: 72, title: 'Hizmetlerimiz', url: '/sayfa/hizmetlerimiz/2' },
+                { id: 71, title: 'Hakkımızda', url: '/sayfa/hakkimizda/10' },
+                { id: 72, title: 'Hizmetlerimiz', url: '/sayfa/hizmetlerimiz/11' },
                 { id: 73, title: 'Bizden Haberler', url: '/bizden-haberler' },
                 { id: 74, title: 'İnsan Kaynakları', url: '#' },
             ]
@@ -43,8 +43,8 @@ class MobileNav extends React.Component {
                         <div className="handheld-header-links">
                             <ul className="columns-3">
                                 <li className="my-account">
-                                    <a href="#" className="has-icon">
-                                        <i className="tm tm-login-register"></i>
+                                    <a href="/login" className="has-icon">
+                                        <i className="tm tm-login-register" />
                                     </a>
                                 </li>
                             </ul>

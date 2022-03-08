@@ -7,6 +7,7 @@ import ForgetForm from "../forms/ForgetForm";
 import {useMutation} from "react-query";
 import {CUSTOMER_FORGET_PASSWORD, DEFAULT_API_KEY, fetchThis} from "../../api";
 import {useLocation, useNavigate} from "react-router-dom";
+import sweetalert from "sweetalert";
 
 function ForgetPassword(props) {
     /* Props */
@@ -37,17 +38,33 @@ function ForgetPassword(props) {
         forgetPasswordMutation?.mutate(values, {
             onSuccess (data) {
                 if (!data?.status) {
-                    alert(data?.errors?.msg || 'Bilinmeyen bir hata ile karşılaşıldı!');
+                    sweetalert({
+                        icon: 'error',
+                        title: 'Hata',
+                        text:data?.errors?.msg || 'Bilinmeyen bir hata ile karşılaşıldı!',
+                        button: null,
+                    }).then();
                 } else {
-                    alert('Yeni şifre oluşturuldu ve hesabınıza mail gönderildi.');
-                    resetForm();
-                    navigate('/login', { fromTo: location, replace: true, state: { email: values.email } });
+                    sweetalert({
+                        icon: 'success',
+                        title: 'İşlem başarılı',
+                        text: 'Yeni şifre oluşturuldu ve hesabınıza mail gönderildi.',
+                        button: null,
+                    }).then(() => {
+                        resetForm();
+                        navigate('/login', { fromTo: location, replace: true, state: { email: values.email } });
+                    });
                 }
                 setSubmitting(false);
                 setLoading(false);
             },
             onError (error) {
-                alert(error?.message || error || 'Bilinmeyen bir hata ile karşılaşıldı!');
+                sweetalert({
+                    icon: 'error',
+                    title: 'Hata',
+                    text: error?.message || error || 'Bilinmeyen bir hata ile karşılaşıldı!',
+                    button: null,
+                }).then();
                 setSubmitting(false);
                 setLoading(false);
             },

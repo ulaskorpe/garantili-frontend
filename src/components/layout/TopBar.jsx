@@ -39,7 +39,7 @@ const TopBar = () => {
                 <ul id="menu-top-bar-left" className="nav menu-top-bar-left d-flex justify-content-start" data-nav="flex-menu">
                    <MenuItem
                        title="Hakkımızda"
-                       path="/sayfa/hakkimizda/1"
+                       path="/sayfa/hakkimizda/10"
                    />
                     <MenuItem
                         title="Bizden Haberler"
@@ -51,7 +51,7 @@ const TopBar = () => {
                     />
                     <MenuItem
                         title="Hizmetlerimiz"
-                        path="/sayfa/hizmetlerimiz/2"
+                        path="/sayfa/hizmetlerimiz/11"
                     />
                     <MenuItem
                         title="İade Formu"

@@ -24,7 +24,7 @@ export const AuthProvider = ({ children }) => {
     }
 
     const isLogged = useMemo(() => (
-        state && !(typeof state.customer_id === 'undefined')
+        Boolean(state && !(typeof state.customer_id === 'undefined'))
     ), [state]);
 
     const value = useMemo(() => ({

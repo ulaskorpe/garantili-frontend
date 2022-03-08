@@ -8,6 +8,7 @@ import {CUSTOMER_ACTIVATION, CUSTOMER_RESEND_ACTIVE_CODE, DEFAULT_API_KEY, fetch
 import {useLocation, useNavigate} from "react-router-dom";
 import VerifyForm from "../forms/VerifyForm";
 import {useAuth} from "../../context/auth";
+import sweetalert from "sweetalert";
 
 function ForgetPassword(props) {
     /* Props */
@@ -53,24 +54,40 @@ function ForgetPassword(props) {
         verifyMutation?.mutate(values, {
             onSuccess (data) {
                 if (!data?.status) {
-                    alert(data?.errors?.msg || 'Bilinmeyen bir hata ile karşılaşıldı!');
+                    sweetalert({
+                        icon: 'error',
+                        title: 'Hata',
+                        text: data?.errors?.msg || 'Bilinmeyen bir hata ile karşılaşıldı!',
+                        button: null,
+                    }).then();
                 } else {
-                    alert('Hesabınızı doğruladınız, teşekkürler.');
-                    resetForm();
-                    navigate(
-                        '/login', {
-                            fromTo: location,
-                            state: {
-                                email: location?.state?.email,
+                    sweetalert({
+                        icon: 'success',
+                        title: 'Doğrulandı.',
+                        text: 'Hesabınızı doğruladınız, teşekkürler.',
+                        button: null,
+                    }).then(() => {
+                        resetForm();
+                        navigate(
+                            '/login', {
+                                fromTo: location,
+                                state: {
+                                    email: location?.state?.email,
+                                },
                             },
-                        },
-                    );
+                        );
+                    });
                 }
                 setSubmitting(false);
                 setLoading(false);
             },
             onError (error) {
-                alert(error?.message || error || 'Bilinmeyen bir hata ile karşılaşıldı!');
+                sweetalert({
+                    icon: 'error',
+                    title: 'Hata',
+                    text: error?.message || error || 'Bilinmeyen bir hata ile karşılaşıldı!',
+                    button: null,
+                }).then();
                 resetForm();
                 setSubmitting(false);
                 setLoading(false);
@@ -83,15 +100,30 @@ function ForgetPassword(props) {
         resendCodeMutation?.mutate({ email: location?.state?.email }, {
             onSuccess (data) {
                 if (!data?.status) {
-                    alert(data?.errors?.msg || 'Bilinmeyen bir hata ile karşılaşıldı!');
+                    sweetalert({
+                        icon: 'error',
+                        title: 'Hata',
+                        text: data?.errors?.msg || 'Bilinmeyen bir hata ile karşılaşıldı!',
+                        button: null,
+                    }).then();
                 } else {
-                    alert('Doğrulama mesajı tekrardan gönderildi, lütfen istenmeyen klasörünü kontrol edin..');
+                    sweetalert({
+                        icon: 'success',
+                        title: 'Başarılı',
+                        text: 'Doğrulama mesajı tekrardan gönderildi, lütfen istenmeyen klasörünü kontrol edin..',
+                        button: null,
+                    }).then();
                     resetForm();
                 }
                 setLoading(false);
             },
             onError (error) {
-                alert(error?.message || error || 'Bilinmeyen bir hata ile karşılaşıldı!');
+                sweetalert({
+                    icon: 'error',
+                    title: 'Hata',
+                    text: error?.message || error || 'Bilinmeyen bir hata ile karşılaşıldı!',
+                    button: null,
+                }).then();
                 resetForm();
                 setLoading(false);
             },
