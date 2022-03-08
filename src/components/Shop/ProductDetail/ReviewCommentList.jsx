@@ -7,13 +7,16 @@ class ReviewCommentList extends Component {
             <div id="comments">
                 <ol className="commentlist">
                     {comments.map((comment, i) => {
+                        const rate = Math.round(comment.rating / 2);
                         return (
                             <li id="li-comment-83" key={i} className="comment byuser comment-author-admin bypostauthor even thread-even depth-1">
                                 <div className="comment_container" id="comment-83">
                                     <div className="comment-text">
                                         <div className="star-rating">
-                                            <span className="w-100">Puna
-                                                5 üzerinden <strong className="rating">{comment.rating}</strong></span>
+                                            <span
+                                                title={`Puan: 5 üzerinden ${rate}`}
+                                                style={{ width: `${rate * 20}%`}}
+                                            />
                                         </div>
                                         <p className="meta">
                                             <strong itemProp="author" className="woocommerce-review__author">{comment.name}</strong>

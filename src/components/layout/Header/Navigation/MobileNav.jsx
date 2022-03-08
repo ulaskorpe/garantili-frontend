@@ -13,16 +13,16 @@ class MobileNav extends React.Component {
         {
             id: 7, title: "Kurumsal", url: "#",
             subs: [
-                { id: 71, title: 'Hakkımızda', url: '#' },
-                { id: 72, title: 'Hizmetlerimiz', url: '#' },
-                { id: 73, title: 'Bizden Haberler', url: '#' },
+                { id: 71, title: 'Hakkımızda', url: '/sayfa/hakkimizda/1' },
+                { id: 72, title: 'Hizmetlerimiz', url: '/sayfa/hizmetlerimiz/2' },
+                { id: 73, title: 'Bizden Haberler', url: '/bizden-haberler' },
                 { id: 74, title: 'İnsan Kaynakları', url: '#' },
             ]
         },
         { id: 8, title: "Garantili Sorgula", url: "#" },
         { id: 9, title: "IMEI Sorgula", url: "#" },
         { id: 10, title: "İade Formu", url: "#" },
-        { id: 11, title: "S.S.S.", url: "#" },
+        { id: 11, title: "S.S.S.", url: "/sss" },
         { id: 11, title: "Bize Ulaşın", url: "#" },
     ]
 
