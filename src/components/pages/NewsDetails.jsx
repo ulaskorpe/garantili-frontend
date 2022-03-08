@@ -57,7 +57,7 @@ export default function NewsDetails(props) {
         { url: '#', title: 'Id nulla reprehenderit duis dolore adipisicing anim laboris.' }
     ])
     return (
-        <div id="content" class="right-sidebar single single-pos">
+        <div id="content" className="right-sidebar single single-pos">
             <div id="page" className="hfeed site">
                 <TopBar />
                 <HeaderMain basket={basket}
@@ -68,61 +68,58 @@ export default function NewsDetails(props) {
                 <div className="col-full">
                     <div className="row">
                         <BreadCrumb crumbs={crumbs} />
-                        <div id="primary" class="content-area">
-                            <main id="main" class="site-main">
-                                <article class="post format-image">
-                                    <div class="media-attachment">
-                                        <div class="post-thumbnail">
-                                            <img width="1433" height="560" alt="" class="wp-post-image" src={details.imageUrl} />
+                        <div id="primary" className="content-area">
+                            <main id="main" className="site-main">
+                                <article className="post format-image">
+                                    <div className="media-attachment">
+                                        <div className="post-thumbnail">
+                                            <img width="1433" height="560" alt="" className="wp-post-image" src={details.imageUrl} />
                                         </div>
                                     </div>
-                                    <header class="entry-header">
-                                        <h1 class="entry-title">{details.title}
-                                            {/* <span class="comments-link">
-                                                <a href="#comments">3</a>
-                                            </span> */}
+                                    <header className="entry-header">
+                                        <h1 className="entry-title">{details.title}
                                         </h1>
-                                        <div class="entry-meta">
-                                            <span class="posted-on">
+                                        <div className="entry-meta">
+                                            <span className="posted-on">
                                                 <a rel="bookmark" href="#">
-                                                    <span class="entry-date published">{details.date}</span>
+                                                    <span className="entry-date published">{details.date}</span>
                                                 </a>
                                             </span>
                                         </div>
                                     </header>
-                                    <div class="entry-content" itemprop="articleBody" dangerouslySetInnerHTML={{ __html: details.content }}>
+                                    <div className="entry-content" itemProp="articleBody" dangerouslySetInnerHTML={{ __html: details.content }}>
                                     </div>
                                 </article>
-                                <nav aria-label="Post Navigation" class="navigation post-navigation" id="post-navigation">
-                                    <span class="screen-reader-text">Post navigation</span>
-                                    <div class="nav-links">
-                                        <div class="nav-previous">
+                                <nav aria-label="Post Navigation" className="navigation post-navigation" id="post-navigation">
+                                    <span className="screen-reader-text">Post navigation</span>
+                                    <div className="nav-links">
+                                        <div className="nav-previous">
                                             <a rel="prev" href={details.previousContent.url}>
-                                                <span class="meta-nav">←</span>&nbsp;{details.previousContent.title}</a>
+                                                <span className="meta-nav">←</span>&nbsp;{details.previousContent.title}</a>
                                         </div>
-                                        <div class="nav-next">
+                                        <div className="nav-next">
                                             <a href={details.nextContent.url} rel="next">{details.nextContent.title} &nbsp;
-                                                <span class="meta-nav">→</span>
+                                                <span className="meta-nav">→</span>
                                             </a>
                                         </div>
                                     </div>
                                 </nav>
                             </main>
                         </div>
-                        <div id="secondary" class="sidebar-blog widget-area" role="complementary">
-                            <div class="widget widget_search" id="search-2">
-                                <form action="#" class="search-form" method="get" role="search">
+                        <div id="secondary" className="sidebar-blog widget-area" role="complementary">
+                            <div className="widget widget_search" id="search-2">
+                                <form action="#" className="search-form" method="get" role="search">
                                     <label>
-                                        <span class="screen-reader-text">Arayın:</span>
-                                        <input type="search" name="s" value="" placeholder="Arama …" class="search-field" />
+                                        <span className="screen-reader-text">Arayın:</span>
+                                        <input type="search" name="s" defaultValue="" placeholder="Arama …" className="search-field" />
                                     </label>
-                                    <input type="submit" value="Search" class="search-submit" />
+                                    <input type="submit" defaultValue="Search" className="search-submit" />
                                 </form>
                             </div>
-                            <div class="widget widget_tag_cloud">
-                                <span class="gamma widget-title">Tags Clouds</span>
-                                <div class="tagcloud">
-                                    {tags.map(_ => <a class="tag-cloud-link" href={_.url}>{_.title}</a>)}
+                            <div className="widget widget_tag_cloud">
+                                <span className="gamma widget-title">Tags Clouds</span>
+                                <div className="tagcloud">
+                                    {tags.map((_, idx) => <a key={idx} className="tag-cloud-link" href={_.url}>{_.title}</a>)}
                                 </div>
                             </div>
                            <RecentPosts />

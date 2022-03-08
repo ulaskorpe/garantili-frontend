@@ -1,4 +1,13 @@
 /** @type Endpoint */
+export const GET_ARTICLES = {
+    path: 'api/site/get-article',
+    method: 'GET',
+    apiKeyRequired: true,
+    pathVars: [],
+    body: [],
+};
+
+/** @type Endpoint */
 export const GET_FAQ_LIST = {
     path: 'api/site/faq-list',
     method: 'GET',

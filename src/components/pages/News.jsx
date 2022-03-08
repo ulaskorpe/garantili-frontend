@@ -3,55 +3,11 @@ import BreadCrumb from "../layout/BreadCrumb";
 import Footer from "../layout/Footer/Footer";
 import HeaderMain from "../layout/Header/Header";
 import TopBar from "../layout/TopBar";
+import {useQuery} from "react-query";
+import {DEFAULT_API_KEY, fetchThis, GET_NEW_LIST, retry} from "../../api";
 
 export default function News(props) {
-
     const { basket, onAddToBasket, removeFromBasket } = props
-    const [posts, setPosts] = useState([
-        {
-            "title": "Id nulla reprehenderit duis dolore adipisicing anim laboris.",
-            "imageUrl": "/assets/images/haber4.jpg",
-            "url": "/bizden-haberler/0",
-            "date": "Şubat 1, 2022",
-            "description": "Quis ad consectetur ipsum eiusmod minim reprehenderit ea mollit qui cillum. Duis nulla amet exercitation est cillum ex."
-        },
-        {
-            "title": "Quis ea dolor nostrud est eiusmod eu reprehenderit nulla.",
-            "imageUrl": "/assets/images/haber1.jpg",
-            "url": "/bizden-haberler/1",
-            "date": "Şubat 1, 2022",
-            "description": "Est laborum eu nisi id sit aliquip minim esse ea. Proident eiusmod ullamco reprehenderit excepteur magna labore."
-        },
-        {
-            "title": "Esse cillum dolor quis culpa qui nostrud laborum.",
-            "imageUrl": "/assets/images/haber2.jpg",
-            "url": "/bizden-haberler/2",
-            "date": "Şubat 1, 2022",
-            "description": "Ullamco nostrud ex anim laborum nulla cillum sunt anim adipisicing aliquip id. Consequat veniam Lorem duis culpa."
-        },
-        {
-            "title": "Qui reprehenderit ex et Lorem veniam cillum nisi nulla.",
-            "imageUrl": "/assets/images/haber3.jpg",
-            "url": "/bizden-haberler/3",
-            "date": "Şubat 1, 2022",
-            "description": "Irure excepteur ea laborum amet consequat aliqua. Incididunt aute incididunt qui reprehenderit id enim velit."
-        },
-        {
-            "title": "Minim pariatur reprehenderit non nulla aute.",
-            "imageUrl": "/assets/images/haber4.jpg",
-            "url": "/bizden-haberler/4",
-            "date": "Şubat 1, 2022",
-            "description": "Tempor consequat ex est amet dolor labore officia pariatur non voluptate id aute ea. Cupidatat eiusmod ad ad sint ad."
-        },
-        {
-            "title": "Amet elit fugiat qui officia excepteur esse culpa.",
-            "imageUrl": "/assets/images/haber1.jpg",
-            "url": "/bizden-haberler/5",
-            "date": "Şubat 1, 2022",
-            "description": "Ipsum et mollit irure velit minim tempor tempor. Consequat ea minim tempor qui officia laborum exercitation ullamco."
-        }
-    ])
-
     const [tags, setTags] = useState([
         {
             "title": "aliquip",
@@ -74,10 +30,26 @@ export default function News(props) {
             "url": "#"
         }
     ])
+    const [crumbs, setCrumb] = useState([{ url: '#', title: 'Haberler' }]);
 
-    const [crumbs, setCrumb] = useState([{ url: '#', title: 'Haberler' }])
+    const news = useQuery(
+        ['getNews'],
+        () => (
+            fetchThis(
+                GET_NEW_LIST,
+                [],
+                DEFAULT_API_KEY,
+                {
+                    start: 0,
+                    len: 10,
+                }
+            )
+        ),
+        { retry, refetchOnWindowFocus: false }
+    );
+
     return (
-        <div id="content" class="right-sidebar blog-grid">
+        <div id="content" className="right-sidebar blog-grid">
             <div id="page" className="hfeed site">
                 <TopBar />
                 <HeaderMain basket={basket}
@@ -88,37 +60,37 @@ export default function News(props) {
                 <div className="col-full">
                     <div className="row">
                         <BreadCrumb crumbs={crumbs} />
-                        <div id="primary" class="content-area">
-                            <main id="main" class="site-main">
-                                {
-                                    posts.map((item, i) => {
+                        <div id="primary" className="content-area">
+                            <main id="main" className="site-main">
+                                {Boolean(news.isSuccess && news.data.status) &&
+                                    news.data.data.map((item, i) => {
                                         return (
-                                            <article class="post format-image hentry">
-                                                <div class="media-attachment">
-                                                    <div class="post-thumbnail">
+                                            <article className="post format-image hentry" key={`article_${i}`}>
+                                                <div className="media-attachment">
+                                                    <div className="post-thumbnail">
                                                         <a href={item.url}>
-                                                            <img alt="" class="wp-post-image" src={item.imageUrl} />
+                                                            <img alt="" className="wp-post-image" src={`https://buyback.garantiliteknoloji.com/${item.imageUrl}`} />
                                                         </a>
                                                     </div>
                                                 </div>
-                                                <div class="content-body">
-                                                    <header class="entry-header">
-                                                        <h1 class="entry-title">
+                                                <div className="content-body">
+                                                    <header className="entry-header">
+                                                        <h1 className="entry-title">
                                                             <a rel="bookmark" href={item.url}>{item.title}</a>
                                                         </h1>
-                                                        <div class="entry-meta">
-                                                            <span class="posted-on">
+                                                        <div className="entry-meta">
+                                                            <span className="posted-on">
                                                                 <a href={item.url} rel="bookmark">
-                                                                    <span class="entry-date published">{item.date}</span>
+                                                                    <span className="entry-date published">{item.date}</span>
                                                                 </a>
                                                             </span>
                                                         </div>
                                                     </header>
-                                                    <div class="entry-content">
+                                                    <div className="entry-content">
                                                         <p>{item.description}</p>
                                                     </div>
-                                                    <div class="post-readmore">
-                                                        <a class="btn btn-primary" href={item.url}>Devamı</a>
+                                                    <div className="post-readmore">
+                                                        <a className="btn btn-primary" href={item.url}>Devamı</a>
                                                     </div>
                                                 </div>
                                             </article>
@@ -127,20 +99,20 @@ export default function News(props) {
                                 }
                             </main>
                         </div>
-                        <div id="secondary" class="sidebar-blog widget-area" role="complementary">
-                            <div class="widget widget_search" id="search-2">
-                                <form action="#" class="search-form" method="get" role="search">
+                        <div id="secondary" className="sidebar-blog widget-area" role="complementary">
+                            <div className="widget widget_search" id="search-2">
+                                <form action="#" className="search-form" method="get" role="search">
                                     <label>
-                                        <span class="screen-reader-text">Arayın:</span>
-                                        <input type="search" name="s" value="" placeholder="Arama …" class="search-field" />
+                                        <span className="screen-reader-text">Arayın:</span>
+                                        <input type="search" name="s" defaultValue="" placeholder="Arama …" className="search-field" />
                                     </label>
-                                    <input type="submit" value="Search" class="search-submit" />
+                                    <input type="submit" defaultValue="Search" className="search-submit" />
                                 </form>
                             </div>
-                            <div class="widget widget_tag_cloud">
-                                <span class="gamma widget-title">Tags Clouds</span>
-                                <div class="tagcloud">
-                                    {tags.map(_ => <a class="tag-cloud-link" href={_.url}>{_.title}</a>)}
+                            <div className="widget widget_tag_cloud">
+                                <span className="gamma widget-title">Tags Clouds</span>
+                                <div className="tagcloud">
+                                    {tags.map((_, idx) => <a className="tag-cloud-link" href={_.url} key={`tag_${idx}`}>{_.title}</a>)}
                                 </div>
                             </div>
                         </div>

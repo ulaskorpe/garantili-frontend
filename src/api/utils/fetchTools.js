@@ -175,5 +175,5 @@ export const retry = (failureCount, error) => {
         403,
         404,
     ];
-    return !noRetryCodes.includes(error?.code);
+    return !noRetryCodes.includes(error?.code) && failureCount <= 2;
 }
