@@ -29,6 +29,10 @@ import ErrorPage from "./components/pages/ErrorPage";
 import ForgetPassword from "./components/pages/ForgetPassword";
 import VerifyAccount from "./components/pages/VerifyAccount";
 import LogOut from "./components/pages/LogOut";
+import Orders from "./components/pages/Orders";
+import MemberInformations from "./components/pages/MemberInformations";
+import Address from "./components/pages/Address";
+import PasswordUpdate from "./components/pages/PasswordUpdate";
 
 const queryClient = new QueryClient();
 
@@ -208,6 +212,10 @@ function App() {
                         )} />
                         <Route path='/takip' element={<OrderFollow basket={basket} removeFromBasket={removeFromBasket} />} />
                         <Route path='/takip-detaylar' element={<FollowDetails basket={basket} removeFromBasket={removeFromBasket} />} />
+                        <Route path='/siparislerim' element={<Orders basket={basket} removeFromBasket={removeFromBasket} />} />
+                        <Route path='/uyelik-bilgilerim' element={<MemberInformations basket={basket} removeFromBasket={removeFromBasket} />} />
+                        <Route path='/adreslerim' element={<Address basket={basket} removeFromBasket={removeFromBasket} />} />
+                        <Route path='/sifre-guncelleme' element={<PasswordUpdate basket={basket} removeFromBasket={removeFromBasket} />} />
                     </Routes>
                 </AuthProvider>
             </QueryClientProvider>

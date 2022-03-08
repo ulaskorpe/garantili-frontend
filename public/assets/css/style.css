@@ -1,38 +1,4 @@
 @charset "UTF-8";
-/*!
-pattern Name:  garantili HTML
-pattern URI:   https://transvelo.github.io/garantili-html/
-Author:         madrasthemes
-Author URI:     https://themeforest.net/user/madrasthemes/portfolio
-Description:  	garantili Html is an answer for new trends in full resolution designs. Clean and smart WooCommerce theme with vertical and horizontal menu variants – ideal for any type of eCommerce shop websites.
-Version:      	1.1.1
-License:      	GNU General Public License v2 or later
-License URI:  	http://www.gnu.org/licenses/gpl-2.0.html
-Text Domain:  	garantili html
-Tags:         	e-commerce, two-columns, left-sidebar, right-sidebar, custom-colors, custom-menu, featured-images, full-width-pattern, threaded-comments, footer-widgets, sticky-post
-
-This pattern, like WordPress, is licensed under the GPL.
-Use it to make something cool, have fun, and share what you've learned with others.
-
-garantili is based on Underscores http://underscores.me/, (C) 2012-2014 Automattic, Inc.
-
-Resetting and rebuilding styles have been helped along thanks to the fine work of
-Eric Meyer http://meyerweb.com/eric/tools/css/reset/index.html
-along with Nicolas Gallagher and Jonathan Neal http://necolas.github.com/normalize.css/
-
-All sizing (typography, layout, padding/margins etc) are inspired by a modular scale that uses 12px/14px as base sizes with a 1.618 ratio.
-We use the excellent modular scale tool built by Tim Brown to calculate this. http://modularscale.com/scale/?px1=14&px2=12&ra1=1.618&ra2=0
-
-FontAwesome License: SIL Open Font License - http://scripts.sil.org/OFL
-Images License: GNU General Public License v2 or later
-
-*/
-/*!
- *  Font Awesome 4.7.0 by @davegandy - http://fontawesome.io - @fontawesome
- *  License - http://fontawesome.io/license (Font: SIL OFL 1.1, CSS: MIT License)
- */
-/* FONT PATH
- * -------------------------- */
 @font-face {
     font-family: 'FontAwesome';
     src: url("../fonts/fontawesome-webfont.eot?v=4.7.0");
@@ -31644,14 +31610,9 @@ ul.order_details li {
     text-transform: uppercase;
 }
 
-ul.order_details li:first-child {
-    padding-top: 1.618em;
-}
 
-ul.order_details li:last-child {
-    border: 0;
-    padding-bottom: 1.618em;
-}
+
+
 
 ul.order_details li strong {
     display: block;
@@ -33300,17 +33261,6 @@ dl.variation dd {
 .products .product .sale-saved-label .saved-label-text {
     font-size: 0.526em;
     line-height: 1.4;
-}
-
-.products .is-placeholder.product:focus, .products .is-placeholder.product:hover {
-    border-color: transparent !important;
-    cursor: wait;
-}
-#grid .products .is-placeholder.product:hover::before {
-    opacity: 1 !important;
-}
-.is-placeholder .star-rating span:before {
-    color: #eaeaea !important;
 }
 
 @media (min-width: 1140px) {
@@ -37551,7 +37501,7 @@ form.track_order input[type="submit"] {
     display: block;
     position: relative;
     bottom: -1px;
-    margin-left: 20%;
+    /* margin-left: 20%; */
     padding-top: 9px;
     margin-right: 20%;
 }
@@ -37976,10 +37926,21 @@ form.track_order input[type="submit"] {
     .footer-widgets .columns:first-child .widget {
         margin-left:0;
       }
+
+      .order-cost-position {
+          text-align: left;
+      }
+}
+
+.order-cost-position {
+    text-align: right;
 }
 
 
 @media (max-width:575px) {
+    .order-cost-position {
+        text-align: left;
+    }
     .footer-info{
         margin-left:auto;
         margin-right: auto;
@@ -38164,6 +38125,19 @@ form.track_order input[type="submit"] {
 .right-seperator{
     border-right:1px solid #E0E0E0;
 }
+.top-gray-seperator{
+    border-top:1px solid #555353;
+}
+.bottom-gray-seperator{
+    border-bottom:1px solid #ECECEC;
+    padding-bottom:10px;
+}
+.top-seperator{
+    border-top:1px solid #eceeef;
+}
+.bottom-seperator{
+    border-bottom:1px solid #eceeef;
+}
 
 .m-tb {
     margin-top:0px;
@@ -38173,6 +38147,21 @@ form.track_order input[type="submit"] {
 .pb-0 {
     padding-bottom:0px !important;
 }
+.pr-0 {
+
+}
 .mb-4 {
     margin-bottom:3px !important;
+}
+
+.mr-0{
+    margin-right: 0 !important;
+    margin-left: auto !important;
+}
+
+.mt-15px {
+    margin-top:15px;
+}
+.f-12px {
+    font-size:13px;
 }
