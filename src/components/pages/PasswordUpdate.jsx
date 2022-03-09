@@ -1,19 +1,142 @@
-import React  from 'react';
+import React, {useCallback, useEffect} from 'react';
+import {Formik} from 'formik';
 import Footer from "../layout/Footer/Footer"
 import HeaderMain from "../layout/Header/Header"
 import TopBar from "../layout/TopBar"
 import BreadCrumb from "../layout/BreadCrumb"
 import { useState } from "react"
+import {useMutation} from "react-query";
+import {CUSTOMER_UPDATE_PASSWORD, DEFAULT_API_KEY, fetchThis} from "../../api";
+import sweetalert from "sweetalert";
+import {useAuth} from "../../context";
+import {useLocation, useNavigate} from "react-router-dom";
 
+const initialValues = {
+    current_password: '',
+    new_password: '',
+    new_password_again: '',
+};
 function PasswordUpdate(props) {
-
     const { basket, onAddToBasket, removeFromBasket } = props
-
+    const navigate = useNavigate();
+    const location = useLocation();
+    const [loading, setLoading] = useState(false);
+    const { state: account, isLogged = false } = useAuth();
     const [crumb, setCrumb] = useState([
         { url: '#', title: 'Şifre Güncelleme' }
-    ])
+    ]);
 
+    const updatePasswordMutation = useMutation((data) => (
+        fetchThis(
+            CUSTOMER_UPDATE_PASSWORD,
+            data,
+            DEFAULT_API_KEY,
+            {},
+        )
+    ));
 
+    const handleSubmit = useCallback((iValues, { setSubmitting, resetForm }) => {
+        if (!isLogged) return;
+        const values = JSON.parse(JSON.stringify(iValues));
+
+        delete values.new_password_again;
+        values.password = values.new_password;
+        delete values.new_password;
+        values.customer_id = parseInt(account.customer_id);
+
+        setSubmitting(true);
+        setLoading(true);
+        updatePasswordMutation?.mutate(values, {
+            onSuccess: ({ status = false, errors = { msg: '' }, data = {}}) => {
+                if (!status) {
+                    sweetalert({
+                        icon: 'error',
+                        title: 'Hata',
+                        text: errors?.msg || 'Bilinmeyen bir hata ile karşılaşıldı!',
+                        button: null,
+                    }).then();
+                } else {
+                    sweetalert({
+                        icon: 'success',
+                        title: 'Başarılı',
+                        text: 'Şifren başarıyla sıfırlandı.',
+                        button: null,
+                    }).then(() => {
+                        resetForm();
+                    });
+                }
+                setSubmitting(false);
+                setLoading(false);
+            },
+            onError: (error, data) => {
+                if (!(error?.code === 'not_verified')) {
+                    sweetalert({
+                        icon: 'error',
+                        title: 'Hata',
+                        text: error?.message || error || 'Bilinmeyen bir hata ile karşılaşıldı!',
+                        button: null,
+                    }).then();
+                }
+                setSubmitting(false);
+                setLoading(false);
+            },
+        });
+    }, [account, isLogged]);
+
+    const validateForm = (values) => {
+        const errors = {};
+        const errorMessages = {
+            required: 'Bu alan zorunlu!',
+        }
+
+        if (!values.current_password) {
+            errors.current_password = errorMessages.required;
+        }
+        if (!values.new_password) {
+            errors.new_password = errorMessages.required;
+        }
+        if (!values.new_password_again) {
+            errors.new_password_again = errorMessages.required;
+        }
+        if (
+            values.new_password
+            && values.new_password_again
+            && values.new_password !== values.new_password_again
+        ) {
+            errors.new_password = 'Şifreler uyuşmuyor!';
+            errors.new_password_again = 'Şifreler uyuşmuyor!';
+        }
+
+        return errors;
+    }
+
+    const isLoading = useCallback((isSubmitting = false) => (
+        loading || isSubmitting || updatePasswordMutation?.isLoading
+    ), [loading, updatePasswordMutation]);
+    const submitIsDisabled = useCallback((isSubmitting, errors = {}, values, validator) => (
+        isLoading(isSubmitting) || Boolean(Object.keys(errors).length) || Boolean(Object.keys(validator(values)).length)
+    ), [isLoading]);
+
+    useEffect(() => {
+        if (
+            !loading
+            && updatePasswordMutation?.isLoading
+        ) {
+            setLoading(true);
+        }
+    }, [loading, setLoading, updatePasswordMutation?.isLoading]);
+
+    useEffect(() => {
+        if (!isLogged) {
+            navigate(
+                '/login',
+                {
+                    fromTo: location,
+                    replace: false,
+                }
+            );
+        }
+    }, [isLogged]);
 
     return (
         <div className="woocommerce-active left-sidebar">
@@ -29,63 +152,144 @@ function PasswordUpdate(props) {
                         <BreadCrumb crumbs={crumb} />
                         <div id="primary" className="content-area">
                             <main id="main" className="site-main">
-
-                                <div class="type-page hentry">
-
-                                    <div class="entry-content">
-                                        <div class="row contact-info">
-                                            <div class="col-md-12 left-col">
-                                                <div class="text-block">
-                                                    <h2 class="contact-page-title">Şifre Güncelleme</h2>
-
+                                <div className="type-page hentry">
+                                    <div className="entry-content">
+                                        <div className="row contact-info">
+                                            <div className="col-md-12 left-col">
+                                                <div className="text-block">
+                                                    <h2 className="contact-page-title">Şifre Güncelleme</h2>
                                                 </div>
-                                                <div class="contact-form">
-                                                    <div role="form" class="wpcf7" id="wpcf7-f425-o1" lang="en-US" dir="ltr">
-                                                        <div class="screen-reader-response"></div>
-                                                        <form class="wpcf7-form" novalidate="novalidate">
-                                                            <div class="form-group row">
-                                                                <div class="col-xs-12 col-md-6">
-                                                                    <label>Mevcut Şifre
-                                                                        <abbr title="required" class="required">*</abbr>
-                                                                    </label>
-                                                                    <br />
-                                                                    <span class="wpcf7-form-control-wrap first-name">
-                                                                        <input type="password" aria-invalid="false" aria-required="true"
-                                                                            class="wpcf7-form-control wpcf7-text wpcf7-validates-as-required input-text"
-                                                                            size="40" name="current-password" />
-                                                                    </span>
-                                                                </div>
-                                                            </div>
-                                                            <div class="form-group row">
-                                                                <div class="col-xs-12 col-md-6">
-                                                                    <label>Yeni Şifre
-                                                                        <abbr title="required" class="required">*</abbr>
-                                                                    </label>
-                                                                    <span class="wpcf7-form-control-wrap last-name">
-                                                                        <input type="password" aria-invalid="false" aria-required="true"
-                                                                            class="wpcf7-form-control wpcf7-text wpcf7-validates-as-required input-text"
-                                                                            size="40" name="new-password" />
-                                                                    </span>
-                                                                </div>
-                                                                <div class="col-xs-12 col-md-6">
-                                                                    <label>Yeni Şifre
-                                                                        <abbr title="required" class="required">*</abbr>
-                                                                    </label>
-                                                                    <span class="wpcf7-form-control-wrap last-name">
-                                                                        <input type="password" aria-invalid="false" aria-required="true"
-                                                                            class="wpcf7-form-control wpcf7-text wpcf7-validates-as-required input-text"
-                                                                            size="40" name="new-password-again" />
-                                                                    </span>
-                                                                </div>
-                                                            </div>
+                                                <div className="contact-form">
+                                                    <div role="form" className="wpcf7" id="wpcf7-f425-o1" lang="en-US" dir="ltr">
+                                                        <div className="screen-reader-response" />
+                                                        <Formik
+                                                            initialValues={initialValues}
+                                                            validate={validateForm}
+                                                            onSubmit={handleSubmit}
+                                                        >
+                                                            {({
+                                                                  values,
+                                                                  errors,
+                                                                  touched,
+                                                                  handleChange,
+                                                                  handleBlur,
+                                                                  handleSubmit,
+                                                                  isSubmitting,
+                                                              }) => (
+                                                                <form
+                                                                    className="wpcf7-form"
+                                                                    noValidate="novalidate"
+                                                                    onSubmit={handleSubmit}
+                                                                >
+                                                                    <div className="form-group row">
+                                                                        <div
+                                                                            className="col-xs-12 col-md-6"
+                                                                            style={{ color: errors.current_password && touched.current_password && errors.current_password ? '#F44336' : 'inherit' }}
+                                                                        >
+                                                                            <label style={{ color: 'inherit' }}>
+                                                                                Mevcut Şifre
+                                                                                <abbr title="required"
+                                                                                      className="required">*</abbr>
+                                                                            </label>
+                                                                            <br/>
+                                                                            <div
+                                                                                className="wpcf7-form-control-wrap first-name"
+                                                                            >
+                                                                                <input
+                                                                                    autoComplete="on"
+                                                                                    disabled={isLoading(isSubmitting)}
+                                                                                    name="current_password"
+                                                                                    onChange={handleChange}
+                                                                                    onBlur={handleBlur}
+                                                                                    value={values.current_password}
+                                                                                    type="password"
+                                                                                    aria-invalid="false"
+                                                                                    aria-required="true"
+                                                                                    className="wpcf7-form-control wpcf7-text wpcf7-validates-as-required input-text"
+                                                                                    size="40"
+                                                                                    style={{ borderColor: errors.current_password && touched.current_password && errors.current_password ? '#F44336' : '#ebebeb' }}
+                                                                                />
+                                                                                {errors.current_password && touched.current_password && errors.current_password}
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div
+                                                                        className="form-group row"
+                                                                    >
+                                                                        <div
+                                                                            className="col-xs-12 col-md-6"
+                                                                            style={{ color: errors.new_password && touched.new_password && errors.new_password ? '#F44336' : 'inherit' }}
+                                                                        >
+                                                                            <label style={{ color: 'inherit' }}>
+                                                                                Yeni Şifre
+                                                                                <abbr title="required"
+                                                                                      className="required">*</abbr>
+                                                                            </label>
+                                                                            <div
+                                                                                className="wpcf7-form-control-wrap last-name">
+                                                                                <input
+                                                                                    autoComplete="off"
+                                                                                    disabled={isLoading(isSubmitting)}
+                                                                                    name="new_password"
+                                                                                    onChange={handleChange}
+                                                                                    onBlur={handleBlur}
+                                                                                    value={values.new_password}
+                                                                                    type="password"
+                                                                                    aria-invalid="false"
+                                                                                    aria-required="true"
+                                                                                    className="wpcf7-form-control wpcf7-text wpcf7-validates-as-required input-text"
+                                                                                    size="40"
+                                                                                    style={{ borderColor: errors.new_password && touched.new_password && errors.new_password ? '#F44336' : '#ebebeb' }}
+                                                                                />
+                                                                                {errors.new_password && touched.new_password && errors.new_password}
+                                                                            </div>
+                                                                        </div>
+                                                                        <div
+                                                                            className="col-xs-12 col-md-6"
+                                                                            style={{ color: errors.new_password_again && touched.new_password_again && errors.new_password_again ? '#F44336' : 'inherit' }}
+                                                                        >
+                                                                            <label style={{ color: 'inherit' }}>
+                                                                                Yeni Şifre
+                                                                                <abbr title="required"
+                                                                                      className="required">*</abbr>
+                                                                            </label>
+                                                                            <div
+                                                                                className="wpcf7-form-control-wrap last-name">
+                                                                                <input
+                                                                                    autoComplete="off"
+                                                                                    disabled={isLoading(isSubmitting)}
+                                                                                    name="new_password_again"
+                                                                                    onChange={handleChange}
+                                                                                    onBlur={handleBlur}
+                                                                                    value={values.new_password_again}
+                                                                                    type="password"
+                                                                                    aria-invalid="false"
+                                                                                    aria-required="true"
+                                                                                    className="wpcf7-form-control wpcf7-text wpcf7-validates-as-required input-text"
+                                                                                    size="40"
+                                                                                    style={{ borderColor: errors.new_password_again && touched.new_password_again && errors.new_password_again ? '#F44336' : '#ebebeb' }}
+                                                                                />
+                                                                                {errors.new_password_again && touched.new_password_again && errors.new_password_again}
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
 
-                                                            <div class="form-group clearfix">
-                                                                <p>
-                                                                    <input type="submit" value="Kaydet" class="wpcf7-form-control wpcf7-submit btn-navy" />
-                                                                </p>
-                                                            </div>
-                                                            <div class="wpcf7-response-output wpcf7-display-none"></div>
-                                                        </form>
+                                                                    <div className="form-group clearfix">
+                                                                        <p>
+                                                                            <input
+                                                                                type="submit"
+                                                                                value="Kaydet"
+                                                                                className="wpcf7-form-control wpcf7-submit btn-navy"
+                                                                                disabled={submitIsDisabled(isSubmitting, errors, values, validateForm)}
+                                                                            />
+                                                                        </p>
+                                                                    </div>
+                                                                    <div
+                                                                        className="wpcf7-response-output wpcf7-display-none" />
+                                                                </form>
+                                                            )
+                                                            }
+                                                        </Formik>
                                                     </div>
                                                 </div>
                                             </div>
@@ -94,31 +298,31 @@ function PasswordUpdate(props) {
                                 </div>
                             </main>
                         </div>
-                        <div id="secondary" class="widget-area shop-sidebar" role="complementary">
+                        <div id="secondary" className="widget-area shop-sidebar" role="complementary">
                             <div id="garantili_product_categories_widget-2"
-                                class="widget woocommerce widget_product_categories garantili_widget_product_categories">
-                                <ul class="product-categories ">
-                                    <li class="product_cat">
+                                className="widget woocommerce widget_product_categories garantili_widget_product_categories">
+                                <ul className="product-categories ">
+                                    <li className="product_cat">
                                         <span>Kullanıcı Bilgilerim</span>
                                         <ul>
-                                            <li class="cat-item">
+                                            <li className="cat-item">
                                                 <a href="/uyelik-bilgilerim">
-                                                    <span class="no-child"></span>Üyelik Bilgilerim</a>
+                                                    <span className="no-child"></span>Üyelik Bilgilerim</a>
                                             </li>
-                                            <li class="cat-item">
+                                            <li className="cat-item">
                                                 <a href="/sifre-guncelleme">
-                                                    <span class="no-child"></span><strong>Şifre Güncelleme</strong></a>
+                                                    <span className="no-child"></span><strong>Şifre Güncelleme</strong></a>
                                             </li>
-                                            <li class="cat-item  current-cat">
+                                            <li className="cat-item  current-cat">
                                                 <a href="/adreslerim">
-                                                    <span class="no-child"></span>Adres Bilgilerim</a>
+                                                    <span className="no-child"></span>Adres Bilgilerim</a>
                                             </li>
 
                                         </ul>
                                     </li>
-                                    <li class="product_cat">
+                                    <li className="product_cat">
                                         <ul>
-                                            <li class="cat-item">
+                                            <li className="cat-item">
                                                 <a href="/siparislerim">
                                                     Siparişlerim</a>
                                             </li>

@@ -44,7 +44,7 @@ export const fetchThis = async (
     }
 
     if (pathVars.length > 0) {
-        pathVars.forEach((pathVar) => {
+        pathVars?.forEach((pathVar) => {
             const isOptional = pathVar[0] === '?';
             if (isOptional) pathVar = pathVar.slice(1);
 

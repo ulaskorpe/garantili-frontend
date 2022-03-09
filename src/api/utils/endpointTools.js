@@ -17,7 +17,7 @@ export const endpointToURL = (
     const conditionRegEx = /\(\?\S*:.*\)/g;
     let path = endpoint.path;
 
-    conditionRegEx.exec(path).forEach((result) => {
+    conditionRegEx.exec(path)?.forEach((result) => {
         const variableName = result.slice(2, result.length-1).split(':')[0];
         const condVal = result.slice(2,result.length-1).split(':')[1];
 
@@ -41,6 +41,5 @@ export const endpointToURL = (
         if (pathVal === pVarIsNull) value = '';
         path = path.replace(`{${key}}`, value);
     });
-    console.log(pathValues['query']);
     return `${API_URL}/${path || ''}`;
 };

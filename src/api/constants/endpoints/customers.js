@@ -63,3 +63,16 @@ export const CUSTOMER_RESEND_ACTIVE_CODE = {
         { name: 'ip_address', type: String, default: '1.1.1.1.',  isRequired: false },
     ],
 };
+
+/** @type Endpoint */
+export const CUSTOMER_UPDATE_PASSWORD = {
+    path: 'api/customers/update-password',
+    method: 'POST',
+    apiKeyRequired: true,
+    pathVars: [],
+    body: [
+        { name: 'customer_id', type: Number, default: '',  isRequired: true },
+        { name: 'current_password', type: String, default: '',  isRequired: true },
+        { name: 'password', type: String, default: '',  isRequired: true },
+    ],
+};
