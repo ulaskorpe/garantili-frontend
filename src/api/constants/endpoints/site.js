@@ -18,10 +18,10 @@ export const GET_FAQ_LIST = {
 
 /** @type Endpoint */
 export const GET_NEW_LIST = {
-    path: 'api/site/news/{start}/{len}',
+    path: 'api/site/news/{start}/{len}(?query:/){query}',
     method: 'GET',
     apiKeyRequired: true,
-    pathVars: [ 'start', 'len' ],
+    pathVars: [ 'start', 'len', '?query' ],
     body: [],
 };
 

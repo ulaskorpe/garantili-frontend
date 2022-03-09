@@ -1,4 +1,4 @@
-import {endpointToURL} from "./endpointTools";
+import {endpointToURL, pVarIsNull} from "./endpointTools";
 
 /** @type {boolean} isDev */
 const isDev = process.env?.NODE_ENV === 'development';
@@ -45,12 +45,15 @@ export const fetchThis = async (
 
     if (pathVars.length > 0) {
         pathVars.forEach((pathVar) => {
+            const isOptional = pathVar[0] === '?';
+            if (isOptional) pathVar = pathVar.slice(1);
+
             const val = endpointPathVars && endpointPathVars[pathVar];
             if (typeof val !== 'undefined') {
-                pVals[pathVar] = val;
+                pVals[pathVar] = val === null ? pVarIsNull : val;
             } else {
                 if (isDev) {
-                    const errorMessage = `${path} pathvar gönderilmedi`;
+                    const errorMessage = `${pathVar} değeri gönderilmedi`;
                     throw {
                         name: 'PathVarError',
                         message: errorMessage,
