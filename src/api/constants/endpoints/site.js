@@ -27,7 +27,7 @@ export const GET_NEW_LIST = {
 
 /** @type Endpoint */
 export const GET_NEW_DETAIL = {
-    path: 'api/site/news/{id}/1',
+    path: 'api/site/news-detail/{id}',
     method: 'GET',
     apiKeyRequired: true,
     pathVars: [ 'id' ],

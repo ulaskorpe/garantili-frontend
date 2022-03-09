@@ -1,13 +1,13 @@
-import {useMemo, useReducer} from "react";
+import React, {useMemo, useReducer} from "react";
 import {basketReducer} from "./reducer";
 import {BasketContext} from "./context";
-import {BASKET_SET, INITIAL_AUTH_STATE} from "./constants";
+import {BASKET_SET, INITIAL_BASKET_STATE} from "./constants";
 
 export const BasketProvider = ({ children }) => {
     const [
         state,
         dispatch = (action) => null
-    ] = useReducer(basketReducer, INITIAL_AUTH_STATE);
+    ] = useReducer(basketReducer, INITIAL_BASKET_STATE);
 
     const localData = localStorage?.getItem('_basket')
     if (

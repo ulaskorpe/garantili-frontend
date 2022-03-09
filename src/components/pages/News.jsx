@@ -8,28 +8,28 @@ import {DEFAULT_API_KEY, fetchThis, GET_NEW_LIST, retry} from "../../api";
 
 export default function News(props) {
     const { basket, onAddToBasket, removeFromBasket } = props
-    const [tags, setTags] = useState([
-        {
-            "title": "aliquip",
-            "url": "#"
-        },
-        {
-            "title": "deserunt",
-            "url": "#"
-        },
-        {
-            "title": "elit",
-            "url": "#"
-        },
-        {
-            "title": "officia",
-            "url": "#"
-        },
-        {
-            "title": "ex",
-            "url": "#"
-        }
-    ])
+    // const [tags, setTags] = useState([
+    //     {
+    //         "title": "aliquip",
+    //         "url": "#"
+    //     },
+    //     {
+    //         "title": "deserunt",
+    //         "url": "#"
+    //     },
+    //     {
+    //         "title": "elit",
+    //         "url": "#"
+    //     },
+    //     {
+    //         "title": "officia",
+    //         "url": "#"
+    //     },
+    //     {
+    //         "title": "ex",
+    //         "url": "#"
+    //     }
+    // ]);
     const [crumbs, setCrumb] = useState([{ url: '#', title: 'Haberler' }]);
 
     const news = useQuery(
@@ -109,12 +109,12 @@ export default function News(props) {
                                     <input type="submit" defaultValue="Search" className="search-submit" />
                                 </form>
                             </div>
-                            <div className="widget widget_tag_cloud">
-                                <span className="gamma widget-title">Tags Clouds</span>
-                                <div className="tagcloud">
-                                    {tags.map((_, idx) => <a className="tag-cloud-link" href={_.url} key={`tag_${idx}`}>{_.title}</a>)}
-                                </div>
-                            </div>
+                            {/*<div className="widget widget_tag_cloud">*/}
+                            {/*    <span className="gamma widget-title">Tags Clouds</span>*/}
+                            {/*    <div className="tagcloud">*/}
+                            {/*        {tags.map((_, idx) => <a className="tag-cloud-link" href={_.url} key={`tag_${idx}`}>{_.title}</a>)}*/}
+                            {/*    </div>*/}
+                            {/*</div>*/}
                         </div>
                     </div>
                 </div>

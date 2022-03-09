@@ -1,4 +1,4 @@
-import {BASKET_SET, BASKET_REMOVE, INITIAL_AUTH_STATE, BASKET_UPDATE, BASKET_ADD} from "./constants";
+import {BASKET_SET, BASKET_REMOVE, INITIAL_BASKET_STATE, BASKET_UPDATE, BASKET_ADD} from "./constants";
 
 export const basketLSKey = '_basket';
 
@@ -18,15 +18,15 @@ export const basketReducer = (
         }
 
         case BASKET_UPDATE: {
-            return INITIAL_AUTH_STATE;
+            return INITIAL_BASKET_STATE;
         }
 
         case BASKET_ADD: {
-            return INITIAL_AUTH_STATE;
+            return INITIAL_BASKET_STATE;
         }
 
         case BASKET_REMOVE: {
-            return INITIAL_AUTH_STATE;
+            return INITIAL_BASKET_STATE;
         }
 
         default: {

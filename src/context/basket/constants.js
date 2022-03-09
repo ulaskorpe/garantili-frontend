@@ -1,4 +1,4 @@
-export const INITIAL_AUTH_STATE = null;
+export const INITIAL_BASKET_STATE = null;
 
 /**/
 export const BASKET_SET = 'basket/set';
