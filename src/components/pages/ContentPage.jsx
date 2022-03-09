@@ -1,3 +1,4 @@
+import React from 'react';
 import { useParams } from "react-router-dom";
 import BreadCrumb from "../layout/BreadCrumb";
 import Footer from "../layout/Footer/Footer";

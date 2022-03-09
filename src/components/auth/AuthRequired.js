@@ -1,3 +1,4 @@
+import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import {INITIAL_AUTH_STATE, useAuth} from "../../context/auth";
 import ErrorPage from "../pages/ErrorPage";
