@@ -62,7 +62,8 @@ function Login(props) {
         successMessage,
         resetForm,
         setSubmitting,
-        cb = (data) => null
+        cb = (data) => null,
+        waitSweetThen = true,
     ) => ({ status = false, errors = { msg: '' }, data = {}}) => {
         if (!status) {
             sweetalert({
@@ -79,8 +80,9 @@ function Login(props) {
                 button: null,
             }).then(() => {
                 resetForm();
-                cb(data);
+                if (waitSweetThen && cb) cb(data);
             });
+            if (!waitSweetThen && cb) cb(data);
         }
         setSubmitting(false);
         setLoading(false);
@@ -95,7 +97,8 @@ function Login(props) {
                 setSubmitting,
                 (data) => {
                     login(data);
-                }
+                },
+                false,
             ),
             onError: onError(
                 setSubmitting,

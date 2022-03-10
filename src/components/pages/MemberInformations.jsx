@@ -1,28 +1,169 @@
-import React from 'react';
+import "react-datepicker/dist/react-datepicker.css";
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import Footer from "../layout/Footer/Footer"
 import HeaderMain from "../layout/Header/Header"
 import TopBar from "../layout/TopBar"
 import BreadCrumb from "../layout/BreadCrumb"
-import { useState } from "react"
-import OrderItemList from "../ordercomponents/OrderItemList"
-import OrderBox from "../ordercomponents/OrderBox"
+import {Formik, Form, Field, ErrorMessage} from "formik";
+import DatePickerField from "../fields/DatePickerField";
+import PhoneInputField from "../fields/PhoneInputField";
+import sweetalert from "sweetalert";
+import {useAuth} from "../../context";
+import {useMutation} from "react-query";
+import {CUSTOMER_UPDATE, DEFAULT_API_KEY, fetchThis} from "../../api";
+import {useLocation, useNavigate} from "react-router-dom";
+import moment from "moment";
 
 function MemberInformations(props) {
+    const { basket, removeFromBasket } = props;
 
-    const { basket, onAddToBasket, removeFromBasket } = props
-
-    const [crumb, setCrumb] = useState([
+    const formikRef = useRef();
+    const navigate = useNavigate();
+    const location = useLocation();
+    const { state: account, isLogged = false, update } = useAuth();
+    const [loading, setLoading] = useState(false);
+    const [crumb] = useState([
         { url: '#', title: 'Üyelik Bilgilerim' }
-    ])
+    ]);
 
-    const [member, setMember] = useState({
-        name: 'Garantili',
-        lastName: 'Teknoloji',
-        birthDate: '01/01/2022',
-        phone: '0212-222-22-22',
-        email: 'info@garantiliteknoloji.com.tr',
-        gender: "male"
-    })
+    const updateCustomerMutation = useMutation((data) => (
+        fetchThis(
+            CUSTOMER_UPDATE,
+            data,
+            DEFAULT_API_KEY,
+            {},
+        )
+    ));
+
+    const isLoading = useCallback((isSubmitting = false) => (
+        loading || isSubmitting || updateCustomerMutation?.isLoading
+    ), [loading, updateCustomerMutation]);
+    const submitIsDisabled = useCallback((isSubmitting, errors = {}, values, validator) => (
+        isLoading(isSubmitting) || Boolean(Object.keys(errors).length) || Boolean(Object.keys(validator(values)).length)
+    ), [isLoading]);
+
+    const handleSubmit = useCallback((iValues, {
+        setSubmitting,
+        resetForm
+    }) => {
+        if (!isLogged) return;
+        const values = JSON.parse(JSON.stringify(iValues));
+        values.birthdate = moment(iValues.birthdate).format('DD/MM/yyyy');
+        values.customer_id = parseInt(account.customer_id);
+
+        setSubmitting(true);
+        setLoading(true);
+        updateCustomerMutation?.mutate(values, {
+            onSuccess: ({ status = false, errors = { msg: '' }, data = {}}) => {
+                if (!status) {
+                    sweetalert({
+                        icon: 'error',
+                        title: 'Hata',
+                        text: errors?.msg || 'Bilinmeyen bir hata ile karşılaşıldı!',
+                        button: null,
+                    }).then();
+                } else {
+                    sweetalert({
+                        icon: 'success',
+                        title: 'Başarılı',
+                        text: 'Bilgilerin başarıyla güncellendi.',
+                        button: null,
+                    }).then(() => {
+                        update(values);
+                    });
+                }
+                setSubmitting(false);
+                setLoading(false);
+            },
+            onError: (error, data) => {
+                sweetalert({
+                    icon: 'error',
+                    title: 'Hata',
+                    text: error?.message || error || 'Bilinmeyen bir hata ile karşılaşıldı!',
+                    button: null,
+                }).then();
+                setSubmitting(false);
+                setLoading(false);
+            },
+        });
+    }, [account, isLogged]);
+
+    const validateForm = (values) => {
+        const errors = {};
+        const errorMessages = {
+            required: 'Bu alan zorunlu!',
+        }
+
+        if (!values.name) {
+            errors.name = errorMessages.required;
+        }
+        if (!values.surname) {
+            errors.surname = errorMessages.required;
+        }
+        if (!values.birthdate) {
+            errors.birthdate = errorMessages.required;
+        }
+        if (!values.gender) {
+            errors.gender = errorMessages.required;
+        }
+        if (!values.email) {
+            errors.email = errorMessages.required;
+        }
+        if (!values.phone) {
+            errors.phone = errorMessages.required;
+        } else if (values.phone.length !== 13) {
+            errors.phone = 'Hatalı telefon numarası!';
+        }
+
+        return errors;
+    }
+
+    useEffect(() => {
+        if (
+            isLogged
+            && formikRef
+            && formikRef.current
+            && formikRef.current.setFieldValue
+        ) {
+            formikRef.current.setFieldValue(
+                'name',
+                account?.name || '',
+            );
+            formikRef.current.setFieldValue(
+                'surname',
+                account?.surname || '',
+            );
+            formikRef.current.setFieldValue(
+                'gender',
+                account?.gender || '',
+            );
+            formikRef.current.setFieldValue(
+                'birthdate',
+                account?.birthdate || '',
+            );
+            formikRef.current.setFieldValue(
+                'email',
+                account?.email || '',
+            );
+            formikRef.current.setFieldValue(
+                'phone',
+                account?.phone || '+90',
+            );
+        }
+    }, [isLogged, account, formikRef])
+
+    useEffect(() => {
+        if (!isLogged) {
+            navigate(
+                '/login',
+                {
+                    fromTo: location,
+                    replace: false,
+                }
+            );
+        }
+
+    }, [isLogged]);
 
     return (
         <div className="woocommerce-active left-sidebar">
@@ -38,100 +179,168 @@ function MemberInformations(props) {
                         <BreadCrumb crumbs={crumb} />
                         <div id="primary" className="content-area">
                             <main id="main" className="site-main">
-
-                                <div class="type-page hentry">
-
-                                    <div class="entry-content">
-                                        <div class="row contact-info">
-                                            <div class="col-md-12 left-col">
-                                                <div class="text-block">
-                                                    <h2 class="contact-page-title">Üyelik Bilgilerim</h2>
-
+                                <div className="type-page hentry">
+                                    <div className="entry-content">
+                                        <div className="row contact-info">
+                                            <div className="col-md-12 left-col">
+                                                <div className="text-block">
+                                                    <h2 className="contact-page-title">Üyelik Bilgilerim</h2>
                                                 </div>
-                                                <div class="contact-form">
-                                                    <div role="form" class="wpcf7" id="wpcf7-f425-o1" lang="en-US" dir="ltr">
-                                                        <div class="screen-reader-response"></div>
-                                                        <form class="wpcf7-form" novalidate="novalidate">
-                                                            <div class="form-group row">
-                                                                <div class="col-xs-12 col-md-6">
-                                                                    <label>Adınız
-                                                                        <abbr title="required" class="required">*</abbr>
-                                                                    </label>
-                                                                    <br />
-                                                                    <span class="wpcf7-form-control-wrap first-name">
-                                                                        <input type="text" aria-invalid="false" aria-required="true"
-                                                                            class="wpcf7-form-control wpcf7-text wpcf7-validates-as-required input-text"
-                                                                            size="40" value={member.name} name="first-name" />
-                                                                    </span>
-                                                                </div>
-                                                                <div class="col-xs-12 col-md-6">
-                                                                    <label>Soyadınız
-                                                                        <abbr title="required" class="required">*</abbr>
-                                                                    </label>
-                                                                    <br />
-                                                                    <span class="wpcf7-form-control-wrap last-name">
-                                                                        <input type="text" aria-invalid="false" aria-required="true"
-                                                                            class="wpcf7-form-control wpcf7-text wpcf7-validates-as-required input-text"
-                                                                            size="40" value={member.lastName} name="last-name" />
-                                                                    </span>
-                                                                </div>
-                                                            </div>
-                                                            <div class="form-group row">
-                                                                <div class="col-xs-12 col-md-6">
-                                                                    <label>Doğum Tarihi
-                                                                        <abbr title="required" class="required">*</abbr>
-                                                                    </label>
-                                                                    <span class="wpcf7-form-control-wrap last-name">
-                                                                        <input type="text" aria-invalid="false" aria-required="true"
-                                                                            class="wpcf7-form-control wpcf7-text wpcf7-validates-as-required input-text"
-                                                                            size="40" value={member.birthDate} name="birthdate" />
-                                                                    </span>
-                                                                </div>
-                                                                <div class="col-xs-12 col-md-6">
-                                                                    <label>Cinsiyet
-                                                                        <abbr title="required" class="required">*</abbr>
-                                                                    </label>
-                                                                    <span class="wpcf7-form-control-wrap first-name">
-                                                                        <br />
-                                                                        <select className="wpcf7-form-control wpcf7-text wpcf7-validates-as-required input-text" value={member.gender}>
-                                                                            <option disabled></option>
-                                                                            <option value="male">Erkek</option>
-                                                                            <option value="female">Kadın</option>
-                                                                        </select>
-                                                                    </span>
-                                                                </div>
-                                                            </div>
-                                                            <div class="form-group row">
-                                                                <div class="col-xs-12 col-md-6">
-                                                                    <label>E-Posta
-                                                                        <abbr title="required" class="required">*</abbr>
-                                                                    </label>
-                                                                    <br />
-                                                                    <span class="wpcf7-form-control-wrap first-name">
-                                                                        <input type="email" aria-invalid="false" aria-required="true"
-                                                                            class="wpcf7-form-control wpcf7-text wpcf7-validates-as-required input-text"
-                                                                            size="40" value={member.email} name="email" />
-                                                                    </span>
-                                                                </div>
-                                                                <div class="col-xs-12 col-md-6">
-                                                                    <label>Telefon
-                                                                        <abbr title="required" class="required">*</abbr>
-                                                                    </label>
-                                                                    <br />
-                                                                    <span class="wpcf7-form-control-wrap last-name">
-                                                                        <input type="text" aria-invalid="false" aria-required="true"
-                                                                            class="wpcf7-form-control wpcf7-text wpcf7-validates-as-required input-text"
-                                                                            size="40" value={member.phone} name="last-name" />
-                                                                    </span>
-                                                                </div>
-                                                            </div>
-                                                            <div class="form-group clearfix">
-                                                                <p>
-                                                                    <input type="submit" value="Kaydet" class="wpcf7-form-control wpcf7-submit btn-navy" />
-                                                                </p>
-                                                            </div>
-                                                            <div class="wpcf7-response-output wpcf7-display-none"></div>
-                                                        </form>
+                                                <div className="contact-form">
+                                                    <div role="form" className="wpcf7" id="wpcf7-f425-o1" lang="en-US" dir="ltr">
+                                                        <div className="screen-reader-response" />
+                                                        <Formik
+                                                            innerRef={formikRef}
+                                                            initialValues={{
+                                                                name: '',
+                                                                surname: '',
+                                                                gender: '',
+                                                                birthdate: '',
+                                                                email: '',
+                                                                phone: '+90',
+                                                            }}
+                                                            onSubmit={handleSubmit}
+                                                            validate={validateForm}
+                                                        >
+                                                            {({
+                                                                  isSubmitting,
+                                                                  errors,
+                                                                  handleBlur,
+                                                                  setFieldValue,
+                                                                  touched,
+                                                                  values,
+                                                                  setTouched,
+                                                              }) => (
+                                                                <Form className="wpcf7-form">
+                                                                    <div className="form-group row">
+                                                                        <div className="col-xs-12 col-md-6">
+                                                                            <label>
+                                                                                Adınız
+                                                                                <abbr title="required" className="required">*</abbr>
+                                                                            </label>
+                                                                            <br />
+                                                                            <div className="wpcf7-form-control-wrap first-name">
+                                                                                <Field
+                                                                                    disabled={isLoading(isSubmitting)}
+                                                                                    aria-invalid="false"
+                                                                                    aria-required="true"
+                                                                                    type="text"
+                                                                                    name="name"
+                                                                                    size="40"
+                                                                                    className="wpcf7-form-control wpcf7-text wpcf7-validates-as-required input-text"
+                                                                                />
+                                                                                <ErrorMessage name="name" />
+                                                                            </div>
+                                                                        </div>
+                                                                        <div className="col-xs-12 col-md-6">
+                                                                            <label>
+                                                                                Soyadınız
+                                                                                <abbr title="required" className="required">*</abbr>
+                                                                            </label>
+                                                                            <br />
+                                                                            <div className="wpcf7-form-control-wrap last-name">
+                                                                                <Field
+                                                                                    disabled={isLoading(isSubmitting)}
+                                                                                    aria-invalid="false"
+                                                                                    aria-required="true"
+                                                                                    type="text"
+                                                                                    name="surname"
+                                                                                    size="40"
+                                                                                    className="wpcf7-form-control wpcf7-text wpcf7-validates-as-required input-text"
+                                                                                />
+                                                                                <ErrorMessage name="surname" />
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <div className="form-group row">
+                                                                        <div className="col-xs-12 col-md-6">
+                                                                            <label>
+                                                                                Doğum Tarihi
+                                                                                <abbr title="required" className="required">*</abbr>
+                                                                            </label>
+                                                                            <div className="wpcf7-form-control-wrap last-name">
+                                                                                <DatePickerField
+                                                                                    disabled={isLoading(isSubmitting)}
+                                                                                    name="birthdate"
+                                                                                    aria-invalid="false"
+                                                                                    aria-required="true"
+                                                                                    size="40"
+                                                                                    dateFormat='d/MM/yyyy'
+                                                                                    className="wpcf7-form-control wpcf7-text wpcf7-validates-as-required input-text"
+                                                                                />
+                                                                                <ErrorMessage name="birthdate" />
+                                                                            </div>
+                                                                        </div>
+                                                                        <div className="col-xs-12 col-md-6">
+                                                                            <label>
+                                                                                Cinsiyet
+                                                                                <abbr title="required" className="required">*</abbr>
+                                                                            </label>
+                                                                            <div className="wpcf7-form-control-wrap first-name">
+                                                                                <Field
+                                                                                    disabled={isLoading(isSubmitting)}
+                                                                                    as="select"
+                                                                                    name="gender"
+                                                                                    className="wpcf7-form-control wpcf7-text wpcf7-validates-as-required input-text"
+                                                                                >
+                                                                                    <option disabled />
+                                                                                    <option value="male">Erkek</option>
+                                                                                    <option value="female">Kadın</option>
+                                                                                </Field>
+                                                                                <ErrorMessage name="gender" />
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <div className="form-group row">
+                                                                        <div className="col-xs-12 col-md-6">
+                                                                            <label>E-Posta
+                                                                                <abbr title="required" className="required">*</abbr>
+                                                                            </label>
+                                                                            <br />
+                                                                            <div className="wpcf7-form-control-wrap first-name">
+                                                                                <Field
+                                                                                    disabled={isLoading(isSubmitting)}
+                                                                                    name="email"
+                                                                                    type="email"
+                                                                                    aria-invalid="false"
+                                                                                    aria-required="true"
+                                                                                    size="40"
+                                                                                    className="wpcf7-form-control wpcf7-text wpcf7-validates-as-required input-text"
+                                                                                />
+                                                                                <ErrorMessage name="email" />
+                                                                            </div>
+                                                                        </div>
+                                                                        <div className="col-xs-12 col-md-6">
+                                                                            <label>Telefon
+                                                                                <abbr title="required" className="required">*</abbr>
+                                                                            </label>
+                                                                            <br />
+                                                                            <div className="wpcf7-form-control-wrap last-name">
+                                                                                <PhoneInputField
+                                                                                    disabled={isLoading(isSubmitting)}
+                                                                                    form={{ errors, handleBlur, setFieldValue, touched, setTouched, }}
+                                                                                    field={{ name: 'phone', value: values.phone }}
+                                                                                />
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <div className="form-group clearfix">
+                                                                        <p>
+                                                                            <input
+                                                                                disabled={submitIsDisabled(isSubmitting, errors, values, validateForm)}
+                                                                                type="submit"
+                                                                                value="Kaydet"
+                                                                                className="wpcf7-form-control wpcf7-submit btn-navy"
+                                                                            />
+                                                                        </p>
+                                                                    </div>
+                                                                    <div className="wpcf7-response-output wpcf7-display-none" />
+                                                                </Form>
+                                                            )}
+                                                        </Formik>
                                                     </div>
                                                 </div>
                                             </div>
@@ -140,31 +349,31 @@ function MemberInformations(props) {
                                 </div>
                             </main>
                         </div>
-                        <div id="secondary" class="widget-area shop-sidebar" role="complementary">
+                        <div id="secondary" className="widget-area shop-sidebar" role="complementary">
                             <div id="garantili_product_categories_widget-2"
-                                class="widget woocommerce widget_product_categories garantili_widget_product_categories">
-                                <ul class="product-categories ">
-                                    <li class="product_cat">
+                                className="widget woocommerce widget_product_categories garantili_widget_product_categories">
+                                <ul className="product-categories ">
+                                    <li className="product_cat">
                                         <span>Kullanıcı Bilgilerim</span>
                                         <ul>
-                                            <li class="cat-item">
+                                            <li className="cat-item">
                                                 <a href="/uyelik-bilgilerim">
-                                                    <span class="no-child"></span><strong>Üyelik Bilgilerim</strong></a>
+                                                    <span className="no-child"></span><strong>Üyelik Bilgilerim</strong></a>
                                             </li>
-                                            <li class="cat-item">
+                                            <li className="cat-item">
                                                 <a href="/sifre-guncelleme">
-                                                    <span class="no-child"></span>Şifre Güncelleme</a>
+                                                    <span className="no-child"></span>Şifre Güncelleme</a>
                                             </li>
-                                            <li class="cat-item  current-cat">
+                                            <li className="cat-item  current-cat">
                                                 <a href="/adreslerim">
-                                                    <span class="no-child"></span>Adres Bilgilerim</a>
+                                                    <span className="no-child"></span>Adres Bilgilerim</a>
                                             </li>
 
                                         </ul>
                                     </li>
-                                    <li class="product_cat">
+                                    <li className="product_cat">
                                         <ul>
-                                            <li class="cat-item">
+                                            <li className="cat-item">
                                                 <a href="/siparislerim">
                                                     Siparişlerim</a>
                                             </li>

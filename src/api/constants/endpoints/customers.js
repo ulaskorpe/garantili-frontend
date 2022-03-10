@@ -76,3 +76,20 @@ export const CUSTOMER_UPDATE_PASSWORD = {
         { name: 'password', type: String, default: '',  isRequired: true },
     ],
 };
+
+/** @type Endpoint */
+export const CUSTOMER_UPDATE = {
+    path: 'api/customers/update',
+    method: 'POST',
+    apiKeyRequired: true,
+    pathVars: [],
+    body: [
+        { name: 'customer_id', type: Number, default: '',  isRequired: true },
+        { name: 'name', type: String, default: '',  isRequired: true },
+        { name: 'surname', type: String, default: '',  isRequired: true },
+        { name: 'birthdate', type: String, default: '',  isRequired: true },
+        { name: 'phone', type: String, default: '',  isRequired: true },
+        { name: 'email', type: String, default: '',  isRequired: true },
+        { name: 'gender', type: String, default: '',  isRequired: true },
+    ],
+};

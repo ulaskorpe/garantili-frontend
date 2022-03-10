@@ -1,7 +1,7 @@
 import React, {useMemo, useReducer} from "react";
 import {authReducer} from "./reducer";
 import {AuthContext} from "./context";
-import {AUTH_SET, AUTH_LOGOUT, INITIAL_AUTH_STATE} from "./constants";
+import {AUTH_SET, AUTH_LOGOUT, INITIAL_AUTH_STATE, AUTH_UPDATE} from "./constants";
 
 export const AuthProvider = ({ children }) => {
     const [
@@ -32,14 +32,18 @@ export const AuthProvider = ({ children }) => {
         isLogged,
         dispatch,
         login (payload) {
-            localStorage.setItem('_u', JSON.stringify(payload));
             dispatch({
                 type: AUTH_SET,
                 payload,
             });
         },
+        update (payload) {
+            dispatch({
+                type: AUTH_UPDATE,
+                payload,
+            });
+        },
         logout (payload) {
-            localStorage.removeItem('_u');
             dispatch({
                 type: AUTH_LOGOUT,
                 payload: INITIAL_AUTH_STATE,

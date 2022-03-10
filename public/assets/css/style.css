@@ -38169,3 +38169,26 @@ form.track_order input[type="submit"] {
 .swal-overlay {
     z-index: 9999999 !important;
 }
+
+.phone-input-container input {
+    border: none;
+    outline: none;
+}
+
+.disabledPhoneInput {
+    cursor: default;
+    background-color: rgba(239, 239, 239, 0.3);
+    border-color: rgba(118, 118, 118, 0.3);
+}
+
+.disabledPhoneInput > div {
+    background-color: rgba(239, 239, 239, 0.3);
+}
+
+.disabledPhoneInput input {
+    background-color: transparent !important;
+}
+
+.PhoneInputCountryIcon {
+    box-shadow: none !important;
+}
