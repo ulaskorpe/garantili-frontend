@@ -88,7 +88,7 @@ export const fetchThis = async (
             const defaultValueIsDefined = typeof defaultValue !== 'undefined';
 
             if (value) {
-                const isValid = type(value) === value;
+                const isValid = type === 'any' || type(value) === value;
                 if (!isValid) {
                     if (isDev) {
                         errors.push(

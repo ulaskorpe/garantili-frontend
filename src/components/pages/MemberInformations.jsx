@@ -14,6 +14,16 @@ import {CUSTOMER_UPDATE, DEFAULT_API_KEY, fetchThis} from "../../api";
 import {useLocation, useNavigate} from "react-router-dom";
 import moment from "moment";
 
+const initialFormValues = {
+    name: '',
+    surname: '',
+    gender: '',
+    birthdate: '',
+    email: '',
+    phone: '+90',
+};
+const dateFormatMoment = 'dd/MM/yyyy';
+const dateFormatComp = 'dd/MM/yyyy';
 function MemberInformations(props) {
     const { basket, removeFromBasket } = props;
 
@@ -48,8 +58,9 @@ function MemberInformations(props) {
     }) => {
         if (!isLogged) return;
         const values = JSON.parse(JSON.stringify(iValues));
-        values.birthdate = moment(iValues.birthdate).format('DD/MM/yyyy');
+
         values.customer_id = parseInt(account.customer_id);
+        values.gender = !values.gender || values.gender === '' ? null : values.gender;
 
         setSubmitting(true);
         setLoading(true);
@@ -103,9 +114,6 @@ function MemberInformations(props) {
         if (!values.birthdate) {
             errors.birthdate = errorMessages.required;
         }
-        if (!values.gender) {
-            errors.gender = errorMessages.required;
-        }
         if (!values.email) {
             errors.email = errorMessages.required;
         }
@@ -127,27 +135,34 @@ function MemberInformations(props) {
         ) {
             formikRef.current.setFieldValue(
                 'name',
-                account?.name || '',
+                account?.name || initialFormValues.name,
             );
             formikRef.current.setFieldValue(
                 'surname',
-                account?.surname || '',
+                account?.surname || initialFormValues.surname,
             );
             formikRef.current.setFieldValue(
                 'gender',
-                account?.gender || '',
+                account?.gender || initialFormValues.gender,
             );
+            let birthDate = initialFormValues.birthdate;
+            if (account?.birthdate) {
+                const dm = moment(account.birthdate);
+                if (dm.isValid()) {
+                    birthDate = new Date(dm.toDate());
+                }
+            }
             formikRef.current.setFieldValue(
                 'birthdate',
-                account?.birthdate || '',
+                birthDate,
             );
             formikRef.current.setFieldValue(
                 'email',
-                account?.email || '',
+                account?.email || initialFormValues.email,
             );
             formikRef.current.setFieldValue(
                 'phone',
-                account?.phone || '+90',
+                account?.phone || initialFormValues.phone,
             );
         }
     }, [isLogged, account, formikRef])
@@ -191,14 +206,7 @@ function MemberInformations(props) {
                                                         <div className="screen-reader-response" />
                                                         <Formik
                                                             innerRef={formikRef}
-                                                            initialValues={{
-                                                                name: '',
-                                                                surname: '',
-                                                                gender: '',
-                                                                birthdate: '',
-                                                                email: '',
-                                                                phone: '+90',
-                                                            }}
+                                                            initialValues={initialFormValues}
                                                             onSubmit={handleSubmit}
                                                             validate={validateForm}
                                                         >
@@ -262,11 +270,11 @@ function MemberInformations(props) {
                                                                             <div className="wpcf7-form-control-wrap last-name">
                                                                                 <DatePickerField
                                                                                     disabled={isLoading(isSubmitting)}
+                                                                                    dateFormat={dateFormatComp}
                                                                                     name="birthdate"
                                                                                     aria-invalid="false"
                                                                                     aria-required="true"
                                                                                     size="40"
-                                                                                    dateFormat='d/MM/yyyy'
                                                                                     className="wpcf7-form-control wpcf7-text wpcf7-validates-as-required input-text"
                                                                                 />
                                                                                 <ErrorMessage name="birthdate" />
@@ -275,7 +283,6 @@ function MemberInformations(props) {
                                                                         <div className="col-xs-12 col-md-6">
                                                                             <label>
                                                                                 Cinsiyet
-                                                                                <abbr title="required" className="required">*</abbr>
                                                                             </label>
                                                                             <div className="wpcf7-form-control-wrap first-name">
                                                                                 <Field
@@ -284,9 +291,9 @@ function MemberInformations(props) {
                                                                                     name="gender"
                                                                                     className="wpcf7-form-control wpcf7-text wpcf7-validates-as-required input-text"
                                                                                 >
-                                                                                    <option disabled />
-                                                                                    <option value="male">Erkek</option>
-                                                                                    <option value="female">Kadın</option>
+                                                                                    <option value="">Belirtilmedi</option>
+                                                                                    <option value="1">Erkek</option>
+                                                                                    <option value="2">Kadın</option>
                                                                                 </Field>
                                                                                 <ErrorMessage name="gender" />
                                                                             </div>

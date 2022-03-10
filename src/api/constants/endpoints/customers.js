@@ -90,6 +90,6 @@ export const CUSTOMER_UPDATE = {
         { name: 'birthdate', type: String, default: '',  isRequired: true },
         { name: 'phone', type: String, default: '',  isRequired: true },
         { name: 'email', type: String, default: '',  isRequired: true },
-        { name: 'gender', type: String, default: '',  isRequired: true },
+        { name: 'gender', type: 'any', default: '',  isRequired: true },
     ],
 };
