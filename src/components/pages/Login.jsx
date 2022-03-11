@@ -1,3 +1,4 @@
+import React from 'react';
 import {useCallback, useEffect, useMemo, useState} from "react"
 import BreadCrumb from "../layout/BreadCrumb"
 import Footer from "../layout/Footer/Footer"
@@ -90,7 +91,7 @@ function Login(props) {
     const handleLoginFormSubmit = (values, { setSubmitting, resetForm }) => {
         setSubmitting(true);
         setLoading(true);
-        loginMutation?.mutate(values, {
+        loginMutation.mutate(values, {
             onSuccess: onSuccess(
                 'Giriş başarılı',
                 resetForm,
@@ -120,7 +121,7 @@ function Login(props) {
     const handleRegisterFormSubmit = (values, { setSubmitting, resetForm }) => {
         setSubmitting(true);
         setLoading(true);
-        registerMutation?.mutate(values, {
+        registerMutation.mutate(values, {
             onSuccess: onSuccess(
                 'Kayıt başarılı.',
                 resetForm,
