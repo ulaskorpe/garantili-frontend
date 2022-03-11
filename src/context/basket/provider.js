@@ -1,4 +1,5 @@
-import {useMemo, useReducer} from "react";
+import React, {useMemo, useReducer} from "react";
+//import {useMemo, useReducer} from "react";
 import {basketReducer} from "./reducer";
 import {BasketContext} from "./context";
 import {BASKET_SET, INITIAL_AUTH_STATE} from "./constants";

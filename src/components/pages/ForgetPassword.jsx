@@ -36,7 +36,7 @@ function ForgetPassword(props) {
     const handleForgetFormSubmit = (values, { setSubmitting, resetForm }) => {
         setSubmitting(true);
         setLoading(true);
-        forgetPasswordMutation?.mutate(values, {
+        forgetPasswordMutation.mutate(values, {
             onSuccess (data) {
                 if (!data?.status) {
                     sweetalert({

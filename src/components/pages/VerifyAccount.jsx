@@ -1,3 +1,4 @@
+import React from 'react';
 import {useCallback, useEffect, useMemo, useState} from "react"
 import BreadCrumb from "../layout/BreadCrumb"
 import Footer from "../layout/Footer/Footer"
@@ -51,7 +52,7 @@ function ForgetPassword(props) {
     const handleVerifyFormSubmit = (values, { setSubmitting, resetForm }) => {
         setSubmitting(true);
         setLoading(true);
-        verifyMutation?.mutate(values, {
+        verifyMutation.mutate(values, {
             onSuccess (data) {
                 if (!data?.status) {
                     sweetalert({
@@ -97,7 +98,7 @@ function ForgetPassword(props) {
     const handleClickResendLink = (resetForm) => (e) => {
         e.preventDefault();
         setLoading(true);
-        resendCodeMutation?.mutate({ email: location?.state?.email }, {
+        resendCodeMutation.mutate({ email: location?.state?.email }, {
             onSuccess (data) {
                 if (!data?.status) {
                     sweetalert({

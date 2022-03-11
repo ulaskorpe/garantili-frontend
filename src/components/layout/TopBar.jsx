@@ -55,19 +55,19 @@ const TopBar = () => {
                     />
                     <MenuItem
                         title="İade Formu"
-                        path={null}
+                        path="/iade-formu"
                     />
                     <MenuItem
                         title="İnsan Kaynakları"
-                        path={null}
+                        path="/insan-kaynaklari"
                     />
                     <MenuItem
                         title="IMEI Sorgulama"
-                        path={null}
+                        path="/imei-sorgulama"
                     />
                     <MenuItem
                         title="Kullanım Kılavuzu"
-                        path={null}
+                        path="sayfa/kullanim-kilavuzu/12"
                     />
                     {/*<li className="garantili-flex-more-menu-item dropdown">*/}
                     {/*    <a title="..." href="#" data-toggle="dropdown" className="dropdown-toggle">...</a>*/}

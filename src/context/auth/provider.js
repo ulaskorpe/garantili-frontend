@@ -1,3 +1,4 @@
+import React from 'react';
 import {useMemo, useReducer} from "react";
 import {authReducer} from "./reducer";
 import {AuthContext} from "./context";
