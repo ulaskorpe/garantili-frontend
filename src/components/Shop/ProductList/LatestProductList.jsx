@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import $ from 'jquery'
 import slick from 'slick-carousel'
+import {getItemPrice} from "../../../store/selectors/basket";
 class LatestProductList extends Component {
     componentDidMount() {
         $('[data-ride="tm-slick-carousel"]').each(function () {
@@ -44,7 +45,7 @@ class LatestProductList extends Component {
                                                                     <span className="amount">{item.listPrice}</span>
                                                                 </ins>
                                                                 <del>
-                                                                    <span className="amount">{item.price}</span>
+                                                                    <span className="amount">{getItemPrice(item.price)}</span>
                                                                 </del>
                                                             </span>
                                                             <h2 className="woocommerce-loop-product__title">{item.title}</h2>

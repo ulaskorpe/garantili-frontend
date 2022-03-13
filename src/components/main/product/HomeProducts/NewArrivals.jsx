@@ -1,21 +1,44 @@
-import React, { Component } from 'react';
+import React, {Component, useState} from 'react';
+import useBasket from "../../../../store/hooks/useBasket";
+import {getItemPrice} from "../../../../store/selectors/basket";
 
 const ProductItem = (props) => {
-    const product = props.product
+    const item = props.product;
+
+    const [added, setAdded] = useState(false);
+
+    const basket = useBasket();
+
     return (
         <div className="product">
             <a href="#" className="woocommerce-LoopProduct-link">
-                <img src={product.imageUrl} width="224" height="197" className="wp-post-image" alt="" />
+                <img src={item.imageUrl} width="224" height="197" className="wp-post-image" alt="" />
                 <span className="price">
                     <ins>
                         <span className="amount"> </span>
                     </ins>
-                    <span className="amount">{product.price}</span>
+                    <span className="amount">{getItemPrice(item.price)}</span>
                 </span>
-                <h2 className="woocommerce-loop-product__title">{product.title}</h2>
+                <h2 className="woocommerce-loop-product__title">{item.title}</h2>
             </a>
             <div className="hover-area">
-                <a className="button add_to_cart_button" href="#" onClick={props.onAddToBasket} rel="nofollow">Sepete ekle</a>
+                <a
+                    className="button add_to_cart_button"
+                    href="#"
+                    rel="nofollow"
+                    onClick={(e) => {
+                        e.preventDefault();
+                        basket.add(item)(e);
+                        setAdded(true);
+                        setTimeout(() => {
+                            setAdded(false);
+                        }, 1250)
+                    }}
+                    style={added ? { backgroundColor: '#e86708', color: '#fff' } : {}}
+                >
+                    {!added && 'Sepete ekle'}
+                    {added && 'Sepete eklendi'}
+                </a>
             </div>
         </div>
     )

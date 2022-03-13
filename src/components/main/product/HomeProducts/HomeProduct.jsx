@@ -1,4 +1,5 @@
-import React, { Component } from "react";
+import React, {Component, useState} from "react";
+import useBasket from "../../../../store/hooks/useBasket";
 
 
 const Headers = (props) => {
@@ -20,28 +21,45 @@ const Headers = (props) => {
 }
 
 const ProductList = (props) => {
-    const products = props.products.map((_, index) => {
-        return (<div className="product" key={index}>
-            <a href="#" className="woocommerce-LoopProduct-link">
+    const basket = useBasket();
+    const [added, setAdded] = useState(false);
+
+
+    return props.products.map((basketItem, index) => {
+       return (<div className="product" key={index}>
+           <a href="#" className="woocommerce-LoopProduct-link">
                 <span className="onsale">
                     <span className="woocommerce-Price-amount amount">
-                        <span className="woocommerce-Price-currencySymbol"></span>{_.discount}
+                        <span className="woocommerce-Price-currencySymbol" />{basketItem.discount}
                     </span>
                 </span>
-                <img src={_.imageUrl} width="224" height="197" className="wp-post-image" alt="" />
-                <span className="price">
-                    <ins><span className="woocommerce-Price-currencySymbol">₺</span><span className="amount">{_.listPrice}</span></ins>
-                    <del><span className="woocommerce-Price-currencySymbol">₺</span><span className="amount">{_.price}</span></del>
+               <img src={basketItem.imageUrl} width="224" height="197" className="wp-post-image" alt="" />
+               <span className="price">
+                    <ins><span className="woocommerce-Price-currencySymbol">₺</span><span className="amount">{basketItem.listPrice}</span></ins>
+                    <del><span className="woocommerce-Price-currencySymbol">₺</span><span className="amount">{basketItem.price}</span></del>
                 </span>
-                <h2 className="woocommerce-loop-product__title">{_.title}</h2>
-            </a>
-            <div className="hover-area">
-                <a className="button add_to_cart_button" onClick={() => props.onAddToBasket(_.id)} rel="nofollow">Sepete ekle</a>
-            </div>
-        </div>)
-    })
-
-    return products
+               <h2 className="woocommerce-loop-product__title">{basketItem.title}</h2>
+           </a>
+           <div className="hover-area">
+               <a
+                   className="button add_to_cart_button"
+                   rel="nofollow"
+                   onClick={(e) => {
+                       e.preventDefault();
+                       basket.add(basketItem)(e);
+                       setAdded(true);
+                       setTimeout(() => {
+                           setAdded(false);
+                       }, 1250)
+                   }}
+                   style={added ? { backgroundColor: '#e86708', color: '#fff' } : {}}
+               >
+                   {!added && 'Sepete ekle'}
+                   {added && 'Sepete eklendi'}
+               </a>
+           </div>
+       </div>)
+   });
 }
 
 const ProductTab = (props) => {

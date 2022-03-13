@@ -38192,3 +38192,7 @@ form.track_order input[type="submit"] {
 .PhoneInputCountryIcon {
     box-shadow: none !important;
 }
+
+.Toastify__toast-container {
+    --toastify-z-index: 999999;
+}

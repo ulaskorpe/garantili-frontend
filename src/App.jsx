@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import {QueryClient, QueryClientProvider} from "react-query";
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Cart from './components/pages/Cart';
@@ -33,10 +35,13 @@ import Orders from "./components/pages/Orders";
 import MemberInformations from "./components/pages/MemberInformations";
 import Address from "./components/pages/Address";
 import PasswordUpdate from "./components/pages/PasswordUpdate";
-import {BasketProvider} from "./context/basket";
-import FetchBasket from "./fetchers/FetchBasket";
+import {Provider} from "react-redux";
+import store from "./store";
+import {persistStore} from "redux-persist";
+import {PersistGate} from "redux-persist/integration/react";
 
 const queryClient = new QueryClient();
+const persistor = persistStore(store);
 
 function App() {
     const [basket, setBasket] = useState({ totalPrice: 0, basketItems: [] })
@@ -147,83 +152,93 @@ function App() {
         <BrowserRouter>
             <QueryClientProvider client={queryClient}>
                 <AuthProvider>
-                    <BasketProvider>
-                        <Routes>
-                            {/* 404 */}
-                            <Route path="*" element={<ErrorPage code={404} />} />
+                    <Provider store={store}>
+                        <PersistGate persistor={persistor}>
+                            <Routes>
+                                {/* 404 */}
+                                <Route path="*" element={<ErrorPage code={404} />} />
 
-                            <Route index element={<HomePage basket={basket} addToBasket={addToBasket} removeFromBasket={removeFromBasket} homeContent={homeContent} />} />
-                            <Route path='/urunler' element={<ShopPage basket={basket} addToBasket={addToBasket} removeFromBasket={removeFromBasket} />} />
-                            <Route path='/urunler/:category-:categoryId' element={<ShopPage basket={basket} addToBasket={addToBasket} removeFromBasket={removeFromBasket} allProducts={allProduct} />} />
-                            <Route path='/urun-detay/:slug/:productId' element={<ProductPage basket={basket} addToBasket={addToBasket} removeFromBasket={removeFromBasket} allProducts={allProduct} />} />
-                            <Route path='/telefon-sat/' element={<PhoneSell basket={basket} addToBasket={addToBasket} removeFromBasket={removeFromBasket} allProducts={allProduct} />} />
-                            <Route path='/telefon-sat/:id' element={<PhoneSellDevice basket={basket} addToBasket={addToBasket} removeFromBasket={removeFromBasket} allProducts={allProduct} />} />
-                            <Route path='/telefon-onar-yenile/' element={<DeviceRepair basket={basket} addToBasket={addToBasket} removeFromBasket={removeFromBasket} allProducts={allProduct} />} />
-                            <Route path='/telefon-onar-yenile/:id' element={<DeviceRepairDetail basket={basket} addToBasket={addToBasket} removeFromBasket={removeFromBasket} allProducts={allProduct} />} />
-                            <Route path='/iletisim' element={<Contact basket={basket} addToBasket={addToBasket} removeFromBasket={removeFromBasket} allProducts={allProduct} />} />
-                            <Route path='/sayfa/:pagetitle/:id' element={<ContentPage basket={basket} addToBasket={addToBasket} removeFromBasket={removeFromBasket} allProducts={allProduct} />} />
-                            <Route path='/sss' element={<Faq basket={basket} addToBasket={addToBasket} removeFromBasket={removeFromBasket} allProducts={allProduct} />} />
-                            <Route path='/kilavuz' element={<UserManual basket={basket} addToBasket={addToBasket} removeFromBasket={removeFromBasket} allProducts={allProduct} />} />
-                            <Route path='/bizden-haberler' element={<News basket={basket} addToBasket={addToBasket} removeFromBasket={removeFromBasket} allProducts={allProduct} />} />
-                            <Route path='/bizden-haberler/:id' element={<NewsDetails basket={basket} addToBasket={addToBasket} removeFromBasket={removeFromBasket} allProducts={allProduct} />} />
-                            <Route path='/insan-kaynaklari' element={<HRPage basket={basket} addToBasket={addToBasket} removeFromBasket={removeFromBasket} allProducts={allProduct} />} />
-                            <Route path='/imei-sorgula' element={<ImeiCheck basket={basket} addToBasket={addToBasket} removeFromBasket={removeFromBasket} allProducts={allProduct} />} />
-                            <Route path='/iade-formu' element={<GivingBackForm basket={basket} addToBasket={addToBasket} removeFromBasket={removeFromBasket} allProducts={allProduct} />} />
-                            <Route path='/sepet' element={<Cart basket={basket} removeFromBasket={removeFromBasket} />} />
-                            <Route path='/odeme' element={<Payment basket={basket} removeFromBasket={removeFromBasket} />} />
-                            <Route path='/siparis-ozeti' element={<OrderSummary basket={basket} removeFromBasket={removeFromBasket} />} />
-                            {/* /login => Login page */}
-                            <Route path='/login' element={(
-                                <AuthController
-                                    mustNotBeLoggedIn
-                                    redirectTo="/"
-                                >
-                                    <Login basket={basket} removeFromBasket={removeFromBasket} />
-                                </AuthController>
-                            )} />
+                                <Route index element={<HomePage basket={basket} addToBasket={addToBasket} removeFromBasket={removeFromBasket} homeContent={homeContent} />} />
+                                <Route path='/urunler' element={<ShopPage basket={basket} addToBasket={addToBasket} removeFromBasket={removeFromBasket} />} />
+                                <Route path='/urunler/:category-:categoryId' element={<ShopPage basket={basket} addToBasket={addToBasket} removeFromBasket={removeFromBasket} allProducts={allProduct} />} />
+                                <Route path='/urun-detay/:slug/:productId' element={<ProductPage basket={basket} addToBasket={addToBasket} removeFromBasket={removeFromBasket} allProducts={allProduct} />} />
+                                <Route path='/telefon-sat/' element={<PhoneSell basket={basket} addToBasket={addToBasket} removeFromBasket={removeFromBasket} allProducts={allProduct} />} />
+                                <Route path='/telefon-sat/:id' element={<PhoneSellDevice basket={basket} addToBasket={addToBasket} removeFromBasket={removeFromBasket} allProducts={allProduct} />} />
+                                <Route path='/telefon-onar-yenile/' element={<DeviceRepair basket={basket} addToBasket={addToBasket} removeFromBasket={removeFromBasket} allProducts={allProduct} />} />
+                                <Route path='/telefon-onar-yenile/:id' element={<DeviceRepairDetail basket={basket} addToBasket={addToBasket} removeFromBasket={removeFromBasket} allProducts={allProduct} />} />
+                                <Route path='/iletisim' element={<Contact basket={basket} addToBasket={addToBasket} removeFromBasket={removeFromBasket} allProducts={allProduct} />} />
+                                <Route path='/sayfa/:pagetitle/:id' element={<ContentPage basket={basket} addToBasket={addToBasket} removeFromBasket={removeFromBasket} allProducts={allProduct} />} />
+                                <Route path='/sss' element={<Faq basket={basket} addToBasket={addToBasket} removeFromBasket={removeFromBasket} allProducts={allProduct} />} />
+                                <Route path='/kilavuz' element={<UserManual basket={basket} addToBasket={addToBasket} removeFromBasket={removeFromBasket} allProducts={allProduct} />} />
+                                <Route path='/bizden-haberler' element={<News basket={basket} addToBasket={addToBasket} removeFromBasket={removeFromBasket} allProducts={allProduct} />} />
+                                <Route path='/bizden-haberler/:id' element={<NewsDetails basket={basket} addToBasket={addToBasket} removeFromBasket={removeFromBasket} allProducts={allProduct} />} />
+                                <Route path='/insan-kaynaklari' element={<HRPage basket={basket} addToBasket={addToBasket} removeFromBasket={removeFromBasket} allProducts={allProduct} />} />
+                                <Route path='/imei-sorgula' element={<ImeiCheck basket={basket} addToBasket={addToBasket} removeFromBasket={removeFromBasket} allProducts={allProduct} />} />
+                                <Route path='/iade-formu' element={<GivingBackForm basket={basket} addToBasket={addToBasket} removeFromBasket={removeFromBasket} allProducts={allProduct} />} />
+                                <Route path='/sepet' element={<Cart basket={basket} removeFromBasket={removeFromBasket} />} />
+                                <Route path='/odeme' element={<Payment basket={basket} removeFromBasket={removeFromBasket} />} />
+                                <Route path='/siparis-ozeti' element={<OrderSummary basket={basket} removeFromBasket={removeFromBasket} />} />
+                                {/* /login => Login page */}
+                                <Route path='/login' element={(
+                                    <AuthController
+                                        mustNotBeLoggedIn
+                                        redirectTo="/"
+                                    >
+                                        <Login basket={basket} removeFromBasket={removeFromBasket} />
+                                    </AuthController>
+                                )} />
 
-                            {/* /log-out => Log-out page */}
-                            <Route
-                                path='/log-out'
-                                element={<LogOut />}
+                                {/* /log-out => Log-out page */}
+                                <Route
+                                    path='/log-out'
+                                    element={<LogOut />}
+                                />
+
+                                {/* /forget-password => Forget password page */}
+                                <Route path='/forget-password' element={(
+                                    <AuthController
+                                        mustNotBeLoggedIn
+                                        redirectTo="/"
+                                    >
+                                        <ForgetPassword
+                                            basket={basket}
+                                            removeFromBasket={removeFromBasket}
+                                        />
+                                    </AuthController>
+                                )} />
+
+                                {/* /verify-account => Verify account page */}
+                                <Route path='/verify-account' element={(
+                                    <AuthController
+                                        mustNotBeLoggedIn
+                                        redirectTo="/"
+                                    >
+                                        <VerifyAccount
+                                            basket={basket}
+                                            removeFromBasket={removeFromBasket}
+                                        />
+                                    </AuthController>
+                                )} />
+                                <Route path='/takip' element={<OrderFollow basket={basket} removeFromBasket={removeFromBasket} />} />
+                                <Route path='/takip-detaylar' element={<FollowDetails basket={basket} removeFromBasket={removeFromBasket} />} />
+                                <Route path='/siparislerim' element={<Orders basket={basket} removeFromBasket={removeFromBasket} />} />
+                                <Route path='/uyelik-bilgilerim' element={<MemberInformations basket={basket} removeFromBasket={removeFromBasket} />} />
+                                <Route path='/adreslerim' element={<Address basket={basket} removeFromBasket={removeFromBasket} />} />
+                                <Route path='/sifre-guncelleme' element={<PasswordUpdate basket={basket} removeFromBasket={removeFromBasket} />} />
+                            </Routes>
+                            <ToastContainer
+                                position="top-right"
+                                theme="colored"
+                                autoClose={1200}
+                                hideProgressBar={false}
+                                newestOnTop={true}
+                                closeOnClick
+                                rtl={false}
+                                pauseOnFocusLoss
+                                draggable
                             />
-
-                            {/* /forget-password => Forget password page */}
-                            <Route path='/forget-password' element={(
-                                <AuthController
-                                    mustNotBeLoggedIn
-                                    redirectTo="/"
-                                >
-                                    <ForgetPassword
-                                        basket={basket}
-                                        removeFromBasket={removeFromBasket}
-                                    />
-                                </AuthController>
-                            )} />
-
-                            {/* /verify-account => Verify account page */}
-                            <Route path='/verify-account' element={(
-                                <AuthController
-                                    mustNotBeLoggedIn
-                                    redirectTo="/"
-                                >
-                                    <VerifyAccount
-                                        basket={basket}
-                                        removeFromBasket={removeFromBasket}
-                                    />
-                                </AuthController>
-                            )} />
-                            <Route path='/takip' element={<OrderFollow basket={basket} removeFromBasket={removeFromBasket} />} />
-                            <Route path='/takip-detaylar' element={<FollowDetails basket={basket} removeFromBasket={removeFromBasket} />} />
-                            <Route path='/siparislerim' element={<Orders basket={basket} removeFromBasket={removeFromBasket} />} />
-                            <Route path='/uyelik-bilgilerim' element={<MemberInformations basket={basket} removeFromBasket={removeFromBasket} />} />
-                            <Route path='/adreslerim' element={<Address basket={basket} removeFromBasket={removeFromBasket} />} />
-                            <Route path='/sifre-guncelleme' element={<PasswordUpdate basket={basket} removeFromBasket={removeFromBasket} />} />
-                        </Routes>
-
-                        {/* Fetch's */}
-                        <FetchBasket />
-                    </BasketProvider>
+                        </PersistGate>
+                    </Provider>
                 </AuthProvider>
             </QueryClientProvider>
         </BrowserRouter>

@@ -28,13 +28,10 @@ function Orders(props) {
                         <BreadCrumb crumbs={crumb} />
                         <div id="primary" className="content-area">
                             <main id="main" className="site-main">
-
-                                <div class="type-page hentry">
-
-                                    <div class="entry-content">
-                                        <div class="woocommerce">
-
-                                            <div class="">
+                                <div className="type-page hentry">
+                                    <div className="entry-content">
+                                        <div className="woocommerce">
+                                            <div className="">
                                                 <OrderItemList removeFromBasket={removeFromBasket} />
                                             </div>
                                         </div>
@@ -42,31 +39,31 @@ function Orders(props) {
                                 </div>
                             </main>
                         </div>
-                        <div id="secondary" class="widget-area shop-sidebar" role="complementary">
+                        <div id="secondary" className="widget-area shop-sidebar" role="complementary">
                             <div id="garantili_product_categories_widget-2"
-                                class="widget woocommerce widget_product_categories garantili_widget_product_categories">
-                               <ul class="product-categories ">
-                                    <li class="product_cat">
+                                className="widget woocommerce widget_product_categories garantili_widget_product_categories">
+                               <ul className="product-categories ">
+                                    <li className="product_cat">
                                         <span>Kullanıcı Bilgilerim</span>
                                         <ul>
-                                            <li class="cat-item">
+                                            <li className="cat-item">
                                                 <a href="/uyelik-bilgilerim">
-                                                    <span class="no-child"></span>Üyelik Bilgilerim</a>
+                                                    <span className="no-child" />Üyelik Bilgilerim</a>
                                             </li>
-                                            <li class="cat-item">
+                                            <li className="cat-item">
                                                 <a href="/sifre-guncelleme">
-                                                    <span class="no-child"></span>Şifre Güncelleme</a>
+                                                    <span className="no-child" />Şifre Güncelleme</a>
                                             </li>
-                                            <li class="cat-item  current-cat">
+                                            <li className="cat-item  current-cat">
                                                 <a href="/adreslerim">
-                                                    <span class="no-child"></span>Adres Bilgilerim</a>
+                                                    <span className="no-child" />Adres Bilgilerim</a>
                                             </li>
 
                                         </ul>
                                     </li>
-                                    <li class="product_cat">
+                                    <li className="product_cat">
                                         <ul>
-                                            <li class="cat-item">
+                                            <li className="cat-item">
                                                 <a href="/siparislerim">
                                                     <strong>Siparişlerim</strong></a>
                                             </li>

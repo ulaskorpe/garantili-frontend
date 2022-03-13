@@ -1,35 +1,48 @@
 import React from 'react';
 import { useState } from "react"
 import CartListItem from "./CartListItem"
+import {useSelector} from "react-redux";
+import {getBasketArrayList} from "../../store/selectors/basket";
 
 function CartList() {
-
-    const [items, setCartItems] = useState([
-        { id: 1, title: 'Apple iPhone 12 Pro Pacific Blue', quantity: 2, price: 24000, totalPrice: 48000, imageUrl: '', url: '/urun-detay/iphone-12-mini-64-gb-3', imageUrl: '/assets/images/products/L10.jpg' }
-    ])
+    const basketArrayList = useSelector(getBasketArrayList);
 
     return (
-        <form method="post" action="#" class="woocommerce-cart-form">
-            <table class="shop_table shop_table_responsive cart">
+        <form method="post" onClick={(e) => e.preventDefault()} className="woocommerce-cart-form">
+            <table className="shop_table shop_table_responsive cart">
                 <thead>
                     <tr>
-                        <th class="product-remove">&nbsp;</th>
-                        <th class="product-thumbnail">&nbsp;</th>
-                        <th class="product-name">Ürünler</th>
-                        <th class="product-price">Fiyat</th>
-                        <th class="product-quantity">Adet</th>
-                        <th class="product-subtotal">Toplam</th>
+                        <th className="product-remove">&nbsp;</th>
+                        <th className="product-thumbnail">&nbsp;</th>
+                        <th className="product-name">Ürünler</th>
+                        <th className="product-price">Fiyat</th>
+                        <th className="product-quantity">Adet</th>
+                        <th className="product-subtotal">Toplam</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {items.map(_ => <CartListItem item={_} />)}
+                {Boolean(basketArrayList.length) ? (
+                    basketArrayList.map((basketItem, basketItemIDX) => <CartListItem item={basketItem} key={`basket_item_${basketItem.id}_${basketItemIDX}`} />)
+                ): (
                     <tr>
-                        <td class="actions" colspan="6">
+                        <td colSpan={6}>
+                            <div
+                                style={{ padding: '20px 10px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}
+                            >
+                                <span>Sepetiniz boş</span>
+                            </div>
+                        </td>
+                    </tr>
+                )}
+                    <tr>
+                        <td className="actions" colSpan="6">
                             <br />
-                            <div class="coupon">
-                                <label for="coupon_code">Kupon kodu:</label>
-                                <input type="text" placeholder="Kupon kodu" value="" id="coupon_code" class="input-text" name="coupon_code" />
-                                <input type="submit" value="Uygula" name="apply_coupon" class="button btn-navy" />
+                            <div className="coupon">
+                                <label
+                                    htmlFor="coupon_code"
+                                >Kupon kodu:</label>
+                                <input type="text" placeholder="Kupon kodu" defaultValue="" id="coupon_code" className="input-text" name="coupon_code" />
+                                <input type="submit" defaultValue="Uygula" name="apply_coupon" className="button btn-navy" />
                             </div>
                         </td>
                     </tr>

@@ -1,4 +1,6 @@
-import React, { Component } from "react";
+import React, {Component, useState} from "react";
+import useBasket from "../../../store/hooks/useBasket";
+import {getItemPrice} from "../../../store/selectors/basket";
 
 const Placeholder = ({ className }) => (
     <div className={`is-placeholder ${className}`}>
@@ -43,63 +45,79 @@ const Placeholder = ({ className }) => (
     </div>
 );
 
-class ListLarge extends Component {
-    render() {
-        const { item, addToBasket, isPlaceholder = false } = this.props;
-        const className = "product list-view-large first";
+const ListLarge = (props) => {
+    const { item, isPlaceholder = false } = props;
+    const className = "product list-view-large first";
+    const [added, setAdded] = useState(false);
 
-        if (isPlaceholder) return <Placeholder className={className} />;
-        return (
-            <div className={className}>
-                <div className="media">
-                    <img width="224" height="197" alt="" className="attachment-shop_catalog size-shop_catalog wp-post-image"
-                        src={item.imageUrl} />
-                    <div className="media-body">
-                        <div className="product-info">
-                            <a className="woocommerce-LoopProduct-link woocommerce-loop-product__link"
-                                href={item.url}>
-                                <h2 className="woocommerce-loop-product__title">{item.title}</h2>
-                                <div className="techmarket-product-rating">
-                                    <div className="star-rating">
-                                        <span className="w-100">5 üzerinden <strong className="rating">{item.rating}</strong></span>
-                                    </div>
-                                    <span className="review-count">{item.reviewCount}</span>
+    const basket = useBasket();
+
+    if (isPlaceholder) return <Placeholder className={className} />;
+    return (
+        <div className={className}>
+            <div className="media">
+                <img width="224" height="197" alt="" className="attachment-shop_catalog size-shop_catalog wp-post-image"
+                     src={item.imageUrl} />
+                <div className="media-body">
+                    <div className="product-info">
+                        <a className="woocommerce-LoopProduct-link woocommerce-loop-product__link"
+                           href={item.url}>
+                            <h2 className="woocommerce-loop-product__title">{item.title}</h2>
+                            <div className="techmarket-product-rating">
+                                <div className="star-rating">
+                                    <span className="w-100">5 üzerinden <strong className="rating">{item.rating}</strong></span>
                                 </div>
+                                <span className="review-count">{item.reviewCount}</span>
+                            </div>
+                        </a>
+                        <div className="brand">
+                            <a href="#">
+                                <img alt={item.brandName} src={item.brandImage} />
                             </a>
-                            <div className="brand">
-                                <a href="#">
-                                    <img alt={item.brandName} src={item.brandImage} />
-                                </a>
-                            </div>
-                            <div className="woocommerce-product-details__short-description">
-                                <ul>
-                                    {
-                                        item.details.map((detail, i) => {
-                                            return (<li key={i}>{detail}</li>)
-                                        })
-                                    }
-                                </ul>
-                            </div>
-                            <span className="sku_wrapper">SKU:
+                        </div>
+                        <div className="woocommerce-product-details__short-description">
+                            <ul>
+                                {
+                                    item.details.map((detail, i) => {
+                                        return (<li key={i}>{detail}</li>)
+                                    })
+                                }
+                            </ul>
+                        </div>
+                        <span className="sku_wrapper">SKU:
                                 <span className="sku">{item.stockCode}</span>
                             </span>
+                    </div>
+                    <div className="product-actions">
+                        <div className="availability">
+                            Stok:
+                            <p className="stock in-stock">{item.stockCount}</p>
                         </div>
-                        <div className="product-actions">
-                            <div className="availability">
-                                Stok:
-                                <p className="stock in-stock">{item.stockCount}</p>
-                            </div>
-                            <span className="price">
+                        <span className="price">
                                 <span className="woocommerce-Price-amount amount">
-                                    <span className="woocommerce-Price-currencySymbol">₺</span>{item.price}</span>
+                                    <span className="woocommerce-Price-currencySymbol">₺</span>{getItemPrice(item.price)}</span>
                             </span>
-                            <a className="button add_to_cart_button" href="#">Sepete Ekle</a>
-                        </div>
+                        <a
+                            className="button add_to_cart_button"
+                            href="#"
+                            onClick={(e) => {
+                                e.preventDefault();
+                                basket.add(item)(e);
+                                setAdded(true);
+                                setTimeout(() => {
+                                    setAdded(false);
+                                }, 1250)
+                            }}
+                            style={added ? { backgroundColor: '#e86708', color: '#fff' } : {}}
+                        >
+                            {!added && 'Sepete ekle'}
+                            {added && 'Sepete eklendi'}
+                        </a>
                     </div>
                 </div>
             </div>
-        )
-    }
-}
+        </div>
+    );
+};
 
 export default ListLarge
