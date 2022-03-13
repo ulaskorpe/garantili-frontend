@@ -158,12 +158,12 @@ export const fetchThis = async (
                     }
                 }
 
-                if (!res?.status) {
-                    throw {
-                        message: res?.errors?.msg || 'Bilinmeyen bir hata ile karşılaşıldı!',
-                        code: res?.errors?.code || undefined,
-                    };
-                }
+                // if (!res?.status) {
+                //     throw {
+                //         message: res?.errors?.msg || 'Bilinmeyen bir hata ile karşılaşıldı!',
+                //         code: res?.errors?.code || undefined,
+                //     };
+                // }
                 if (!successCodes.includes(statusCode)) {
                     throw new Error(res?.errors?.msg || 'Bilinmeyen bir hata ile karşılaşıldı!');
                 }

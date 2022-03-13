@@ -1,6 +1,7 @@
 import React, {Component, useState} from "react";
 import useBasket from "../../../store/hooks/useBasket";
-import {getItemPrice} from "../../../store/selectors/basket";
+import {ayir, getItemPrice} from "../../../store/selectors/basket";
+import useProductTools from "../../../hooks/useProductTools";
 
 const Placeholder = ({ className }) => (
     <div className={`is-placeholder ${className}`}>
@@ -51,6 +52,7 @@ const ListItem = (props) => {
     const [added, setAdded] = useState(false);
 
     const basket = useBasket();
+    const { goProductEvent } = useProductTools();
 
     if (isPlaceholder) return <Placeholder className={className} />;
     return (
@@ -62,7 +64,9 @@ const ListItem = (props) => {
                 <div className="media-body">
                     <div className="product-info">
                         <a className="woocommerce-LoopProduct-link woocommerce-loop-product__link"
-                           href="single-product-fullwidth.html">
+                           href={item.url}
+                           onClick={goProductEvent(item)}
+                        >
                             <h2 className="woocommerce-loop-product__title">{item.title}</h2>
                             <div className="techmarket-product-rating">
                                 <div title="Rated 5.00 out of 5"
@@ -92,8 +96,9 @@ const ListItem = (props) => {
                         </div>
                         <span className="price">
                                 <span className="woocommerce-Price-amount amount">
-                                    <span
-                                        className="woocommerce-Price-currencySymbol">₺</span>{getItemPrice(item.price)}</span>
+                                    <span className="woocommerce-Price-currencySymbol">₺</span>
+                                    {ayir(getItemPrice(item))}
+                                </span>
                             </span>
                         <a
                             className="button add_to_cart_button"

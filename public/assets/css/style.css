@@ -38196,3 +38196,18 @@ form.track_order input[type="submit"] {
 .Toastify__toast-container {
     --toastify-z-index: 999999;
 }
+
+.slick-pagination {
+    display: flex;
+    justify-content: center;
+    font-size: 0.938em;
+    line-height: 1.200em;
+    letter-spacing: -0.01em;
+}
+
+.slick-pagination .slider-next:before, .home-5-deals-carousel .custom-slick-pagination .slider-next:before {
+    color: #dedede;
+    content: "|";
+    display: inline-block;
+    margin: 0 1.3em;
+}

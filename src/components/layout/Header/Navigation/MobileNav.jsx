@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import {useSelector} from "react-redux";
 import {getBasketCount} from "../../../../store/selectors/basket";
+import useRouterDOM from "../../../../hooks/useRouterDOM";
 
 const INITIAL_MOBILE_NAV_ITEMS = [
     { id: 1, title: "Süper Teklif", url: "#" },
@@ -30,13 +31,19 @@ const INITIAL_LOGO_STYLE = {
 
 const MobileNav = () => {
     const basketCount = useSelector(getBasketCount);
+    const { goEvent } = useRouterDOM();
 
     return (
         <div className="col-full handheld-only">
             <div className="handheld-header">
                 <div className="row">
                     <div className="site-branding">
-                        <a href="#" className="custom-logo-link" rel="home">
+                        <a
+                            className="custom-logo-link"
+                            rel="home"
+                            href="/"
+                            onClick={goEvent('/')}
+                        >
                             <img
                                 alt=""
                                 src="/assets/images/LOGO.svg"

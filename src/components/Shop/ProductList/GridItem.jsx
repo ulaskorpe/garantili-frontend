@@ -1,7 +1,8 @@
 import React, {useState} from "react";
 import {basketAdd} from "../../../store/actions/basket";
 import useBasket from "../../../store/hooks/useBasket";
-import {getItemPrice} from "../../../store/selectors/basket";
+import {ayir, getItemPrice} from "../../../store/selectors/basket";
+import useProductTools from "../../../hooks/useProductTools";
 
 const Placeholder = ({ className }) => (
     <div className={`is-placeholder ${className}`}>
@@ -30,18 +31,19 @@ const GridItem = (props) => {
     const { item, listCount, isPlaceholder = false } = props;
     const [added, setAdded] = useState(false);
     const basket = useBasket();
+    const { goProductEvent } = useProductTools();
 
     const className = getClasses(listCount);
     if (isPlaceholder) return <Placeholder className={className} />;
 
     return (
         <div className={className}>
-            <a className="woocommerce-LoopProduct-link woocommerce-loop-product__link" href={item.url} >
+            <a className="woocommerce-LoopProduct-link woocommerce-loop-product__link" href={item.url} onClick={goProductEvent(item)}>
                 <img width="224" height="197" alt="" className="attachment-shop_catalog size-shop_catalog wp-post-image" src={item.imageUrl} />
                 <br />
                 <div className="price">
                         <span className="woocommerce-Price-amount amount">
-                            {getItemPrice(item.price)}
+                            {ayir(getItemPrice(item))}
                             <span className="woocommerce-Price-currencySymbol">₺</span>
                         </span>
                 </div>

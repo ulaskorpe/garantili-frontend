@@ -17,6 +17,15 @@ export const GET_FAQ_LIST = {
 };
 
 /** @type Endpoint */
+export const GET_SUPER_OFFER = {
+    path: 'api/site/super-offer',
+    method: 'GET',
+    apiKeyRequired: true,
+    pathVars: [],
+    body: [],
+};
+
+/** @type Endpoint */
 export const GET_NEW_LIST = {
     path: 'api/site/news/{start}/{len}(?query:/){query}',
     method: 'GET',
