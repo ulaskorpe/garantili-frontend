@@ -24,6 +24,7 @@
  * @property {Array.<string>} pathVars
  */
 
+export * from './cart_order';
 export * from './customers';
 export * from './products';
 export * from './site';

@@ -38211,3 +38211,7 @@ form.track_order input[type="submit"] {
     display: inline-block;
     margin: 0 1.3em;
 }
+
+.no-slick-pb .slick-list {
+    padding-bottom: 0 !important;
+}

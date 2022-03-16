@@ -3,7 +3,8 @@ import { useState } from "react"
 import OrderBox from "./OrderBox"
 import OrderItem from "./OrderItem"
 
-function OrderItemList() {
+function OrderItemList(props) {
+    const { data } = props;
 
     const [items, setCartItems] = useState([
         { id: 1, title: 'Apple iPhone 12 Pro Pacific Blue', quantity: 2, price: 24000, totalPrice: 48000, url: '/urun-detay/iphone-12-mini-64-gb-3', imageUrl: '/assets/images/products/L10.jpg' },
@@ -26,36 +27,41 @@ function OrderItemList() {
     })
     return (
         <div>
-            <h2 class="woocommerce-order-details__title bottom-gray-seperator">Siparişlerim</h2>
+            <h2 className="woocommerce-order-details__title bottom-gray-seperator">Siparişlerim</h2>
             <div className="container-fluid">
                 <div className="row">
                     <div className="woocommerce-cart-form col-md-9">
-                        <ul class="woocommerce-order-overview woocommerce-thankyou-order-details order_details bottom-seperator">
-                            <li class="woocommerce-order-overview__order order">
+                        <ul className="woocommerce-order-overview woocommerce-thankyou-order-details order_details bottom-seperator">
+                            <li className="woocommerce-order-overview__order order">
                                 Sipariş Numarası:<strong>{orderDetails.orderNumber}</strong>
                             </li>
-                            <li class="woocommerce-order-overview__date date">
+                            <li className="woocommerce-order-overview__date date">
                                 Tarih:<strong>{orderDetails.orderDate}</strong>
                             </li>
-                            <li class="woocommerce-order-overview__payment-method method">
+                            <li className="woocommerce-order-overview__payment-method method">
                                 Ödeme Yöntemi: <strong>{orderDetails.paymentMethod}</strong>
                             </li>
-                            <li class="woocommerce-order-overview__total total order-cost-position">
-                                Sipariş Bedeli:<strong><span class="woocommerce-Price-amount amount"><span
-                                    class="woocommerce-Price-currencySymbol ">₺</span>{orderDetails.price}</span></strong>
+                            <li className="woocommerce-order-overview__total total order-cost-position">
+                                Sipariş Bedeli:<strong><span className="woocommerce-Price-amount amount"><span
+                                    className="woocommerce-Price-currencySymbol ">₺</span>{orderDetails.price}</span></strong>
                             </li>
                         </ul>
-                        <table class="shop_table shop_table_responsive cart">
+                        <table className="shop_table shop_table_responsive cart">
                             <thead>
                                 <tr>
-                                    <th class="product-name">Ürünler</th>
-                                    <th class="product-price">Fiyat</th>
-                                    <th class="product-quantity">Adet</th>
-                                    <th class="product-subtotal text-right">Toplam</th>
+                                    <th className="product-name">Ürünler</th>
+                                    <th className="product-price">Fiyat</th>
+                                    <th className="product-quantity">Adet</th>
+                                    <th className="product-subtotal text-right">Toplam</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {items.map(_ => <OrderItem item={_} />)}
+                                {data?.items?.map((item, itemIDX) => (
+                                    <OrderItem
+                                        key={`order_item_${itemIDX}`}
+                                        item={item}
+                                    />
+                                ))}
                             </tbody>
                         </table>
                     </div>

@@ -87,7 +87,7 @@ export const fetchThis = async (
             let value = (endpointBody || {})[name];
             const defaultValueIsDefined = typeof defaultValue !== 'undefined';
 
-            if (value) {
+            if (typeof value !== 'undefined') {
                 const isValid = type === 'any' || type(value) === value;
                 if (!isValid) {
                     if (isDev) {
@@ -108,7 +108,6 @@ export const fetchThis = async (
                 }
             } else {
                 if (isRequired) {
-                    console.log(name, 'zorunlu')
                     return false;
                 }
 

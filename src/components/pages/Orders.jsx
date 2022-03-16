@@ -1,26 +1,72 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import Footer from "../layout/Footer/Footer"
 import HeaderMain from "../layout/Header/Header"
 import TopBar from "../layout/TopBar"
 import BreadCrumb from "../layout/BreadCrumb"
 import { useState } from "react"
 import OrderItemList from "../ordercomponents/OrderItemList"
-import OrderBox from "../ordercomponents/OrderBox"
+import {useQuery} from "react-query";
+import {DEFAULT_API_KEY, fetchThis, GET_ORDER_SUMMARY, retry} from "../../api";
+import {useParams} from "react-router-dom";
+import {useAuth} from "../../context";
+
+const ROOT_CRUMB = { url: '/siparişlerim', title: 'Siparişler' };
+
 function Orders(props) {
-
-    const { basket, onAddToBasket, removeFromBasket } = props
-
+    const params = useParams();
+    const { state: customer, isLogged } = useAuth();
     const [crumb, setCrumb] = useState([
-        { url: '#', title: 'Siparişlerim' }
-    ])
+        ROOT_CRUMB,
+    ]);
+
+    const orderDetail = useQuery(
+        ['get-order-history', params, customer],
+        () => (
+            fetchThis(
+                GET_ORDER_SUMMARY,
+                {
+                    order_id: params.id,
+                    customer_id: '1000109',
+                },
+                DEFAULT_API_KEY,
+                {},
+            )
+        ),
+        {
+            retry,
+            refetchOnWindowFocus: false,
+            enabled: Boolean(
+                isLogged
+                && typeof params.id !== 'undefined'
+            ),
+        },
+    );
+
+    useEffect(() => {
+        if (crumb.length === 1) {
+            if (
+                orderDetail.isSuccess
+                && orderDetail.data
+                && orderDetail.data.status
+            ) {
+                setCrumb([
+                    ROOT_CRUMB,
+                    { url: '#', title: 'Test' },
+                ]);
+            } else if (params && params.id) {
+                setCrumb([
+                    ROOT_CRUMB,
+                    { url: '#', title: params.id },
+                ]);
+            }
+        }
+    }, [orderDetail, crumb, params])
 
     return (
         <div className="woocommerce-active left-sidebar">
             <div id="page" className="hfeed site">
                 <TopBar />
-                <HeaderMain basket={basket}
-                    onRemoveBasket={removeFromBasket}
-                />
+                <HeaderMain />
             </div>
             <div id="content" className="site-content" tabIndex="-1">
                 <div className="col-full">
@@ -32,7 +78,20 @@ function Orders(props) {
                                     <div className="entry-content">
                                         <div className="woocommerce">
                                             <div className="">
-                                                <OrderItemList removeFromBasket={removeFromBasket} />
+                                                {Boolean(
+                                                    orderDetail.isSuccess
+                                                    && orderDetail.data.status
+                                                ) && (
+                                                    <OrderItemList
+                                                        data={orderDetail.data.data.order}
+                                                    />
+                                                )}
+                                                {orderDetail.isLoading && (
+                                                    <span>Sipariş bilgileri getiriliyor, lütfen bekleyiniz...</span>
+                                                )}
+                                                {orderDetail.isError && (
+                                                    <span>Hata!</span>
+                                                )}
                                             </div>
                                         </div>
                                     </div>
@@ -64,8 +123,9 @@ function Orders(props) {
                                     <li className="product_cat">
                                         <ul>
                                             <li className="cat-item">
-                                                <a href="/siparislerim">
-                                                    <strong>Siparişlerim</strong></a>
+                                                <a href="#">
+                                                    <strong>Sipariş detay</strong>
+                                                </a>
                                             </li>
 
                                         </ul>

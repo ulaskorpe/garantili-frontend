@@ -7,59 +7,57 @@ class OrderBox extends Component {
     }
     render() {
         return (
-            <div class="cart-collaterals w-100 mr-0 mt-15px">
-                <div class="cart_totals">
+            <div className="cart-collaterals w-100 mr-0 mt-15px">
+                <div className="cart_totals">
                     <h2>Ödeme Bilgileri</h2>
-                    <table class="shop_table shop_table_responsive">
+                    <table className="shop_table shop_table_responsive">
                         <tbody>
-                            <tr class="cart-subtotal">
+                            <tr className="cart-subtotal">
                                 <th>Ara Toplam</th>
                                 <td data-title="Subtotal">
-                                    <span class="woocommerce-Price-amount amount">
-                                        <span class="woocommerce-Price-currencySymbol">₺</span>{this.state.subTotal}</span>
+                                    <span className="woocommerce-Price-amount amount">
+                                        <span className="woocommerce-Price-currencySymbol">₺</span>{this.state.subTotal}</span>
                                 </td>
                             </tr>
-                            <tr class="shipping">
+                            <tr className="shipping">
                                 <th>Kargo</th>
                                 <td data-title="Shipping">Sabit Fiyat</td>
                             </tr>
-                            <tr class="order-total">
+                            <tr className="order-total">
                                 <th>Toplam</th>
                                 <td data-title="Total">
                                     <strong>
-                                        <span class="woocommerce-Price-amount amount">
-                                            <span class="woocommerce-Price-currencySymbol">₺</span>{this.state.total}</span>
+                                        <span className="woocommerce-Price-amount amount">
+                                            <span className="woocommerce-Price-currencySymbol">₺</span>{this.state.total}</span>
                                     </strong>
                                 </td>
                             </tr>
                         </tbody>
                     </table>
                     <h2>Adres Bilgileri</h2>
-                    <table class="shop_table shop_table_responsive m-tb">
+                    <table className="shop_table shop_table_responsive m-tb">
                         <tbody>
-                            <tr class="cart-subtotal">
+                            <tr className="cart-subtotal">
                                 <th><strong>Teslimat Adresi</strong></th>
                                 <td data-title="Subtotal">
                                 </td>
                             </tr>
-                            <tr class="shipping">
+                            <tr className="shipping">
                                 <th>{this.state.deliveryAddress}</th>
                             </tr>
-                            <tr class="top-gray-seperator">
+                            <tr className="top-gray-seperator">
                                 <th className="pt-3"><strong>Fatura Adresi</strong></th>
                                 <td data-title="Subtotal">
                                 </td>
                             </tr>
-                            <tr class="shipping">
+                            <tr className="shipping">
                                 <th>{this.state.deliveryAddress}</th>
                             </tr>
-                            <tr class="order-total">
+                            <tr className="order-total">
                                 
                             </tr>
                         </tbody>
                     </table>
-
-                    
                 </div>
             </div>
         )

@@ -18,6 +18,49 @@ export const GET_ALL_PRODUCTS = {
 };
 
 /** @type Endpoint */
+export const GET_BEST_SELLERS = {
+    path: 'api/products/best-sellers',
+    method: 'POST',
+    apiKeyRequired: true,
+    pathVars: [],
+    body: [
+        { name: 'count', type: Number, default: 0,  isRequired: true },
+    ],
+};
+
+export const GET_WEEKLY_DEALS = {
+    path: 'api/products/weekly-deals',
+    method: 'POST',
+    apiKeyRequired: true,
+    pathVars: [],
+    body: [
+        { name: 'count', type: Number, default: 0,  isRequired: true },
+    ],
+};
+
+/** @type Endpoint */
+export const GET_NEW_PRODUCTS = {
+    path: 'api/products/new-products',
+    method: 'POST',
+    apiKeyRequired: true,
+    pathVars: [],
+    body: [
+        { name: 'count', type: Number, default: 0,  isRequired: true },
+        { name: 'category_id', type: String, default: '',  isRequired: true },
+    ],
+};
+
+export const GET_HIGHEST_RATED = {
+    path: 'api/products/highest-rated',
+    method: 'POST',
+    apiKeyRequired: true,
+    pathVars: [],
+    body: [
+        { name: 'count', type: Number, default: 0,  isRequired: true },
+    ],
+};
+
+/** @type Endpoint */
 export const GET_PRODUCT_FILTERS = {
     path: 'api/products/product-filters',
     method: 'GET',
