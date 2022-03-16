@@ -44,7 +44,7 @@ const queryClient = new QueryClient();
 const persistor = persistStore(store);
 
 function App() {
-    const [basket, setBasket] = useState({ totalPrice: 0, basketItems: [] })
+
     const [allProduct] = useState(
         [
             { id: 1, title: "Samsung Galaxy M52 5G 128 GB (Samsung Türkiye Garantili) ", listPrice: "5799.00", price: "5299.00", url: "/urun-detay/samsung-m2-1", imageUrl: "/assets/images/products/L1.jpg", discount: "300.000", details: ['128 GB Depolama', '8 GB RAM', '6.7" Retina Ekran', '5000mAh'] },
@@ -59,73 +59,6 @@ function App() {
             { id: 10, title: "iPhone 13 Pro 128 GB", price: "21.499.00", url: "/urun-detay/iphone-13-pro-128-10", imageUrl: "/assets/images/products/L10.jpg", details: ['128 GB Depolama', '4 GB RAM', '6.5" Ekran Boyutu', '8MP Ön Kamera'] }
         ]
     )
-    const [homeContent] = useState({
-        products: {
-            headers: [
-                { id: 1, title: "Haftanın Fırsatları", tabUrl: "#weeklydeals" },
-                { id: 2, title: "Çok Satanlar", tabUrl: "#topsales" },
-                { id: 3, title: "Yeni Ürünler", tabUrl: "#newproducts" },
-                { id: 4, title: "En Yüksek Puanlı", tabUrl: "#highrated" }
-            ],
-            tabs: [
-                {
-                    id: 1, tabId: "weeklydeals", products: [
-                        { id: 21, title: "Bluetooth on-ear PureBass Headphones", listPrice: "300.00", price: "500.00", url: "", imageUrl: "assets/images/products/7.jpg", discount: "150" },
-                        { id: 22, title: "Bluetooth on-ear PureBass Headphones", listPrice: "300.00", price: "500.00", url: "", imageUrl: "assets/images/products/7.jpg", discount: "150" },
-                        { id: 23, title: "Bluetooth on-ear PureBass Headphones", listPrice: "300.00", price: "500.00", url: "", imageUrl: "assets/images/products/7.jpg", discount: "150" },
-                        { id: 24, title: "Bluetooth on-ear PureBass Headphones", listPrice: "300.00", price: "500.00", url: "", imageUrl: "assets/images/products/7.jpg", discount: "150" },
-                        { id: 25, title: "Bluetooth on-ear PureBass Headphones", listPrice: "300.00", price: "500.00", url: "", imageUrl: "assets/images/products/7.jpg", discount: "150" },
-                        { id: 26, title: "Bluetooth on-ear PureBass Headphones", listPrice: "300.00", price: "500.00", url: "", imageUrl: "assets/images/products/7.jpg", discount: "150" },
-                        { id: 27, title: "Bluetooth on-ear PureBass Headphones", listPrice: "300.00", price: "500.00", url: "", imageUrl: "assets/images/products/7.jpg", discount: "150" },
-                        { id: 28, title: "Bluetooth on-ear PureBass Headphones", listPrice: "300.00", price: "500.00", url: "", imageUrl: "assets/images/products/7.jpg", discount: "150" },
-                        { id: 29, title: "Bluetooth on-ear PureBass Headphones", listPrice: "300.00", price: "500.00", url: "", imageUrl: "assets/images/products/7.jpg", discount: "150" },
-                        { id: 30, title: "Bluetooth on-ear PureBass Headphones", listPrice: "300.00", price: "500.00", url: "", imageUrl: "assets/images/products/7.jpg", discount: "150" },
-                        { id: 31, title: "Bluetooth on-ear PureBass Headphones", listPrice: "300.00", price: "500.00", url: "", imageUrl: "assets/images/products/7.jpg", discount: "150" },
-                        { id: 22, title: "Bluetooth on-ear PureBass Headphones", listPrice: "300.00", price: "500.00", url: "", imageUrl: "assets/images/products/7.jpg", discount: "150" },
-                        { id: 33, title: "Bluetooth on-ear PureBass Headphones", listPrice: "300.00", price: "500.00", url: "", imageUrl: "assets/images/products/7.jpg", discount: "150" },
-                    ]
-                },
-                {
-                    id: 2, tabId: "topsales", products: [
-                        { id: 21, title: "Bluetooth on-ear PureBass Headphones", listPrice: "300.00", price: "500.00", url: "", imageUrl: "assets/images/products/7.jpg", discount: "150" },
-                        { id: 22, title: "Bluetooth on-ear PureBass Headphones", listPrice: "300.00", price: "500.00", url: "", imageUrl: "assets/images/products/7.jpg", discount: "150" },
-                    ]
-                }
-            ]
-        }
-    }
-    )
-
-    const removeFromBasket = (productId) => {
-        const basketItem = basket.basketItems.find(_ => _.id === productId)
-        basket.basketItems = basket.basketItems.filter(p => p.id !== productId)
-        basket.totalPrice -= basketItem.price * basketItem.quantity
-        setBasket(basket.totalPrice, basket.basketItems)
-    }
-    const addToBasket = (productId) => {
-        if (basket.basketItems.find(p => p.id === productId)) {
-
-            basket.basketItems.find(p => p.id === productId).quantity++
-            const exbasketItem = basket.basketItems.find(p => p.id === productId)
-            basket.totalPrice += exbasketItem.price
-
-            setBasket(basket.totalPrice, basket.basketItems)
-            return
-        }
-
-        const product = this.state.allProducts.find(p => p.id === productId)
-        const basketItem = {
-            id: productId,
-            title: product.title,
-            quantity: 1,
-            price: Number.parseFloat(product.price.replace('', '')),
-            imageUrl: product.imageUrl
-        }
-        basket.totalPrice += basketItem.price
-        basket.basketItems.push(basketItem)
-
-        setBasket(basket.totalPrice, basket.basketItems)
-    }
 
     return (
         <BrowserRouter>
@@ -137,33 +70,94 @@ function App() {
                                 {/* 404 */}
                                 <Route path="*" element={<ErrorPage code={404} />} />
 
-                                <Route index element={<HomePage basket={basket} addToBasket={addToBasket} removeFromBasket={removeFromBasket} homeContent={homeContent} />} />
-                                <Route path='/urunler' element={<ShopPage basket={basket} addToBasket={addToBasket} removeFromBasket={removeFromBasket} />} />
-                                <Route path='/urunler/:category-:categoryId' element={<ShopPage basket={basket} addToBasket={addToBasket} removeFromBasket={removeFromBasket} allProducts={allProduct} />} />
-                                <Route path='/urun-detay/:slug/:productId' element={<ProductPage basket={basket} addToBasket={addToBasket} removeFromBasket={removeFromBasket} allProducts={allProduct} />} />
-                                <Route path='/telefon-sat/' element={<PhoneSell basket={basket} addToBasket={addToBasket} removeFromBasket={removeFromBasket} allProducts={allProduct} />} />
-                                <Route path='/telefon-sat/:id' element={<PhoneSellDevice basket={basket} addToBasket={addToBasket} removeFromBasket={removeFromBasket} allProducts={allProduct} />} />
-                                <Route path='/telefon-onar-yenile/' element={<DeviceRepair basket={basket} addToBasket={addToBasket} removeFromBasket={removeFromBasket} allProducts={allProduct} />} />
-                                <Route path='/telefon-onar-yenile/:id' element={<DeviceRepairDetail basket={basket} addToBasket={addToBasket} removeFromBasket={removeFromBasket} allProducts={allProduct} />} />
-                                <Route path='/iletisim' element={<Contact basket={basket} addToBasket={addToBasket} removeFromBasket={removeFromBasket} allProducts={allProduct} />} />
-                                <Route path='/sayfa/:pagetitle/:id' element={<ContentPage basket={basket} addToBasket={addToBasket} removeFromBasket={removeFromBasket} allProducts={allProduct} />} />
-                                <Route path='/sss' element={<Faq basket={basket} addToBasket={addToBasket} removeFromBasket={removeFromBasket} allProducts={allProduct} />} />
-                                <Route path='/kilavuz' element={<UserManual basket={basket} addToBasket={addToBasket} removeFromBasket={removeFromBasket} allProducts={allProduct} />} />
-                                <Route path='/bizden-haberler' element={<News basket={basket} addToBasket={addToBasket} removeFromBasket={removeFromBasket} allProducts={allProduct} />} />
-                                <Route path='/bizden-haberler/:id' element={<NewsDetails basket={basket} addToBasket={addToBasket} removeFromBasket={removeFromBasket} allProducts={allProduct} />} />
-                                <Route path='/insan-kaynaklari' element={<HRPage basket={basket} addToBasket={addToBasket} removeFromBasket={removeFromBasket} allProducts={allProduct} />} />
-                                <Route path='/imei-sorgula' element={<ImeiCheck basket={basket} addToBasket={addToBasket} removeFromBasket={removeFromBasket} allProducts={allProduct} />} />
-                                <Route path='/iade-formu' element={<GivingBackForm basket={basket} addToBasket={addToBasket} removeFromBasket={removeFromBasket} allProducts={allProduct} />} />
-                                <Route path='/sepet' element={<Cart basket={basket} removeFromBasket={removeFromBasket} />} />
-                                <Route path='/odeme' element={<Payment basket={basket} removeFromBasket={removeFromBasket} />} />
-                                <Route path='/siparis-ozeti' element={<OrderSummary basket={basket} removeFromBasket={removeFromBasket} />} />
+                                <Route
+                                    index
+                                    element={<HomePage />}
+                                />
+                                <Route
+                                    path='/urunler'
+                                    element={<ShopPage />}
+                                />
+                                <Route
+                                    path='/urunler/:category-:categoryId'
+                                    element={<ShopPage />}
+                                />
+                                <Route
+                                    path='/urun-detay/:slug/:productId'
+                                    element={<ProductPage />}
+                                />
+                                <Route
+                                    path='/telefon-sat/'
+                                    element={<PhoneSell />}
+                                />
+                                <Route
+                                    path='/telefon-sat/:id'
+                                    element={<PhoneSellDevice />}
+                                />
+                                <Route
+                                    path='/telefon-onar-yenile/'
+                                    element={<DeviceRepair />}
+                                />
+                                <Route
+                                    path='/telefon-onar-yenile/:id'
+                                    element={<DeviceRepairDetail />}
+                                />
+                                <Route
+                                    path='/iletisim'
+                                    element={<Contact />}
+                                />
+                                <Route
+                                    path='/sayfa/:pagetitle/:id'
+                                    element={<ContentPage />}
+                                />
+                                <Route
+                                    path='/sss'
+                                    element={<Faq />}
+                                />
+                                <Route
+                                    path='/kilavuz'
+                                    element={<UserManual />}
+                                />
+                                <Route
+                                    path='/bizden-haberler'
+                                    element={<News />}
+                                />
+                                <Route
+                                    path='/bizden-haberler/:id'
+                                    element={<NewsDetails />}
+                                />
+                                <Route
+                                    path='/insan-kaynaklari'
+                                    element={<HRPage  />}
+                                />
+                                <Route
+                                    path='/imei-sorgula'
+                                    element={<ImeiCheck />}
+                                />
+                                <Route
+                                    path='/iade-formu'
+                                    element={<GivingBackForm />}
+                                />
+                                <Route
+                                    path='/sepet'
+                                    element={<Cart />}
+                                />
+                                <Route
+                                    path='/odeme'
+                                    element={<Payment />}
+                                />
+                                <Route
+                                    path='/siparis-ozeti'
+                                    element={<OrderSummary />}
+                                />
+
                                 {/* /login => Login page */}
                                 <Route path='/login' element={(
                                     <AuthController
                                         mustNotBeLoggedIn
                                         redirectTo="/"
                                     >
-                                        <Login basket={basket} removeFromBasket={removeFromBasket} />
+                                        <Login />
                                     </AuthController>
                                 )} />
 
@@ -179,10 +173,7 @@ function App() {
                                         mustNotBeLoggedIn
                                         redirectTo="/"
                                     >
-                                        <ForgetPassword
-                                            basket={basket}
-                                            removeFromBasket={removeFromBasket}
-                                        />
+                                        <ForgetPassword />
                                     </AuthController>
                                 )} />
 
@@ -192,20 +183,40 @@ function App() {
                                         mustNotBeLoggedIn
                                         redirectTo="/"
                                     >
-                                        <VerifyAccount
-                                            basket={basket}
-                                            removeFromBasket={removeFromBasket}
-                                        />
+                                        <VerifyAccount />
                                     </AuthController>
                                 )} />
-                                <Route path='/takip' element={<OrderFollow basket={basket} removeFromBasket={removeFromBasket} />} />
-                                <Route path='/takip-detaylar' element={<FollowDetails basket={basket} removeFromBasket={removeFromBasket} />} />
-                                <Route path='/siparislerim' element={<Orders basket={basket} removeFromBasket={removeFromBasket} />} />
-                                <Route path='/siparis/:id' element={<Orders basket={basket} removeFromBasket={removeFromBasket} />} />
-                                <Route path='/uyelik-bilgilerim' element={<MemberInformations basket={basket} removeFromBasket={removeFromBasket} />} />
-                                <Route path='/adreslerim' element={<Address basket={basket} removeFromBasket={removeFromBasket} />} />
-                                <Route path='/sifre-guncelleme' element={<PasswordUpdate basket={basket} removeFromBasket={removeFromBasket} />} />
+                                <Route
+                                    path='/takip'
+                                    element={<OrderFollow />}
+                                />
+                                <Route
+                                    path='/takip-detaylar'
+                                    element={<FollowDetails />}
+                                />
+                                <Route
+                                    path='/siparislerim'
+                                    element={<Orders />}
+                                />
+                                <Route
+                                    path='/siparis/:id'
+                                    element={<Orders />}
+                                />
+                                <Route
+                                    path='/uyelik-bilgilerim'
+                                    element={<MemberInformations />}
+                                />
+                                <Route
+                                    path='/adreslerim'
+                                    element={<Address />}
+                                />
+                                <Route
+                                    path='/sifre-guncelleme'
+                                    element={<PasswordUpdate />}
+                                />
                             </Routes>
+
+                            {/* Toast */}
                             <ToastContainer
                                 position="top-right"
                                 theme="colored"

@@ -64,7 +64,6 @@ class Slider extends Component {
                     });
                 }
             )
-        console.log('cc did mount')
     }
 
     componentDidUpdate() {

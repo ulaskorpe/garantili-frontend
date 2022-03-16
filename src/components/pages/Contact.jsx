@@ -4,8 +4,7 @@ import Footer from "../layout/Footer/Footer";
 import HeaderMain from "../layout/Header/Header";
 import TopBar from "../layout/TopBar";
 
-export default function Contact(props) {
-    const { basket, onAddToBasket, removeFromBasket } = props
+export default function Contact() {
     const crumbs = [
         { url: '#', title: 'İletişim' }
     ]
@@ -13,9 +12,7 @@ export default function Contact(props) {
         <div className="woocommerce-active single-product full-width normal">
             <div id="page" className="hfeed site">
                 <TopBar />
-                <HeaderMain basket={basket}
-                    onRemoveBasket={removeFromBasket}
-                />
+                <HeaderMain />
             </div>
             <div id="content" className="site-content" tabIndex="-1">
                 <div className="col-full">

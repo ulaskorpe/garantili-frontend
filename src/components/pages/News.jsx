@@ -8,8 +8,7 @@ import {useQuery} from "react-query";
 import {DEFAULT_API_KEY, fetchThis, GET_NEW_LIST, retry} from "../../api";
 
 let timer = null;
-export default function News(props) {
-    const { basket, onAddToBasket, removeFromBasket } = props
+export default function News() {
     // const [tags, setTags] = useState([
     //     {
     //         "title": "aliquip",
@@ -32,8 +31,8 @@ export default function News(props) {
     //         "url": "#"
     //     }
     // ]);
-    const [crumbs, setCrumb] = useState([{ url: '#', title: 'Haberler' }]);
-    let [searchQuery, setSearchQuery] = useState(null);
+    const [crumbs] = useState([{ url: '#', title: 'Haberler' }]);
+    let [searchQuery, setSearchQuery] = useState('');
     const handleSearchChange = (e) => {
         if (timer) {
             clearTimeout(timer);
@@ -66,9 +65,7 @@ export default function News(props) {
         <div id="content" className="right-sidebar blog-grid">
             <div id="page" className="hfeed site">
                 <TopBar />
-                <HeaderMain basket={basket}
-                    onRemoveBasket={removeFromBasket}
-                />
+                <HeaderMain />
             </div>
             <div id="content" className="site-content" tabIndex="-1">
                 <div className="col-full">

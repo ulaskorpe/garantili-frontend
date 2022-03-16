@@ -22,11 +22,9 @@ const initialFormValues = {
     email: '',
     phone: '+90',
 };
-const dateFormatMoment = 'dd/MM/yyyy';
-const dateFormatComp = 'dd/MM/yyyy';
-function MemberInformations(props) {
-    const { basket, removeFromBasket } = props;
 
+const dateFormatComp = 'dd/MM/yyyy';
+function MemberInformations() {
     const formikRef = useRef();
     const navigate = useNavigate();
     const location = useLocation();
@@ -54,7 +52,6 @@ function MemberInformations(props) {
 
     const handleSubmit = useCallback((iValues, {
         setSubmitting,
-        resetForm
     }) => {
         if (!isLogged) return;
         const values = JSON.parse(JSON.stringify(iValues));
@@ -65,7 +62,7 @@ function MemberInformations(props) {
         setSubmitting(true);
         setLoading(true);
         updateCustomerMutation?.mutate(values, {
-            onSuccess: ({ status = false, errors = { msg: '' }, data = {}}) => {
+            onSuccess: ({ status = false, errors = { msg: '' }}) => {
                 if (!status) {
                     sweetalert({
                         icon: 'error',
@@ -86,7 +83,7 @@ function MemberInformations(props) {
                 setSubmitting(false);
                 setLoading(false);
             },
-            onError: (error, data) => {
+            onError: (error) => {
                 sweetalert({
                     icon: 'error',
                     title: 'Hata',
@@ -184,9 +181,7 @@ function MemberInformations(props) {
         <div className="woocommerce-active left-sidebar">
             <div id="page" className="hfeed site">
                 <TopBar />
-                <HeaderMain basket={basket}
-                    onRemoveBasket={removeFromBasket}
-                />
+                <HeaderMain />
             </div>
             <div id="content" className="site-content" tabIndex="-1">
                 <div className="col-full">
@@ -365,15 +360,15 @@ function MemberInformations(props) {
                                         <ul>
                                             <li className="cat-item">
                                                 <a href="/uyelik-bilgilerim">
-                                                    <span className="no-child"></span><strong>Üyelik Bilgilerim</strong></a>
+                                                    <span className="no-child" /><strong>Üyelik Bilgilerim</strong></a>
                                             </li>
                                             <li className="cat-item">
                                                 <a href="/sifre-guncelleme">
-                                                    <span className="no-child"></span>Şifre Güncelleme</a>
+                                                    <span className="no-child" />Şifre Güncelleme</a>
                                             </li>
                                             <li className="cat-item  current-cat">
                                                 <a href="/adreslerim">
-                                                    <span className="no-child"></span>Adres Bilgilerim</a>
+                                                    <span className="no-child" />Adres Bilgilerim</a>
                                             </li>
 
                                         </ul>

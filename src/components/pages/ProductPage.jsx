@@ -10,10 +10,13 @@ import ProductGallery from "../Shop/ProductDetail/ProductGallery";
 import RelatedProductList from "../Shop/ProductDetail/RelatedProductList";
 import {useQuery} from "react-query";
 import {DEFAULT_API_KEY, fetchThis, GET_PRODUCT_DETAIL, retry} from "../../api";
+import useBasket from "../../store/hooks/useBasket";
 
 function ProductPage(props) {
-    const { basket, onAddToBasket, removeFromBasket } = props
-    const { productId } = useParams()
+    const { item } = props;
+    const { productId } = useParams();
+    const [added, setAdded] = useState(false);
+    const basket = useBasket();
 
     const getProduct = useQuery(
         ['product', productId],
@@ -37,8 +40,6 @@ function ProductPage(props) {
             && getProduct?.data?.data
         )) returnData = getProduct?.data?.data;
 
-        console.log(returnData);
-
         return returnData;
     }, [getProduct?.data])
 
@@ -50,9 +51,7 @@ function ProductPage(props) {
         <div className="woocommerce-active single-product full-width normal">
             <div id="page" className="hfeed site">
                 <TopBar />
-                <HeaderMain basket={basket}
-                    onRemoveBasket={removeFromBasket}
-                />
+                <HeaderMain />
             </div>
             <div id="content" className="site-content" tabIndex="-1">
                 <div className="col-full">
@@ -118,14 +117,27 @@ function ProductPage(props) {
                                                             <input type="number" size="4" className="input-text qty text" title="Qty" defaultValue="1" name="quantity"
                                                                 id="quantity-input" />
                                                         </div>
-                                                        <button className="single_add_to_cart_button button alt" value="185" name="add-to-cart"
-                                                            onClick={() => onAddToBasket(product.id)}>Sepete Ekle</button>
+                                                        <button
+                                                            className="single_add_to_cart_button button alt" value="185" name="add-to-cart"
+                                                            onClick={(e) => {
+                                                                e.preventDefault();
+                                                                basket.add(item)(e);
+                                                                setAdded(true);
+                                                                setTimeout(() => {
+                                                                    setAdded(false);
+                                                                }, 1250)
+                                                            }}
+                                                            style={added ? { backgroundColor: '#e86708', color: '#fff' } : {}}
+                                                        >
+                                                            {!added && 'Sepete ekle'}
+                                                            {added && 'Sepete eklendi'}
+                                                        </button>
                                                     </form>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <RelatedProductList onAddToBasket={onAddToBasket} />
+                                    <RelatedProductList />
                                 </div>
                                 <DetailTabs tabs={product.tabs} />
                             </main>

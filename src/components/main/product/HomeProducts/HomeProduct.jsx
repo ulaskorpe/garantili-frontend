@@ -179,7 +179,6 @@ const homeProductHeaders = [
 ];
 
 const HomeProducts = (props) => {
-    const { products, onAddToBasket } = props;
 
     const defaultUQOptions = {
         retry,

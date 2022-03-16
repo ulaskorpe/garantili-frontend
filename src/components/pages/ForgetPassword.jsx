@@ -12,7 +12,6 @@ import sweetalert from "sweetalert";
 
 function ForgetPassword(props) {
     /* Props */
-    const { basket, removeFromBasket } = props;
     const location = useLocation();
     const navigate = useNavigate();
 
@@ -119,9 +118,7 @@ function ForgetPassword(props) {
         <div className="woocommerce-active single-product full-width normal">
             <div id="page" className="hfeed site">
                 <TopBar />
-                <HeaderMain basket={basket}
-                    onRemoveBasket={removeFromBasket}
-                />
+                <HeaderMain />
             </div>
             <div id="content" className="site-content" tabIndex="-1">
                 <div className="col-full">

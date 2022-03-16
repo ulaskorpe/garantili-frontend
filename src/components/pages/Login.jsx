@@ -14,7 +14,6 @@ import {useLocation, useNavigate} from "react-router-dom";
 
 function Login(props) {
     /* Props */
-    const { basket, removeFromBasket } = props;
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -227,9 +226,7 @@ function Login(props) {
         <div className="woocommerce-active single-product full-width normal">
             <div id="page" className="hfeed site">
                 <TopBar />
-                <HeaderMain basket={basket}
-                    onRemoveBasket={removeFromBasket}
-                />
+                <HeaderMain />
             </div>
             <div id="content" className="site-content" tabIndex="-1">
                 <div className="col-full">

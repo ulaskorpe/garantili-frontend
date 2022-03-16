@@ -9,7 +9,6 @@ class ProductList extends Component {
     render() {
         const {
             products,
-            onAddToBasket,
             listType,
         } = this.props
 
@@ -17,15 +16,15 @@ class ProductList extends Component {
             const isPlaceholder = Boolean(product.isPlaceholder);
             switch (listType) {
                 case 'grid':
-                    return <GridItem isPlaceholder={isPlaceholder} item={product} addToBasket={onAddToBasket} key={i} listCount={i + 1} />
+                    return <GridItem isPlaceholder={isPlaceholder} item={product} key={i} listCount={i + 1} />
                 case 'grid-extended':
-                    return <GridExtended isPlaceholder={isPlaceholder} item={product} addToBasket={onAddToBasket} key={i} listCount={i + 1} />
+                    return <GridExtended isPlaceholder={isPlaceholder} item={product} key={i} listCount={i + 1} />
                 case 'large-list':
-                    return <ListLarge isPlaceholder={isPlaceholder} item={product} addToBasket={onAddToBasket} key={i} listCount={i + 1} />
+                    return <ListLarge isPlaceholder={isPlaceholder} item={product} key={i} listCount={i + 1} />
                 case 'list':
-                    return <ListItem isPlaceholder={isPlaceholder} item={product} addToBasket={onAddToBasket} key={i} listCount={i + 1} />
+                    return <ListItem isPlaceholder={isPlaceholder} item={product} key={i} listCount={i + 1} />
                 case 'list-small':
-                    return <SmallListItem isPlaceholder={isPlaceholder} item={product} addToBasket={onAddToBasket} key={i} listCount={i + 1} />
+                    return <SmallListItem isPlaceholder={isPlaceholder} item={product} key={i} listCount={i + 1} />
                 default:
                     break;
             }

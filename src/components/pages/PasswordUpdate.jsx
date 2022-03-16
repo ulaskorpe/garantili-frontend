@@ -16,13 +16,12 @@ const initialValues = {
     new_password: '',
     new_password_again: '',
 };
-function PasswordUpdate(props) {
-    const { basket, onAddToBasket, removeFromBasket } = props
+function PasswordUpdate() {
     const navigate = useNavigate();
     const location = useLocation();
     const [loading, setLoading] = useState(false);
     const { state: account, isLogged = false } = useAuth();
-    const [crumb, setCrumb] = useState([
+    const [crumb] = useState([
         { url: '#', title: 'Şifre Güncelleme' }
     ]);
 
@@ -47,7 +46,7 @@ function PasswordUpdate(props) {
         setSubmitting(true);
         setLoading(true);
         updatePasswordMutation?.mutate(values, {
-            onSuccess: ({ status = false, errors = { msg: '' }, data = {}}) => {
+            onSuccess: ({ status = false, errors = { msg: '' }}) => {
                 if (!status) {
                     sweetalert({
                         icon: 'error',
@@ -68,7 +67,7 @@ function PasswordUpdate(props) {
                 setSubmitting(false);
                 setLoading(false);
             },
-            onError: (error, data) => {
+            onError: (error) => {
                 if (!(error?.code === 'not_verified')) {
                     sweetalert({
                         icon: 'error',
@@ -142,9 +141,7 @@ function PasswordUpdate(props) {
         <div className="woocommerce-active left-sidebar">
             <div id="page" className="hfeed site">
                 <TopBar />
-                <HeaderMain basket={basket}
-                    onRemoveBasket={removeFromBasket}
-                />
+                <HeaderMain />
             </div>
             <div id="content" className="site-content" tabIndex="-1">
                 <div className="col-full">
@@ -307,15 +304,15 @@ function PasswordUpdate(props) {
                                         <ul>
                                             <li className="cat-item">
                                                 <a href="/uyelik-bilgilerim">
-                                                    <span className="no-child"></span>Üyelik Bilgilerim</a>
+                                                    <span className="no-child" />Üyelik Bilgilerim</a>
                                             </li>
                                             <li className="cat-item">
                                                 <a href="/sifre-guncelleme">
-                                                    <span className="no-child"></span><strong>Şifre Güncelleme</strong></a>
+                                                    <span className="no-child" /><strong>Şifre Güncelleme</strong></a>
                                             </li>
                                             <li className="cat-item  current-cat">
                                                 <a href="/adreslerim">
-                                                    <span className="no-child"></span>Adres Bilgilerim</a>
+                                                    <span className="no-child" />Adres Bilgilerim</a>
                                             </li>
 
                                         </ul>

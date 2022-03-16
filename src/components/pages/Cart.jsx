@@ -6,7 +6,7 @@ import BreadCrumb from "../layout/BreadCrumb"
 import { useState } from "react"
 import CartList from "../cart/CartList"
 import CartTotals from "../cart/CartTotals"
-function Cart(props) {
+function Cart() {
     const [crumb, setCrumb] = useState([
         { url: '#', title: 'Alışveriş Sepeti' }
     ])

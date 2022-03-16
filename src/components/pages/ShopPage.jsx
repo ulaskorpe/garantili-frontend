@@ -49,12 +49,7 @@ const perPages = [
     },
 ];
 
-function ShopPage(props) {
-    /* Props */
-    const {
-        addToBasket
-    } = props;
-
+function ShopPage() {
     /* States */
     const [filterQuery, setFilterQuery] = useState({});
     const [priceLimit] = useState(INITIAL_PRICE_LIMIT);
@@ -76,7 +71,7 @@ function ShopPage(props) {
         Object.keys(filterQuery).forEach((filterKey) => {
             const values = filterQuery[filterKey];
             if (typeof values === 'undefined') return;
-            let value = null;
+            let value;
             if (Array.isArray(values)) value = values.join(',');
             else value = values;
             filterList[filterKey] = value;
@@ -220,7 +215,7 @@ function ShopPage(props) {
         <div className="woocommerce-active left-sidebar" >
             <div id="page" className="hfeed site">
                 <TopBar />
-                <HeaderMain basket={props.basket} onRemoveBasket={props.removeFromBasket} />
+                <HeaderMain />
                 <div id="content" className="site-content" tabIndex="-1">
                     <div className="col-full">
                         <div className="row">
@@ -317,7 +312,6 @@ function ShopPage(props) {
                                                     {products.isSuccess && (
                                                         <ProductList
                                                             products={products.data.data}
-                                                            onAddToBasket={addToBasket}
                                                             listType="grid"
                                                         />
                                                     )}
@@ -330,7 +324,6 @@ function ShopPage(props) {
                                                     {products.isSuccess && (
                                                         <ProductList
                                                             products={products.data.data}
-                                                            onAddToBasket={addToBasket}
                                                             listType="grid-extended"
                                                         />
                                                     )}
@@ -343,7 +336,6 @@ function ShopPage(props) {
                                                     {products.isSuccess && (
                                                         <ProductList
                                                             products={products.data.data}
-                                                            onAddToBasket={addToBasket}
                                                             listType="large-list"
                                                         />
                                                     )}
@@ -356,7 +348,6 @@ function ShopPage(props) {
                                                     {products.isSuccess && (
                                                         <ProductList
                                                             products={products.data.data}
-                                                            onAddToBasket={addToBasket}
                                                             listType="list"
                                                         />
                                                     )}
@@ -369,7 +360,6 @@ function ShopPage(props) {
                                                     {products.isSuccess && (
                                                         <ProductList
                                                             products={products.data.data}
-                                                            onAddToBasket={addToBasket}
                                                             listType="list-small"
                                                         />
                                                     )}

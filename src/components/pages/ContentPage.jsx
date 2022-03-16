@@ -7,8 +7,7 @@ import TopBar from "../layout/TopBar";
 import {useQuery} from "react-query";
 import {DEFAULT_API_KEY, fetchThis, GET_ARTICLES, retry} from "../../api";
 
-export default function ContentPage(props) {
-    const { basket, onAddToBasket, removeFromBasket } = props
+export default function ContentPage() {
     const { id } = useParams();
     const pages = useQuery(
         ['getPageInfos', id],
@@ -27,9 +26,7 @@ export default function ContentPage(props) {
         <div className="woocommerce-active single-product full-width normal">
             <div id="page" className="hfeed site">
                 <TopBar />
-                <HeaderMain basket={basket}
-                    onRemoveBasket={removeFromBasket}
-                />
+                <HeaderMain />
             </div>
             <div id="content" className="site-content" tabIndex="-1">
                 <div className="col-full">

@@ -8,14 +8,12 @@ import TopBar from "../layout/TopBar";
 import DeviceForm from "../main/phone-repair/DeviceForm";
 import DeviceGallery from "../main/phone-repair/DeviceGallery";
 
-export default function DeviceRepairDetail(props) {
-
+export default function DeviceRepairDetail() {
     const crumbs = [
         { url: '/telefon-onar-yenile', title: 'Telefon Onar Yenile' },
         { url: '/telefon-onar-yenile/apple-1', title: 'Apple' },
         { url: '#', title: 'iPhone 12' },
     ]
-    const { basket, onAddToBasket, removeFromBasket } = props
 
     const [deviceDetail, setDeviceDetail] = useState({
         title: 'Cihaz Bilgileri',
@@ -67,9 +65,7 @@ export default function DeviceRepairDetail(props) {
         <div className="woocommerce-active single-product full-width normal">
             <div id="page" className="hfeed site">
                 <TopBar />
-                <HeaderMain basket={basket}
-                    onRemoveBasket={removeFromBasket}
-                />
+                <HeaderMain />
             </div>
             <div id="content" className="site-content" tabIndex="-1">
                 <div className="col-full">

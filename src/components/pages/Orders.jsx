@@ -12,7 +12,7 @@ import {useAuth} from "../../context";
 
 const ROOT_CRUMB = { url: '/siparişlerim', title: 'Siparişler' };
 
-function Orders(props) {
+function Orders() {
     const params = useParams();
     const { state: customer, isLogged } = useAuth();
     const [crumb, setCrumb] = useState([
@@ -127,7 +127,6 @@ function Orders(props) {
                                                     <strong>Sipariş detay</strong>
                                                 </a>
                                             </li>
-
                                         </ul>
                                     </li>
                                 </ul>

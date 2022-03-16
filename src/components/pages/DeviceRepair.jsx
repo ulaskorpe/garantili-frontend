@@ -7,8 +7,7 @@ import TopBar from "../layout/TopBar"
 import DeviceList from "../main/phone-repair/DeviceList"
 import ShopFilterItem from "../Shop/ShopFilters/ShopFilterItem"
 
-export default function DeviceRepair(props) {
-    const { basket, onAddToBasket, removeFromBasket } = props
+export default function DeviceRepair() {
     const crumbs = [
         { url: '#', title: 'Telefon Sat' }
     ]
@@ -92,9 +91,7 @@ export default function DeviceRepair(props) {
         <div className="woocommerce-active left-sidebar" >
             <div id="page" className="hfeed site">
                 <TopBar />
-                <HeaderMain basket={basket}
-                    onRemoveBasket={removeFromBasket}
-                />
+                <HeaderMain />
             </div>
             <div id="content" className="site-content" tabIndex="-1">
                 <div className="col-full">
@@ -166,8 +163,7 @@ export default function DeviceRepair(props) {
                                     <div id="grid" className="tab-pane active" role="tabpanel">
                                         <div className="woocommerce columns-4">
                                             <div className="products">
-                                                <DeviceList products={products} onAddToBasket={onAddToBasket} listType="grid" />
-
+                                                <DeviceList products={products} listType="grid" />
                                             </div>
                                         </div>
                                     </div>

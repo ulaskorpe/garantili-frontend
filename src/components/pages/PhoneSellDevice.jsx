@@ -8,14 +8,13 @@ import TopBar from "../layout/TopBar";
 import DeviceForm from "../phone-sell/DeviceForm";
 import DeviceGallery from "../phone-sell/DeviceGallery";
 
-export default function PhoneSellDevice(props) {
+export default function PhoneSellDevice() {
 
     const crumbs = [
         { url: '/telefon-sat', title: 'Telefon Sat' },
         { url: '/telefon-sat/apple-1', title: 'Apple' },
         { url: '#', title: 'iPhone 11' },
     ]
-    const { basket, onAddToBasket, removeFromBasket } = props
 
     const [deviceDetail, setDeviceDetail] = useState({
         title: 'iPhone 12',
@@ -62,9 +61,7 @@ export default function PhoneSellDevice(props) {
         <div className="woocommerce-active single-product full-width normal">
             <div id="page" className="hfeed site">
                 <TopBar />
-                <HeaderMain basket={basket}
-                    onRemoveBasket={removeFromBasket}
-                />
+                <HeaderMain />
             </div>
             <div id="content" className="site-content" tabIndex="-1">
                 <div className="col-full">

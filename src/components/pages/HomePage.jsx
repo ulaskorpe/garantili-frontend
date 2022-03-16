@@ -9,9 +9,7 @@ import HomeProductList from "../main/product/HomeProducts/HomeProductList";
 import NewArrivals from "../main/product/HomeProducts/NewArrivals";
 import Slider from "../main/slider/Slider";
 
-const HomePage = (props) => {
-    const { homeContent } = props;
-
+const HomePage = () => {
     return (
         <div className="woocommerce-active garantili-design-pattern-homepage-v1 can-uppercase">
             <div id="page" className="hfeed site">
@@ -26,7 +24,7 @@ const HomePage = (props) => {
                                     <Slider />
                                     <FullMessage />
                                     <Banner />
-                                    <HomeProductList content={homeContent} />
+                                    <HomeProductList />
                                     <PartnerList />
                                     <NewArrivals />
                                     <Banner />

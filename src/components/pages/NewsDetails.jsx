@@ -8,8 +8,7 @@ import {useQuery} from "react-query";
 import {API_URL, DEFAULT_API_KEY, fetchThis, GET_NEW_DETAIL, retry} from "../../api";
 import {useParams} from "react-router-dom";
 
-export default function NewsDetails(props) {
-    const { basket, onAddToBasket, removeFromBasket } = props;
+export default function NewsDetails() {
     const params = useParams();
     // const [tags, setTags] = useState([
     //     {
@@ -66,9 +65,7 @@ export default function NewsDetails(props) {
         <div id="content" className="right-sidebar single single-pos">
             <div id="page" className="hfeed site">
                 <TopBar />
-                <HeaderMain basket={basket}
-                    onRemoveBasket={removeFromBasket}
-                />
+                <HeaderMain />
             </div>
             <div id="content" className="site-content" tabIndex="-1">
                 <div className="col-full">
