@@ -63,11 +63,11 @@ const TopBar = () => {
                     />
                     <MenuItem
                         title="IMEI Sorgulama"
-                        path="/imei-sorgulama"
+                        path="/imei-sorgula"
                     />
                     <MenuItem
                         title="Kullanım Kılavuzu"
-                        path="sayfa/kullanim-kilavuzu/12"
+                        path="/sayfa/kullanim-kilavuzu/12"
                     />
                     {/*<li className="garantili-flex-more-menu-item dropdown">*/}
                     {/*    <a title="..." href="#" data-toggle="dropdown" className="dropdown-toggle">...</a>*/}

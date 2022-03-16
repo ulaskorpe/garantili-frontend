@@ -1,5 +1,4 @@
 import React from 'react';
-import { useState } from "react"
 import CartListItem from "./CartListItem"
 import {useSelector} from "react-redux";
 import {getBasketArrayList} from "../../store/selectors/basket";

@@ -2,16 +2,16 @@ import React from 'react';
 import { useState } from "react"
 import OrderBox from "./OrderBox"
 import OrderItem from "./OrderItem"
+import {ayir} from "../../store/selectors/basket";
+import moment from "moment";
 
 function OrderItemList(props) {
-    const { data } = props;
+    const { data, title = 'Siparişlerim' } = props;
 
-    const [items, setCartItems] = useState([
-        { id: 1, title: 'Apple iPhone 12 Pro Pacific Blue', quantity: 2, price: 24000, totalPrice: 48000, url: '/urun-detay/iphone-12-mini-64-gb-3', imageUrl: '/assets/images/products/L10.jpg' },
-        { id: 1, title: 'Apple iPhone 12 Pro Pacific Blue', quantity: 2, price: 24000, totalPrice: 48000, url: '/urun-detay/iphone-12-mini-64-gb-3', imageUrl: '/assets/images/products/L10.jpg' },
-        { id: 1, title: 'Apple iPhone 12 Pro Pacific Blue', quantity: 2, price: 24000, totalPrice: 48000, url: '/urun-detay/iphone-12-mini-64-gb-3', imageUrl: '/assets/images/products/L10.jpg' }
-    ])
-    const [orderDetails, setDetails] = useState({
+    const order = data.order;
+    const paymentInformations = data.payment_informations;
+
+    const [orderDetails] = useState({
         products: [
             { id: 1, title: 'iPhone 13 Pro', quantity: 1, price: '23000', url: '/' }
         ],
@@ -24,26 +24,31 @@ function OrderItemList(props) {
         totalPrice: 25000,
         deliveryAddress: 'Nur Yıldız Plaza, 15 Temmuz Mah. Gülbahar Cad. B Blok. No:7 Kapı No 21 Bağcılar / İSTANBUL',
         billAddress: 'Nur Yıldız Plaza, 15 Temmuz Mah. Gülbahar Cad. B Blok. No:7 Kapı No 21 Bağcılar / İSTANBUL'
-    })
+    });
+
+    const date = moment
+        .unix(order.date_time)
+        .format('DD MMMM YYYY')
+
     return (
         <div>
-            <h2 className="woocommerce-order-details__title bottom-gray-seperator">Siparişlerim</h2>
+            <h2 className="woocommerce-order-details__title bottom-gray-seperator">{title}</h2>
             <div className="container-fluid">
                 <div className="row">
                     <div className="woocommerce-cart-form col-md-9">
                         <ul className="woocommerce-order-overview woocommerce-thankyou-order-details order_details bottom-seperator">
                             <li className="woocommerce-order-overview__order order">
-                                Sipariş Numarası:<strong>{orderDetails.orderNumber}</strong>
+                                Sipariş Numarası:<strong>{order.order_id}</strong>
                             </li>
                             <li className="woocommerce-order-overview__date date">
-                                Tarih:<strong>{orderDetails.orderDate}</strong>
+                                Tarih:<strong>{date}</strong>
                             </li>
                             <li className="woocommerce-order-overview__payment-method method">
-                                Ödeme Yöntemi: <strong>{orderDetails.paymentMethod}</strong>
+                                Ödeme Yöntemi: <strong>{order.order_method}</strong>
                             </li>
                             <li className="woocommerce-order-overview__total total order-cost-position">
                                 Sipariş Bedeli:<strong><span className="woocommerce-Price-amount amount"><span
-                                    className="woocommerce-Price-currencySymbol ">₺</span>{orderDetails.price}</span></strong>
+                                    className="woocommerce-Price-currencySymbol ">₺</span>{ayir(paymentInformations.total)}</span></strong>
                             </li>
                         </ul>
                         <table className="shop_table shop_table_responsive cart">
@@ -56,7 +61,7 @@ function OrderItemList(props) {
                                 </tr>
                             </thead>
                             <tbody>
-                                {data?.items?.map((item, itemIDX) => (
+                                {order?.items?.map((item, itemIDX) => (
                                     <OrderItem
                                         key={`order_item_${itemIDX}`}
                                         item={item}
@@ -66,7 +71,12 @@ function OrderItemList(props) {
                         </table>
                     </div>
                     <div className="col-md-3 mr-0 pr-0">
-                        <OrderBox />
+                        <OrderBox
+                            details={paymentInformations.details}
+                            total={paymentInformations.total}
+                            shippingAddress={order.shipping_address}
+                            invoiceAddress={order.invoice_address}
+                        />
                     </div>
                 </div>
             </div>

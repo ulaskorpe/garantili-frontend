@@ -1,9 +1,7 @@
 import React, { Component } from 'react';
 class OrderBox extends Component {
-    state = {
-        subTotal: 48000,
-        total: 48000,
-        deliveryAddress: 'Nur Yıldız Plaza, 15 Temmuz Mah.'
+    constructor(props) {
+        super(props);
     }
     render() {
         return (
@@ -12,23 +10,21 @@ class OrderBox extends Component {
                     <h2>Ödeme Bilgileri</h2>
                     <table className="shop_table shop_table_responsive">
                         <tbody>
-                            <tr className="cart-subtotal">
-                                <th>Ara Toplam</th>
-                                <td data-title="Subtotal">
+                            {this.props.details?.map((item, index) => (
+                                <tr className="cart-subtotal" key={`item_${index}_${item.id}`}>
+                                    <th>{item.name}</th>
+                                    <td data-title="Subtotal">
                                     <span className="woocommerce-Price-amount amount">
-                                        <span className="woocommerce-Price-currencySymbol">₺</span>{this.state.subTotal}</span>
-                                </td>
-                            </tr>
-                            <tr className="shipping">
-                                <th>Kargo</th>
-                                <td data-title="Shipping">Sabit Fiyat</td>
-                            </tr>
+                                        <span className="woocommerce-Price-currencySymbol">₺</span>{item.value}</span>
+                                    </td>
+                                </tr>
+                            ))}
                             <tr className="order-total">
                                 <th>Toplam</th>
                                 <td data-title="Total">
                                     <strong>
                                         <span className="woocommerce-Price-amount amount">
-                                            <span className="woocommerce-Price-currencySymbol">₺</span>{this.state.total}</span>
+                                            <span className="woocommerce-Price-currencySymbol">₺</span>{this.props.total}</span>
                                     </strong>
                                 </td>
                             </tr>
@@ -43,7 +39,7 @@ class OrderBox extends Component {
                                 </td>
                             </tr>
                             <tr className="shipping">
-                                <th>{this.state.deliveryAddress}</th>
+                                <th>{this?.props?.shippingAddress?.address}</th>
                             </tr>
                             <tr className="top-gray-seperator">
                                 <th className="pt-3"><strong>Fatura Adresi</strong></th>
@@ -51,10 +47,10 @@ class OrderBox extends Component {
                                 </td>
                             </tr>
                             <tr className="shipping">
-                                <th>{this.state.deliveryAddress}</th>
+                                <th>{this.props?.invoiceAddress?.address}</th>
                             </tr>
                             <tr className="order-total">
-                                
+
                             </tr>
                         </tbody>
                     </table>
