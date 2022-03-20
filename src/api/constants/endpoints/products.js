@@ -25,6 +25,8 @@ export const GET_BEST_SELLERS = {
     pathVars: [],
     body: [
         { name: 'count', type: Number, default: 0,  isRequired: true },
+        { name: 'page', type: Number, default: 1,  isRequired: false },
+        { name: 'page_count', type: Number, default: 10,  isRequired: false },
     ],
 };
 
@@ -35,6 +37,8 @@ export const GET_WEEKLY_DEALS = {
     pathVars: [],
     body: [
         { name: 'count', type: Number, default: 0,  isRequired: true },
+        { name: 'page', type: Number, default: 1,  isRequired: false },
+        { name: 'page_count', type: Number, default: 10,  isRequired: false },
     ],
 };
 
@@ -47,6 +51,8 @@ export const GET_NEW_PRODUCTS = {
     body: [
         { name: 'count', type: Number, default: 0,  isRequired: true },
         { name: 'category_id', type: String, default: '',  isRequired: true },
+        { name: 'page', type: Number, default: 1,  isRequired: false },
+        { name: 'page_count', type: Number, default: 10,  isRequired: false },
     ],
 };
 
@@ -57,6 +63,8 @@ export const GET_HIGHEST_RATED = {
     pathVars: [],
     body: [
         { name: 'count', type: Number, default: 0,  isRequired: true },
+        { name: 'page', type: Number, default: 1,  isRequired: false },
+        { name: 'page_count', type: Number, default: 10,  isRequired: false },
     ],
 };
 

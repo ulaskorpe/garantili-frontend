@@ -175,7 +175,7 @@ function MemberInformations() {
             );
         }
 
-    }, [isLogged]);
+    }, [isLogged, location, navigate]);
 
     return (
         <div className="woocommerce-active left-sidebar">
@@ -368,7 +368,7 @@ function MemberInformations() {
                                             </li>
                                             <li className="cat-item  current-cat">
                                                 <a href="/adreslerim">
-                                                    <span className="no-child" />Adres Bilgilerim</a>
+                                                    <span className="no-child" />Adreslerim</a>
                                             </li>
 
                                         </ul>

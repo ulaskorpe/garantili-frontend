@@ -1,11 +1,10 @@
-import React, {Component, useState, useEffect, useMemo} from "react";
-import { useLocation, useParams, } from "react-router-dom";
+import React, {useState, useMemo} from "react";
+import { useParams, } from "react-router-dom";
 import BreadCrumb from "../layout/BreadCrumb";
 import Footer from "../layout/Footer/Footer";
 import HeaderMain from "../layout/Header/Header";
 import TopBar from "../layout/TopBar";
 import DetailTabs from "../Shop/ProductDetail/DetailTabs";
-import Product from "../Shop/ProductDetail/Product";
 import ProductGallery from "../Shop/ProductDetail/ProductGallery";
 import RelatedProductList from "../Shop/ProductDetail/RelatedProductList";
 import {useQuery} from "react-query";
@@ -30,7 +29,7 @@ function ProductPage(props) {
                 },
             )
         ),
-        { retry: false, refetchOnWindowFocus: false },
+        { retry, refetchOnWindowFocus: false },
     );
 
     const product = useMemo(() => {

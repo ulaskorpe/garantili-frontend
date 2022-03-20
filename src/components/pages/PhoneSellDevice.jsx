@@ -1,6 +1,5 @@
 import React from 'react';
 import { useState } from "react";
-import OrderReview from "../cart/OrderReview";
 import BreadCrumb from "../layout/BreadCrumb";
 import Footer from "../layout/Footer/Footer";
 import HeaderMain from "../layout/Header/Header";
@@ -16,7 +15,7 @@ export default function PhoneSellDevice() {
         { url: '#', title: 'iPhone 11' },
     ]
 
-    const [deviceDetail, setDeviceDetail] = useState({
+    const [deviceDetail] = useState({
         title: 'iPhone 12',
         imageGallery: [
             { id: 1, imageUrl: '/assets/images/products/a8.jpg' },
@@ -51,11 +50,6 @@ export default function PhoneSellDevice() {
             }
         ]
     })
-
-    const imgStyle = {
-        width: '600px'
-    }
-
 
     return (
         <div className="woocommerce-active single-product full-width normal">

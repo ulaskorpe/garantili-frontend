@@ -162,7 +162,6 @@ function ShopPage() {
         setPagination(newPagination);
     }, [totalCount, pagination, perPagesObject]);
     const handlePageChange = useCallback((page) => {
-        console.log('1', page)
         setPagination({
             ...pagination,
             page,

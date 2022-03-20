@@ -11,21 +11,6 @@ function OrderItemList(props) {
     const order = data.order;
     const paymentInformations = data.payment_informations;
 
-    const [orderDetails] = useState({
-        products: [
-            { id: 1, title: 'iPhone 13 Pro', quantity: 1, price: '23000', url: '/' }
-        ],
-        orderNumber: "301A23",
-        orderDate: '10 Mart, 2022',
-        price: 5032,
-        paymentMethod: 'Kredi Kartı',
-        subTotal: 24000,
-        shippingPrice: 1000,
-        totalPrice: 25000,
-        deliveryAddress: 'Nur Yıldız Plaza, 15 Temmuz Mah. Gülbahar Cad. B Blok. No:7 Kapı No 21 Bağcılar / İSTANBUL',
-        billAddress: 'Nur Yıldız Plaza, 15 Temmuz Mah. Gülbahar Cad. B Blok. No:7 Kapı No 21 Bağcılar / İSTANBUL'
-    });
-
     const date = moment
         .unix(order.date_time)
         .format('DD MMMM YYYY')

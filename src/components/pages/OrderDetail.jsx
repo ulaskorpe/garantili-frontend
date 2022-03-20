@@ -10,7 +10,7 @@ import {DEFAULT_API_KEY, fetchThis, GET_ORDER_SUMMARY, retry} from "../../api";
 import {useParams} from "react-router-dom";
 import {useAuth} from "../../context";
 
-const ROOT_CRUMB = { url: '/siparişlerim', title: 'Siparişler' };
+const ROOT_CRUMB = { url: '/siparislerim', title: 'Siparişlerim' };
 
 function OrderDetail() {
     const params = useParams();
@@ -20,13 +20,13 @@ function OrderDetail() {
     ]);
 
     const orderDetail = useQuery(
-        ['get-order-history', params, customer],
+        ['get-order-detail', params, customer],
         () => (
             fetchThis(
                 GET_ORDER_SUMMARY,
                 {
                     order_id: params.id,
-                    customer_id: '1000109',
+                    customer_id: customer.customer_id.toString(),
                 },
                 DEFAULT_API_KEY,
                 {},

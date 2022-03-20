@@ -1,6 +1,5 @@
 import $ from "jquery";
 import React, { Component } from "react";
-import slick from "slick-carousel";
 import ProductGalleryItem from "../Shop/ProductDetail/ProductGalleryItem";
 import ProductGalleryThub from "../Shop/ProductDetail/ProductGalleryThumb";
 
@@ -34,7 +33,12 @@ class DeviceGallery extends Component {
                         data-slick="{&quot;infinite&quot;:false,&quot;slidesToShow&quot;:1,&quot;slidesToScroll&quot;:1,&quot;dots&quot;:false,&quot;arrows&quot;:false,&quot;asNavFor&quot;:&quot;#garantili-single-product-gallery .garantili-single-product-gallery-thumbnails__wrapper&quot;}">
                         <div className="woocommerce-product-gallery woocommerce-product-gallery--with-images woocommerce-product-gallery--columns-4 images"
                             data-columns="4">
-                            <a href="#" className="woocommerce-product-gallery__trigger">🔍</a>
+                            <a
+                                href="#"
+                                className="woocommerce-product-gallery__trigger"
+                            >
+                                🔍
+                            </a>
                             <figure className="woocommerce-product-gallery__wrapper ">
                                 {
                                     content.map((image, i) => <ProductGalleryItem galleryItem={image} key={i} />)

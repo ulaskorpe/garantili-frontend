@@ -5,8 +5,6 @@ import Footer from "../layout/Footer/Footer"
 import HeaderMain from "../layout/Header/Header"
 import TopBar from "../layout/TopBar"
 import DeviceList from "../phone-sell/DeviceList"
-import ProductList from "../Shop/ProductList/ProductList"
-import ShopPriceFilter from "../Shop/ProductList/ShopPriceFilter"
 import ShopFilterItem from "../Shop/ShopFilters/ShopFilterItem"
 
 export default function PhoneSell(props) {
@@ -56,10 +54,10 @@ export default function PhoneSell(props) {
     }
     function handleFilters(filterType, filterValue) {
         filters.forEach(_ => {
-            if (_.filterName != filterType) return
+            if (_.filterName !== filterType) return
             _.items.forEach(pf => {
-                if (pf.filterName != filterValue) return
-                pf.isChosen = pf.isChosen == true ? false : true
+                if (pf.filterName !== filterValue) return
+                pf.isChosen = pf.isChosen === true ? false : true
             })
         })
 
@@ -67,10 +65,10 @@ export default function PhoneSell(props) {
 
         const filterdProducts = []
         filters.forEach(_ => {
-            const filterItems = _.items.filter(l => l.isChosen == true)
+            const filterItems = _.items.filter(l => l.isChosen === true)
 
             filterItems.forEach(fi => {
-                const ppp = data.filter(l => l.filterData.some(f => f.filterType == _.filterName && f.value == fi.filterName))
+                const ppp = data.filter(l => l.filterData.some(f => f.filterType === _.filterName && f.value === fi.filterName))
                 ppp.forEach(p => filterdProducts.push(p))
             })
 

@@ -46,8 +46,9 @@ const useBasket = () => {
         e.preventDefault();
 
         // success
+        // todo
         toast('clearBasket');
-    }, [dispatch]);
+    }, []);
     const remove = useCallback((itemID) => (e) => {
         e.preventDefault();
         if (!itemID) return false;

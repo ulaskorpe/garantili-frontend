@@ -20,11 +20,13 @@
  * @property {string} path
  * @property {RequestMethods} method
  * @property {OptionalBoolean} apiKeyRequired
+ * @property {OptionalBoolean} doNotCheckStatus
  * @property {Array.<EndpointBody>} body
  * @property {Array.<string>} pathVars
  */
 
 export * from './cart_order';
+export * from './address';
 export * from './customers';
 export * from './products';
 export * from './site';

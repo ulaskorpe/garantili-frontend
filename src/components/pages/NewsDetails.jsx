@@ -1,11 +1,11 @@
-import {useMemo, useState} from "react";
+import {useMemo} from "react";
 import BreadCrumb from "../layout/BreadCrumb";
 import Footer from "../layout/Footer/Footer";
 import HeaderMain from "../layout/Header/Header";
 import TopBar from "../layout/TopBar";
 import RecentPosts from "../RecentPosts";
 import {useQuery} from "react-query";
-import {API_URL, DEFAULT_API_KEY, fetchThis, GET_NEW_DETAIL, retry} from "../../api";
+import {DEFAULT_API_KEY, fetchThis, GET_NEW_DETAIL, retry} from "../../api";
 import {useParams} from "react-router-dom";
 
 export default function NewsDetails() {
@@ -55,9 +55,10 @@ export default function NewsDetails() {
     const crumbs = useMemo(() => ([
         { url: '/bizden-haberler', title: 'Haberler' },
         ...(
-            details.isSuccess && ([
-                { url: '#', title: details.data.data.title }
-            ]) || []
+            (
+                details.isSuccess &&
+                [{ url: '#', title: details.data.data.title }]
+            ) || []
         ),
     ]), [details]);
 

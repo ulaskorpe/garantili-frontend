@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import {ayir} from "../../store/selectors/basket";
 class OrderBox extends Component {
     constructor(props) {
         super(props);
@@ -15,7 +16,7 @@ class OrderBox extends Component {
                                     <th>{item.name}</th>
                                     <td data-title="Subtotal">
                                     <span className="woocommerce-Price-amount amount">
-                                        <span className="woocommerce-Price-currencySymbol">₺</span>{item.value}</span>
+                                        <span className="woocommerce-Price-currencySymbol">₺</span>{ayir(item.value)}</span>
                                     </td>
                                 </tr>
                             ))}
@@ -24,7 +25,7 @@ class OrderBox extends Component {
                                 <td data-title="Total">
                                     <strong>
                                         <span className="woocommerce-Price-amount amount">
-                                            <span className="woocommerce-Price-currencySymbol">₺</span>{this.props.total}</span>
+                                            <span className="woocommerce-Price-currencySymbol">₺</span>{ayir(this.props.total)}</span>
                                     </strong>
                                 </td>
                             </tr>

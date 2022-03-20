@@ -80,7 +80,7 @@ function PasswordUpdate() {
                 setLoading(false);
             },
         });
-    }, [account, isLogged]);
+    }, [account, isLogged, updatePasswordMutation]);
 
     const validateForm = (values) => {
         const errors = {};
@@ -135,7 +135,7 @@ function PasswordUpdate() {
                 }
             );
         }
-    }, [isLogged]);
+    }, [isLogged, navigate, location]);
 
     return (
         <div className="woocommerce-active left-sidebar">
@@ -312,7 +312,7 @@ function PasswordUpdate() {
                                             </li>
                                             <li className="cat-item  current-cat">
                                                 <a href="/adreslerim">
-                                                    <span className="no-child" />Adres Bilgilerim</a>
+                                                    <span className="no-child" />Adreslerim</a>
                                             </li>
 
                                         </ul>

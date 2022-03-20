@@ -31,7 +31,7 @@ export const getBasketArrayList = createDraftSafeSelector(
     (basket = {}) => {
         let basketList = [];
 
-        Object.entries(basket).map(([_, basketItem]) => {
+        Object.entries(basket).forEach(([_, basketItem]) => {
             basketList.push(basketItem);
         });
 
@@ -44,7 +44,7 @@ export const getSplitBasketTotalPrice = createDraftSafeSelector(
     (basket = {}) => {
         let total = 0;
 
-        Object.entries(basket).map(([_, basketItem]) => {
+        Object.entries(basket).forEach(([_, basketItem]) => {
             total+= getItemPrice(basketItem) * basketItem.quantity;
         });
 
@@ -56,7 +56,7 @@ export const getBasketTotalPrice = createDraftSafeSelector(
     (basket = {}) => {
         let total = 0;
 
-        Object.entries(basket).map(([_, basketItem]) => {
+        Object.entries(basket).forEach(([_, basketItem]) => {
             total+= getItemPrice(basketItem) * basketItem.quantity;
         });
 

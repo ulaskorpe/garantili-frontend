@@ -1,9 +1,10 @@
-import {useLocation, useNavigate} from "react-router-dom";
+import {useLocation, useNavigate, useParams} from "react-router-dom";
 import {useCallback} from "react";
 
 const useRouterDOM = () => {
     const location = useLocation();
     const navigate = useNavigate();
+    const params = useParams();
 
     const go = useCallback((path, replace = false) => {
         if (!path) return;
@@ -24,7 +25,8 @@ const useRouterDOM = () => {
 
     return ({
         go,
-        goEvent
+        goEvent,
+        params,
     });
 };
 

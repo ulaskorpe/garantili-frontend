@@ -34,7 +34,6 @@ import LogOut from "./components/pages/LogOut";
 import Orders from "./components/pages/Orders";
 import OrderDetail from "./components/pages/OrderDetail";
 import MemberInformations from "./components/pages/MemberInformations";
-import Address from "./components/pages/Address";
 import PasswordUpdate from "./components/pages/PasswordUpdate";
 import {Provider} from "react-redux";
 import store from "./store";
@@ -42,6 +41,9 @@ import {persistStore} from "redux-persist";
 import {PersistGate} from "redux-persist/integration/react";
 import moment from 'moment';
 import 'moment/locale/tr';
+import Addresses from "./components/pages/AddressList";
+import EditAddress from "./components/pages/EditAddress";
+import AddAddress from "./components/pages/AddAddress";
 
 const queryClient = new QueryClient();
 const persistor = persistStore(store);
@@ -196,7 +198,15 @@ function App() {
                                 />
                                 <Route
                                     path='/adreslerim'
-                                    element={<Address />}
+                                    element={<Addresses />}
+                                />
+                                <Route
+                                    path='/adreslerim/duzenle/:id'
+                                    element={<EditAddress />}
+                                />
+                                <Route
+                                    path='/adreslerim/ekle'
+                                    element={<AddAddress />}
                                 />
                                 <Route
                                     path='/sifre-guncelleme'

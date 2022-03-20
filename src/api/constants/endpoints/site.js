@@ -42,3 +42,44 @@ export const GET_NEW_DETAIL = {
     pathVars: [ 'id' ],
     body: [],
 };
+
+/** @type Endpoint */
+export const GET_CITIES = {
+    path: 'api/get-cities',
+    method: 'GET',
+    apiKeyRequired: true,
+    doNotCheckStatus: true,
+    pathVars: [],
+    body: [],
+};
+
+
+/** @type Endpoint */
+export const GET_TOWNS = {
+    path: 'api/get-towns/{city_id}',
+    method: 'GET',
+    apiKeyRequired: true,
+    doNotCheckStatus: true,
+    pathVars: [ 'city_id' ],
+    body: [],
+};
+
+/** @type Endpoint */
+export const GET_DISTRICTS = {
+    path: 'api/get-districts/{town_id}',
+    method: 'GET',
+    apiKeyRequired: true,
+    doNotCheckStatus: true,
+    pathVars: [ 'town_id' ],
+    body: [],
+};
+
+/** @type Endpoint */
+export const GET_NEIGHBORHOODS = {
+    path: 'api/get-neighborhoods/{district_id}',
+    method: 'GET',
+    apiKeyRequired: true,
+    doNotCheckStatus: true,
+    pathVars: [ 'district_id' ],
+    body: [],
+};

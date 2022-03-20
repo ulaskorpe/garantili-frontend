@@ -191,7 +191,7 @@ const HomeProducts = (props) => {
         () => (
             fetchThis(
                 GET_WEEKLY_DEALS,
-                { count: 0 },
+                { count: 0, page_count: 15, page: 1, },
                 DEFAULT_API_KEY,
                 {},
             )
@@ -205,7 +205,7 @@ const HomeProducts = (props) => {
         () => (
             fetchThis(
                 GET_BEST_SELLERS,
-                { count: 0 },
+                { count: 0, page_count: 15, page: 1, },
                 DEFAULT_API_KEY,
                 {},
             )
@@ -219,7 +219,7 @@ const HomeProducts = (props) => {
         () => (
             fetchThis(
                 GET_NEW_PRODUCTS,
-                { count: 0, category_id: '0' },
+                { count: 0, page_count: 15, page: 1, },
                 DEFAULT_API_KEY,
                 {},
             )
@@ -233,7 +233,7 @@ const HomeProducts = (props) => {
         () => (
             fetchThis(
                 GET_HIGHEST_RATED,
-                { count: 0 },
+                { count: 0, page_count: 15, page: 1, },
                 DEFAULT_API_KEY,
                 {},
             )
@@ -252,7 +252,7 @@ const HomeProducts = (props) => {
               <div className="tab-content">
                   <ProductTab
                       id="weeklydeals"
-                      products={weeklyDeals.isSuccess ? weeklyDeals?.data?.data : []}
+                      products={weeklyDeals.isSuccess ? weeklyDeals?.data?.data?.products : []}
                       error={weeklyDeals.isError}
                       loading={weeklyDeals.isLoading}
                       success={weeklyDeals.isSuccess}
@@ -260,7 +260,7 @@ const HomeProducts = (props) => {
                   />
                   <ProductTab
                       id="topsales"
-                      products={bestSellers.isSuccess ? bestSellers?.data?.data : []}
+                      products={bestSellers.isSuccess ? bestSellers?.data?.data?.products : []}
                       error={bestSellers.isError}
                       loading={bestSellers.isLoading}
                       success={bestSellers.isSuccess}
@@ -274,7 +274,7 @@ const HomeProducts = (props) => {
                   />
                   <ProductTab
                       id="highrated"
-                      products={highestRated.isSuccess ? highestRated?.data?.data : []}
+                      products={highestRated.isSuccess ? highestRated?.data?.data?.products : []}
                       error={highestRated.isError}
                       loading={highestRated.isLoading}
                       success={highestRated.isSuccess}

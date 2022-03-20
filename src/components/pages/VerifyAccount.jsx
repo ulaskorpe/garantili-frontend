@@ -94,10 +94,12 @@ function ForgetPassword(props) {
             },
         });
     };
-    const handleClickResendLink = (resetForm) => (e) => {
+    const handleClickResendLink = useCallback((resetForm) => (e) => {
         e.preventDefault();
         setLoading(true);
-        resendCodeMutation.mutate({ email: location?.state?.email }, {
+        resendCodeMutation.mutate({
+            email: location?.state?.email || ''
+        }, {
             onSuccess (data) {
                 if (!data?.status) {
                     sweetalert({
@@ -128,7 +130,7 @@ function ForgetPassword(props) {
                 setLoading(false);
             },
         });
-    };
+    }, [resendCodeMutation, location]);
 
     /* Utils */
     const isLoading = useCallback((isSubmitting = false) => (

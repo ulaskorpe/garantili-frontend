@@ -41,5 +41,8 @@ export const endpointToURL = (
         if (pathVal === pVarIsNull) value = '';
         path = path.replace(`{${key}}`, value);
     });
+
+    console.log(pathValues, endpoint.path);
+
     return `${API_URL}/${path || ''}`;
 };
