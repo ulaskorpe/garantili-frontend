@@ -18,7 +18,6 @@ const persistConfig = {
     storage,
     whitelist: [
         'auth',
-        'basket',
     ]
 }
 
