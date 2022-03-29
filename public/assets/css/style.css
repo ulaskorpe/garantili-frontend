@@ -38295,3 +38295,58 @@ form.track_order input[type="submit"] {
     gap: 0.85em;
     flex-wrap: wrap;
 }
+
+.basket-filter-modal {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 20px 30px;
+    border-radius: 8px;
+    box-shadow: 2px 2px 5px 1px rgba(0, 0, 0, .1);
+    border: 2px solid #eaeaea;
+    background-color: #FFFFFF;
+    max-width: 90%;
+    box-sizing: border-box;
+}
+
+.basket-filter-modal-overlay {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100vw;
+    height: 100vh;
+    box-sizing: border-box;
+    background-color: rgba(0, 0, 0, .3);
+    position: fixed;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 99999;
+}
+
+.basket-filter-modal-head {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #eaeaea;
+}
+
+.basket-filter-modal-head > * {
+    margin: 0;
+}
+
+.basket-modal-filters {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.basket-filter-modal-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+    justify-content: flex-end;
+    align-items: center;
+}
