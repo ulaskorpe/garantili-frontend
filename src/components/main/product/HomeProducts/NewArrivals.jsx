@@ -186,7 +186,7 @@ const NewArrivals = (props) => {
                                     </div>
                                 )}
                                 {newArrivals.isSuccess && (
-                                    !newArrivals?.data?.data?.items?.length ? (
+                                    !newArrivals?.data?.data?.products?.length ? (
                                         <div style={{
                                             display: 'flex',
                                             justifyContent: 'center',
@@ -201,7 +201,7 @@ const NewArrivals = (props) => {
                                             className="products no-slick-pb"
                                             {...slickSettings}
                                         >
-                                            {newArrivals?.data?.data?.items?.map((item, i) => (
+                                            {newArrivals?.data?.data?.products?.map((item, i) => (
                                                 <ProductItem
                                                     product={item}
                                                     key={i}
