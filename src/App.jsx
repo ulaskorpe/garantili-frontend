@@ -25,7 +25,6 @@ import OrderFollow from './components/pages/OrderFollow';
 import FollowDetails from './components/pages/FollowDetails';
 import DeviceRepair from './components/pages/DeviceRepair';
 import DeviceRepairDetail from './components/pages/DeviceRepairDetail';
-import {AuthProvider} from "./context/auth";
 import {AuthController} from "./components/auth/AuthRequired";
 import ErrorPage from "./components/pages/ErrorPage";
 import ForgetPassword from "./components/pages/ForgetPassword";
@@ -44,6 +43,14 @@ import 'moment/locale/tr';
 import Addresses from "./components/pages/AddressList";
 import EditAddress from "./components/pages/EditAddress";
 import AddAddress from "./components/pages/AddAddress";
+import BasketTools from "./components/BasketTools";
+import {
+    GET_BEST_SELLERS,
+    GET_HIGHEST_RATED,
+    GET_NEW_PRODUCTS,
+    GET_SUPER_OFFER_PRODUCTS,
+    GET_WEEKLY_DEALS
+} from "./api";
 
 const queryClient = new QueryClient();
 const persistor = persistStore(store);
@@ -53,182 +60,262 @@ function App() {
     return (
         <BrowserRouter>
             <QueryClientProvider client={queryClient}>
-                <AuthProvider>
-                    <Provider store={store}>
-                        <PersistGate persistor={persistor}>
-                            <Routes>
-                                {/* 404 */}
-                                <Route path="*" element={<ErrorPage code={404} />} />
+                <Provider store={store}>
+                    <PersistGate persistor={persistor}>
+                        <Routes>
+                            {/* 404 */}
+                            <Route path="*" element={<ErrorPage code={404} />} />
 
-                                <Route
-                                    index
-                                    element={<HomePage />}
-                                />
-                                <Route
-                                    path='/urunler'
-                                    element={<ShopPage />}
-                                />
-                                <Route
-                                    path='/urunler/:category-:categoryId'
-                                    element={<ShopPage />}
-                                />
-                                <Route
-                                    path='/urun-detay/:slug/:productId'
-                                    element={<ProductPage />}
-                                />
-                                <Route
-                                    path='/telefon-sat/'
-                                    element={<PhoneSell />}
-                                />
-                                <Route
-                                    path='/telefon-sat/:id'
-                                    element={<PhoneSellDevice />}
-                                />
-                                <Route
-                                    path='/telefon-onar-yenile/'
-                                    element={<DeviceRepair />}
-                                />
-                                <Route
-                                    path='/telefon-onar-yenile/:id'
-                                    element={<DeviceRepairDetail />}
-                                />
-                                <Route
-                                    path='/iletisim'
-                                    element={<Contact />}
-                                />
-                                <Route
-                                    path='/sayfa/:pagetitle/:id'
-                                    element={<ContentPage />}
-                                />
-                                <Route
-                                    path='/sss'
-                                    element={<Faq />}
-                                />
-                                <Route
-                                    path='/kilavuz'
-                                    element={<UserManual />}
-                                />
-                                <Route
-                                    path='/bizden-haberler'
-                                    element={<News />}
-                                />
-                                <Route
-                                    path='/bizden-haberler/:id'
-                                    element={<NewsDetails />}
-                                />
-                                <Route
-                                    path='/insan-kaynaklari'
-                                    element={<HRPage  />}
-                                />
-                                <Route
-                                    path='/imei-sorgula'
-                                    element={<ImeiCheck />}
-                                />
-                                <Route
-                                    path='/iade-formu'
-                                    element={<GivingBackForm />}
-                                />
-                                <Route
-                                    path='/sepet'
-                                    element={<Cart />}
-                                />
-                                <Route
-                                    path='/odeme'
-                                    element={<Payment />}
-                                />
-                                <Route
-                                    path='/siparis-ozeti'
-                                    element={<OrderSummary />}
-                                />
-
-                                {/* /login => Login page */}
-                                <Route path='/login' element={(
-                                    <AuthController
-                                        mustNotBeLoggedIn
-                                        redirectTo="/"
-                                    >
-                                        <Login />
-                                    </AuthController>
-                                )} />
-
-                                {/* /log-out => Log-out page */}
-                                <Route
-                                    path='/log-out'
-                                    element={<LogOut />}
-                                />
-
-                                {/* /forget-password => Forget password page */}
-                                <Route path='/forget-password' element={(
-                                    <AuthController
-                                        mustNotBeLoggedIn
-                                        redirectTo="/"
-                                    >
-                                        <ForgetPassword />
-                                    </AuthController>
-                                )} />
-
-                                {/* /verify-account => Verify account page */}
-                                <Route path='/verify-account' element={(
-                                    <AuthController
-                                        mustNotBeLoggedIn
-                                        redirectTo="/"
-                                    >
-                                        <VerifyAccount />
-                                    </AuthController>
-                                )} />
-                                <Route
-                                    path='/takip'
-                                    element={<OrderFollow />}
-                                />
-                                <Route
-                                    path='/takip-detaylar'
-                                    element={<FollowDetails />}
-                                />
-                                <Route
-                                    path='/siparislerim'
-                                    element={<Orders />}
-                                />
-                                <Route
-                                    path='/siparis/:id'
-                                    element={<OrderDetail />}
-                                />
-                                <Route
-                                    path='/uyelik-bilgilerim'
-                                    element={<MemberInformations />}
-                                />
-                                <Route
-                                    path='/adreslerim'
-                                    element={<Addresses />}
-                                />
-                                <Route
-                                    path='/adreslerim/duzenle/:id'
-                                    element={<EditAddress />}
-                                />
-                                <Route
-                                    path='/adreslerim/ekle'
-                                    element={<AddAddress />}
-                                />
-                                <Route
-                                    path='/sifre-guncelleme'
-                                    element={<PasswordUpdate />}
-                                />
-                            </Routes>
-
-                            {/* Toast */}
-                            <ToastContainer
-                                position="top-right"
-                                theme="colored"
-                                autoClose={1200}
-                                hideProgressBar={false}
-                                newestOnTop={true}
-                                closeOnClick
-                                rtl={false}
-                                pauseOnFocusLoss
-                                draggable
+                            <Route
+                                index
+                                element={<HomePage />}
                             />
-                        </PersistGate>
-                    </Provider>
-                </AuthProvider>
+                            <Route
+                                path='/urunler'
+                                element={<ShopPage />}
+                            />
+                            <Route
+                                path='/urunler/:categoryId'
+                                element={<ShopPage />}
+                            />
+                            {/***/}
+                            <Route
+                                path='/haftanin-firsatlari'
+                                element={(
+                                    <CustomShopPage
+                                        category={{ title: 'Haftanın Fırsatları' }}
+                                        endpoint={GET_WEEKLY_DEALS}
+                                    />
+                                )}
+                            />
+                            <Route
+                                path='/cok-satanlar'
+                                element={(
+                                    <CustomShopPage
+                                        category={{ title: 'Çok Satanlar' }}
+                                        endpoint={GET_BEST_SELLERS}
+                                    />
+                                )}
+                            />
+                            <Route
+                                path='/yeni-urunler'
+                                element={(
+                                    <CustomShopPage
+                                        category={{ title: 'Yeni Ürünler' }}
+                                        endpoint={GET_NEW_PRODUCTS}
+                                    />
+                                )}
+                            />
+                            <Route
+                                path='/super-teklifler'
+                                element={(
+                                    <CustomShopPage
+                                        category={{ id: 1, title: 'Süper Teklifler', url: '/super-teklifler' }}
+                                        endpoint={GET_SUPER_OFFER_PRODUCTS}
+                                    />
+                                )}
+                            />
+                            <Route
+                                path='/en-yuksek-puanli'
+                                element={(
+                                    <CustomShopPage
+                                        category={{ title: 'En Yüksek Puanlı' }}
+                                        endpoint={GET_HIGHEST_RATED}
+                                    />
+                                )}
+                            />
+                            {/***/}
+
+                            <Route
+                                path='/urun-detay/:slug/:productId'
+                                element={<ProductPage />}
+                            />
+                            <Route
+                                path='/telefon-sat/'
+                                element={<PhoneSell />}
+                            />
+                            <Route
+                                path='/telefon-sat/:id'
+                                element={<PhoneSellDevice />}
+                            />
+                            <Route
+                                path='/telefon-onar-yenile/'
+                                element={<DeviceRepair />}
+                            />
+                            <Route
+                                path='/telefon-onar-yenile/:id'
+                                element={<DeviceRepairDetail />}
+                            />
+                            <Route
+                                path='/iletisim'
+                                element={<Contact />}
+                            />
+                            <Route
+                                path='/sayfa/:pagetitle/:id'
+                                element={<ContentPage />}
+                            />
+                            <Route
+                                path='/sss'
+                                element={<Faq />}
+                            />
+                            <Route
+                                path='/kilavuz'
+                                element={<UserManual />}
+                            />
+                            <Route
+                                path='/bizden-haberler'
+                                element={<News />}
+                            />
+                            <Route
+                                path='/bizden-haberler/:id'
+                                element={<NewsDetails />}
+                            />
+                            <Route
+                                path='/insan-kaynaklari'
+                                element={<HRPage  />}
+                            />
+                            <Route
+                                path='/imei-sorgula'
+                                element={<ImeiCheck />}
+                            />
+                            <Route
+                                path='/iade-formu'
+                                element={<GivingBackForm />}
+                            />
+                            <Route
+                                path='/sepet'
+                                element={<Cart />}
+                            />
+                            <Route
+                                path='/odeme'
+                                element={<Payment />}
+                            />
+                            <Route path='/siparis-ozeti' element={(
+                                <AuthController
+                                    redirectTo="/login"
+                                >
+                                    <OrderSummary />
+                                </AuthController>
+                            )} />
+
+                            {/* /login => Login page */}
+                            <Route path='/login' element={(
+                                <AuthController
+                                    mustNotBeLoggedIn
+                                    redirectTo="/"
+                                >
+                                    <Login />
+                                </AuthController>
+                            )} />
+
+                            {/* /log-out => Log-out page */}
+                            <Route
+                                path='/log-out'
+                                element={<LogOut />}
+                            />
+
+                            {/* /forget-password => Forget password page */}
+                            <Route path='/forget-password' element={(
+                                <AuthController
+                                    mustNotBeLoggedIn
+                                    redirectTo="/"
+                                >
+                                    <ForgetPassword />
+                                </AuthController>
+                            )} />
+
+                            {/* /verify-account => Verify account page */}
+                            <Route path='/verify-account' element={(
+                                <AuthController
+                                    mustNotBeLoggedIn
+                                    redirectTo="/"
+                                >
+                                    <VerifyAccount />
+                                </AuthController>
+                            )} />
+                            <Route
+                                path='/takip'
+                                element={<OrderFollow />}
+                            />
+                            <Route
+                                path='/takip-detaylar'
+                                element={<FollowDetails />}
+                            />
+                            <Route path='/siparislerim' element={(
+                                <AuthController
+                                    redirectTo="/login"
+                                >
+                                    <Orders />
+                                </AuthController>
+                            )} />
+                            <Route path='/uyelik-bilgilerim' element={(
+                                <AuthController
+                                    redirectTo="/login"
+                                >
+                                    <MemberInformations />
+                                </AuthController>
+                            )} />
+                            <Route path='/siparis/:id' element={(
+                                <AuthController
+                                    redirectTo="/login"
+                                >
+                                    <OrderDetail />
+                                </AuthController>
+                            )} />
+                            <Route path='/uyelik-bilgilerim' element={(
+                                <AuthController
+                                    redirectTo="/login"
+                                >
+                                    <MemberInformations />
+                                </AuthController>
+                            )} />
+                            <Route path='/adreslerim' element={(
+                                <AuthController
+                                    redirectTo="/login"
+                                >
+                                    <Addresses />
+                                </AuthController>
+                            )} />
+                            <Route path='/adreslerim/duzenle/:id' element={(
+                                <AuthController
+                                    redirectTo="/login"
+                                >
+                                    <EditAddress />
+                                </AuthController>
+                            )} />
+                            <Route path='/adreslerim/ekle' element={(
+                                <AuthController
+                                    redirectTo="/login"
+                                >
+                                    <AddAddress />
+                                </AuthController>
+                            )} />
+                            <Route path='/sifre-guncelleme' element={(
+                                <AuthController
+                                    redirectTo="/login"
+                                >
+                                    <PasswordUpdate />
+                                </AuthController>
+                            )} />
+                        </Routes>
+
+                        {/* Toast */}
+                        <ToastContainer
+                            position="top-right"
+                            theme="colored"
+                            autoClose={1200}
+                            hideProgressBar={false}
+                            newestOnTop={true}
+                            closeOnClick
+                            rtl={false}
+                            pauseOnFocusLoss
+                            draggable
+                        />
+
+                        {/* Basket Tools */}
+                        <BasketTools />
+                    </PersistGate>
+                </Provider>
             </QueryClientProvider>
         </BrowserRouter>
     );
