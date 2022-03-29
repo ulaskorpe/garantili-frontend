@@ -1,9 +1,6 @@
 import {createSelector} from "@reduxjs/toolkit";
 
-export const userIsLogged = createSelector(
+export const selectUser = createSelector(
     (state) => state.auth,
-    (account) => {
-        if (!account) return false;
-        return (typeof account.customer_id !== 'undefined');
-    }
+    (account) => account,
 );

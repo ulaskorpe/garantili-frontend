@@ -1,5 +1,5 @@
 import {createReducer} from "@reduxjs/toolkit";
-import {authLogin} from "../actions/auth";
+import {authLogin, authLogOut} from "../actions/auth";
 
 const INITIAL_STATE = {};
 const authReducer = createReducer(
@@ -11,8 +11,13 @@ const authReducer = createReducer(
             state,
             action,
         ) => {
-            console.log(action, state);
+            Object.keys(action.payload).forEach((key) => {
+                state[key] = action.payload[key];
+            });
         });
+
+        // LogOut
+        builder.addCase(authLogOut.type, () => INITIAL_STATE);
 
     }
 )
