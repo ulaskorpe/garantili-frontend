@@ -1,8 +1,8 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import {INITIAL_AUTH_STATE, useAuth} from "../../context/auth";
 import ErrorPage from "../pages/ErrorPage";
 import {useEffect, useMemo} from "react";
+import useAuth from "../../store/hooks/useAuth";
 
 export const AuthController = (props) => {
     /* Props */

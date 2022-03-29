@@ -1,5 +1,5 @@
 import React, {useState, useCallback, useMemo, useEffect} from 'react';
-import { useParams } from 'react-router-dom';
+import {useLocation} from 'react-router-dom';
 import BreadCrumb from '../layout/BreadCrumb';
 import Footer from '../layout/Footer/Footer';
 import HeaderMain from '../layout/Header/Header';
@@ -11,7 +11,7 @@ import ShopCategoryList from '../Shop/ShopFilters/ShopCategoryList';
 import ShopFilterItem from '../Shop/ShopFilters/ShopFilterItem';
 import ShopHeader from '../Shop/ShopHeader';
 import {useQuery} from "react-query";
-import {GET_PRODUCT_FILTERS, fetchThis, retry, GET_ALL_PRODUCTS, DEFAULT_API_KEY} from "../../api";
+import {GET_PRODUCT_FILTERS, fetchThis, retry, DEFAULT_API_KEY} from "../../api";
 import BasketFilterModal from "../BasketFilterModal";
 
 /* Initial Values */
@@ -23,11 +23,11 @@ const INITIAL_HEADER = {
     imageUrl: '/assets/images/products/jumbo.jpg'
 };
 const INITIAL_CATEGORIES = [
-    { id: 0, title: 'Mağaza' },
+    { id: 0, title: 'Mağaza', url: '/urunler/0' },
     { id: 1, title: 'Süper Teklifler', url: '/super-teklifler' },
-    { id: 2, title: 'Telefonlar' },
-    { id: 3, title: 'Tabletler' },
-    { id: 4, title: 'Aksesuarlar' },
+    { id: 2, title: 'Telefonlar', url: '/urunler/2' },
+    { id: 3, title: 'Tabletler', url: '/urunler/3' },
+    { id: 4, title: 'Aksesuarlar', url: '/urunler/4' },
 ];
 
 // constants
@@ -50,13 +50,14 @@ const perPages = [
     },
 ];
 
-function ShopPage() {
+function CustomShopPage(props) {
+    const { endpoint, category } = props;
     /* States */
     const [filterQuery, setFilterQuery] = useState({});
     const [priceLimit] = useState(INITIAL_PRICE_LIMIT);
     const [crumbs] = useState(INITIAL_CRUMBS);
     const [header] = useState(INITIAL_HEADER);
-    const [selectedCategory, setSelectedCategory] = useState(INITIAL_CATEGORIES[0]);
+    const [selectedCategory, setSelectedCategory] = useState(category);
     const [totalCount, setTotalCount] = useState(0);
     const [pagination, setPagination] = useState({
         page: { value: 1 },
@@ -65,7 +66,7 @@ function ShopPage() {
     const { Modal, openModalEvent } = BasketFilterModal();
 
     /* React Router DOM hooks */
-    const { categoryId } = useParams();
+    const { pathname } = useLocation();
 
     /* */
     const filtersToString = useCallback(() => {
@@ -98,7 +99,7 @@ function ShopPage() {
                 DEFAULT_API_KEY,
             )
         ),
-        { retry, refetchOnWindowFocus: false  },
+        { retry, refetchOnWindowFocus: false, enabled: Boolean(endpoint)  },
     );
 
     /**/
@@ -123,18 +124,18 @@ function ShopPage() {
         ],
         () => (
             fetchThis(
-                GET_ALL_PRODUCTS,
+                endpoint,
                 {
                     page: pagination.page.value,
                     page_count: pagination.perPage.value,
-                    category_id: selectedCategory.id.toString(),
+                    category_id: (selectedCategory?.id || 0).toString(),
                     keyword: '',
                     ...(filtersToString() || {}),
                 },
                 DEFAULT_API_KEY,
             )
         ),
-        { retry, refetchOnWindowFocus: false, placeholderData: generateFakeResponse, },
+        { retry, refetchOnWindowFocus: false, placeholderData: generateFakeResponse, enabled: Boolean(endpoint) },
     );
 
     /* Memos */
@@ -153,7 +154,7 @@ function ShopPage() {
     );
     const totalPageCount = useMemo(() => (
         calcPageCount(
-            products?.data?.item_count || 0,
+            products?.data?.data?.item_count || 0,
             pagination.perPage.value
         )
     ), [products.data, pagination.perPage]);
@@ -211,22 +212,24 @@ function ShopPage() {
 
     /* Setters */
     useEffect(() => {
-        let category = INITIAL_CATEGORIES.find(categoryElem => categoryElem.id.toString() === categoryId); // todo: burayı backendden al
-        if (category === undefined) category = INITIAL_CATEGORIES[0];
-        if (JSON.stringify(selectedCategory) !== JSON.stringify(category)) setSelectedCategory(category);
-    }, [selectedCategory, categoryId])
+        let _category = INITIAL_CATEGORIES.find(categoryElem => categoryElem.url === pathname); // todo: burayı backendden al
+        if (
+            _category
+            && JSON.stringify(selectedCategory) !== JSON.stringify(_category)
+        ) setSelectedCategory(_category);
+    }, [selectedCategory, pathname])
 
 
 
     useEffect(() => {
         if (
-            products?.data?.item_count
-            && products.data.item_count !== totalCount
+            products?.data?.data?.item_count
+            && products.data?.data?.item_count !== totalCount
         ) setTotalCount(products.data.item_count);
     }, [products.data, totalCount]);
 
     const defaultProductListProps = useMemo(() => ({
-        products: products?.data?.data || [],
+        products: products?.data?.data?.products || [],
         openModalEvent,
     }), [products, openModalEvent]);
 
@@ -502,4 +505,4 @@ function ShopPage() {
     );
 }
 
-export default ShopPage
+export default CustomShopPage

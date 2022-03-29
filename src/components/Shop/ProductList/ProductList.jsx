@@ -1,35 +1,43 @@
-import React, { Component } from "react";
+import React  from "react";
 import GridExtended from "./GridExtended";
 import GridItem from "./GridItem";
 import ListItem from "./ListItem";
 import ListLarge from "./ListLarge";
 import SmallListItem from "./SmallListItem";
 
-class ProductList extends Component {
-    render() {
-        const {
-            products,
-            listType,
-        } = this.props
+const ProductList = (props) => {
+    const {
+        products,
+        openModalEvent,
+        listType,
+    } = props;
 
-        return products.map((product, i) => {
-            const isPlaceholder = Boolean(product.isPlaceholder);
-            switch (listType) {
-                case 'grid':
-                    return <GridItem isPlaceholder={isPlaceholder} item={product} key={i} listCount={i + 1} />
-                case 'grid-extended':
-                    return <GridExtended isPlaceholder={isPlaceholder} item={product} key={i} listCount={i + 1} />
-                case 'large-list':
-                    return <ListLarge isPlaceholder={isPlaceholder} item={product} key={i} listCount={i + 1} />
-                case 'list':
-                    return <ListItem isPlaceholder={isPlaceholder} item={product} key={i} listCount={i + 1} />
-                case 'list-small':
-                    return <SmallListItem isPlaceholder={isPlaceholder} item={product} key={i} listCount={i + 1} />
-                default:
-                    break;
-            }
-        })
-    }
-}
+    return products?.map((product, i) => {
+        const isPlaceholder = Boolean(product.isPlaceholder);
+
+        const defaultItemProps = {
+            isPlaceholder,
+            item: product,
+            key: i,
+            listCount: i + 1,
+            openModalEvent,
+        }
+
+        switch (listType) {
+            case 'grid':
+                return <GridItem {...defaultItemProps} />
+            case 'grid-extended':
+                return <GridExtended {...defaultItemProps} />
+            case 'large-list':
+                return <ListLarge {...defaultItemProps} />
+            case 'list':
+                return <ListItem {...defaultItemProps} />
+            case 'list-small':
+                return <SmallListItem {...defaultItemProps} />
+            default:
+                return <></>;
+        }
+    })
+};
 
 export default ProductList

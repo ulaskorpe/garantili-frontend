@@ -1,5 +1,4 @@
-import React, {Component, useState} from "react";
-import useBasket from "../../../store/hooks/useBasket";
+import React from "react";
 import {ayir, getItemPrice} from "../../../store/selectors/basket";
 import useProductTools from "../../../hooks/useProductTools";
 
@@ -47,11 +46,9 @@ const Placeholder = ({ className }) => (
 );
 
 const ListLarge = (props) => {
-    const { item, isPlaceholder = false } = props;
+    const { item, isPlaceholder = false, openModalEvent } = props;
     const className = "product list-view-large first";
-    const [added, setAdded] = useState(false);
 
-    const basket = useBasket();
     const { goProductEvent } = useProductTools();
 
     if (isPlaceholder) return <Placeholder className={className} />;
@@ -107,18 +104,9 @@ const ListLarge = (props) => {
                         <a
                             className="button add_to_cart_button"
                             href="#"
-                            onClick={(e) => {
-                                e.preventDefault();
-                                basket.add(item)(e);
-                                setAdded(true);
-                                setTimeout(() => {
-                                    setAdded(false);
-                                }, 1250)
-                            }}
-                            style={added ? { backgroundColor: '#e86708', color: '#fff' } : {}}
+                            onClick={openModalEvent(item)}
                         >
-                            {!added && 'Sepete ekle'}
-                            {added && 'Sepete eklendi'}
+                            Sepete ekle
                         </a>
                     </div>
                 </div>

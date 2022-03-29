@@ -10,7 +10,7 @@ import {CUSTOMER_FORGET_PASSWORD, DEFAULT_API_KEY, fetchThis} from "../../api";
 import {useLocation, useNavigate} from "react-router-dom";
 import sweetalert from "sweetalert";
 
-function ForgetPassword(props) {
+function ForgetPassword() {
     /* Props */
     const location = useLocation();
     const navigate = useNavigate();
@@ -42,14 +42,18 @@ function ForgetPassword(props) {
                         icon: 'error',
                         title: 'Hata',
                         text:data?.errors?.msg || 'Bilinmeyen bir hata ile karşılaşıldı!',
-                        button: null,
+                        button: {
+                            text: 'Tamam',
+                        },
                     }).then();
                 } else {
                     sweetalert({
                         icon: 'success',
                         title: 'İşlem başarılı',
                         text: 'Yeni şifre oluşturuldu ve hesabınıza mail gönderildi.',
-                        button: null,
+                        button: {
+                            text: 'Tamam',
+                        },
                     }).then(() => {
                         resetForm();
                         navigate('/login', { fromTo: location, replace: true, state: { email: values.email } });
@@ -63,7 +67,9 @@ function ForgetPassword(props) {
                     icon: 'error',
                     title: 'Hata',
                     text: error?.message || error || 'Bilinmeyen bir hata ile karşılaşıldı!',
-                    button: null,
+                    button: {
+                        text: 'Tamam',
+                    },
                 }).then();
                 setSubmitting(false);
                 setLoading(false);

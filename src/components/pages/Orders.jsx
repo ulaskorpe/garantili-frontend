@@ -6,7 +6,7 @@ import BreadCrumb from "../layout/BreadCrumb"
 import { useState } from "react"
 import {useQuery} from "react-query";
 import {DEFAULT_API_KEY, fetchThis, GET_ORDER_LIST, retry} from "../../api";
-import {useAuth} from "../../context";
+import useAuth from "../../store/hooks/useAuth";
 import moment from "moment";
 import useRouterDOM from "../../hooks/useRouterDOM";
 import {ayir} from "../../store/selectors/basket";
@@ -35,7 +35,7 @@ const perPages = [
 ];
 
 function Orders() {
-    const { state: customer, isLogged } = useAuth();
+    const { account, isLogged = false } = useAuth();
     const [totalCount, setTotalCount] = useState(0);
     const [pagination, setPagination] = useState({
         page: { value: 1 },
@@ -48,14 +48,14 @@ function Orders() {
 
     const orderHistory = useQuery(
         [
-            'get-order-history', customer,
+            'get-order-history', account,
             pagination.page, pagination.perPage,
         ],
         () => (
             fetchThis(
                 GET_ORDER_LIST,
                 {
-                    customer_id: customer.customer_id.toString(),
+                    customer_id: account.customer_id.toString(),
                     page: pagination.page.value,
                     page_count: pagination.perPage.value,
                 },
@@ -125,7 +125,7 @@ function Orders() {
                             {/* Items */}
                             <div className="order-items">
                                 {/* item */}
-                                {orderHistory?.data?.data?.orders?.map((order, orderIDX) => (
+                                {orderHistory?.data?.data?.orders?.map((order) => (
                                     <div
                                         className="order-item"
                                         key={order.order_id}

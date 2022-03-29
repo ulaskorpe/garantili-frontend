@@ -8,7 +8,7 @@ import { useState } from "react"
 import {useMutation} from "react-query";
 import {CUSTOMER_UPDATE_PASSWORD, DEFAULT_API_KEY, fetchThis} from "../../api";
 import sweetalert from "sweetalert";
-import {useAuth} from "../../context";
+import useAuth from "../../store/hooks/useAuth";
 import {useLocation, useNavigate} from "react-router-dom";
 
 const initialValues = {
@@ -20,7 +20,7 @@ function PasswordUpdate() {
     const navigate = useNavigate();
     const location = useLocation();
     const [loading, setLoading] = useState(false);
-    const { state: account, isLogged = false } = useAuth();
+    const { account, isLogged = false } = useAuth();
     const [crumb] = useState([
         { url: '#', title: 'Şifre Güncelleme' }
     ]);
@@ -52,14 +52,18 @@ function PasswordUpdate() {
                         icon: 'error',
                         title: 'Hata',
                         text: errors?.msg || 'Bilinmeyen bir hata ile karşılaşıldı!',
-                        button: null,
+                        button: {
+                            text: 'Tamam',
+                        },
                     }).then();
                 } else {
                     sweetalert({
                         icon: 'success',
                         title: 'Başarılı',
                         text: 'Şifren başarıyla sıfırlandı.',
-                        button: null,
+                        button: {
+                            text: 'Tamam',
+                        },
                     }).then(() => {
                         resetForm();
                     });
@@ -73,7 +77,9 @@ function PasswordUpdate() {
                         icon: 'error',
                         title: 'Hata',
                         text: error?.message || error || 'Bilinmeyen bir hata ile karşılaşıldı!',
-                        button: null,
+                        button: {
+                            text: 'Tamam',
+                        },
                     }).then();
                 }
                 setSubmitting(false);

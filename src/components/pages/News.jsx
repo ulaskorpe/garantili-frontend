@@ -94,7 +94,7 @@ export default function News() {
                                                 <div className="media-attachment">
                                                     <div className="post-thumbnail">
                                                         <a href={item.url}>
-                                                            <img alt="" className="wp-post-image" src={`https://buyback.garantiliteknoloji.com/${item.imageUrl}`} />
+                                                            <img alt="" className="wp-post-image" src={item.imageUrl} />
                                                         </a>
                                                     </div>
                                                 </div>

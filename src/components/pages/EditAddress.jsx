@@ -16,8 +16,8 @@ import {
     GET_TOWNS, UPDATE_ADDRESS
 } from "../../api";
 import sweetalert from "sweetalert";
-import {useAuth} from "../../context";
 import useRouterDOM from "../../hooks/useRouterDOM";
+import useAuth from "../../store/hooks/useAuth";
 
 const NOT_SELECTED = { value: -1, label: 'Seçilmedi' };
 
@@ -46,7 +46,7 @@ function EditAddress() {
         { url: '#', title: 'Adresimi düzenle' },
     ]);
     const formikRef = useRef();
-    const { state: account, isLogged = false } = useAuth();
+    const { account, isLogged = false } = useAuth();
     const [loading, setLoading] = useState(false);
     const { go, params } = useRouterDOM();
     
@@ -329,14 +329,18 @@ function EditAddress() {
                         icon: 'error',
                         title: 'Hata',
                         text: errors?.msg || 'Bilinmeyen bir hata ile karşılaşıldı!',
-                        button: null,
+                        button: {
+                            text: 'Tamam',
+                        },
                     }).then();
                 } else {
                     sweetalert({
                         icon: 'success',
                         title: 'Başarılı',
                         text: 'Kayıt işlemi başarılı',
-                        button: null,
+                        button: {
+                            text: 'Tamam',
+                        },
                     }).then(() => {
                         go('/adreslerim');
                     });
@@ -349,7 +353,9 @@ function EditAddress() {
                     icon: 'error',
                     title: 'Hata',
                     text: error?.message || error || 'Bilinmeyen bir hata ile karşılaşıldı!',
-                    button: null,
+                    button: {
+                        text: 'Tamam',
+                    },
                 }).then();
                 setSubmitting(false);
                 setLoading(false);
@@ -468,11 +474,7 @@ function EditAddress() {
                                                                         {({
                                                                               isSubmitting,
                                                                               errors,
-                                                                              handleBlur,
-                                                                              setFieldValue,
-                                                                              touched,
                                                                               values,
-                                                                              setTouched,
                                                                           }) => (
                                                                             <Form
                                                                                 className="wpcf7-form"

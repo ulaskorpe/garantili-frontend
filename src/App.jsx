@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React  from 'react';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import {QueryClient, QueryClientProvider} from "react-query";
@@ -20,6 +20,7 @@ import PhoneSell from './components/pages/PhoneSell';
 import PhoneSellDevice from './components/pages/PhoneSellDevice';
 import ProductPage from './components/pages/ProductPage';
 import ShopPage from './components/pages/ShopPage';
+import CustomShopPage from './components/pages/CustomShopPage';
 import UserManual from './components/pages/UserManual';
 import OrderFollow from './components/pages/OrderFollow';
 import FollowDetails from './components/pages/FollowDetails';

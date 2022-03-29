@@ -1,5 +1,4 @@
-import React, {Component, useCallback, useState} from 'react';
-import useBasket from "../../../../store/hooks/useBasket";
+import React, {useCallback, useState} from 'react';
 import {getItemPrice} from "../../../../store/selectors/basket";
 import useProductTools from "../../../../hooks/useProductTools";
 import {useQuery} from "react-query";
@@ -7,9 +6,11 @@ import {DEFAULT_API_KEY, fetchThis, GET_NEW_PRODUCTS, retry} from "../../../../a
 import DSlick from "react-slick";
 
 const ProductItem = (props) => {
-    const item = props.product;
-    const [added, setAdded] = useState(false);
-    const basket = useBasket();
+    const {
+        openModalEvent,
+        product,
+    } = props;
+    const item = product;
     const { goProductEvent } = useProductTools();
 
     return (
@@ -19,7 +20,7 @@ const ProductItem = (props) => {
                 href={item.url || '#'}
                 onClick={goProductEvent(item)}
             >
-                <img src={`https://buyback.garantiliteknoloji.com/${item.imageUrl}`} width="224" height="197" className="wp-post-image" alt="" />
+                <img src={item.imageUrl} width="224" height="197" className="wp-post-image" alt="" />
                 <span className="price">
                     <ins>
                         <span className="amount"> </span>
@@ -33,18 +34,9 @@ const ProductItem = (props) => {
                     className="button add_to_cart_button"
                     href="#"
                     rel="nofollow"
-                    onClick={(e) => {
-                        e.preventDefault();
-                        basket.add(item)(e);
-                        setAdded(true);
-                        setTimeout(() => {
-                            setAdded(false);
-                        }, 1250)
-                    }}
-                    style={added ? { backgroundColor: '#e86708', color: '#fff' } : {}}
+                    onClick={openModalEvent(item)}
                 >
-                    {!added && 'Sepete ekle'}
-                    {added && 'Sepete eklendi'}
+                    Sepete ekle
                 </a>
             </div>
         </div>
@@ -97,7 +89,10 @@ const CATEGORY_ALL = {
 
 let timer = null;
 let lastCategories = [];
-const NewArrivals = () => {
+const NewArrivals = (props) => {
+    const {
+        openModalEvent,
+    } = props;
     const [selectedCategory, setSelectedCategory] = useState(0);
 
     const newArrivals = useQuery(
@@ -210,6 +205,7 @@ const NewArrivals = () => {
                                                 <ProductItem
                                                     product={item}
                                                     key={i}
+                                                    openModalEvent={openModalEvent}
                                                 />
                                             ))}
                                         </DSlick>

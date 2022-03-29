@@ -9,22 +9,26 @@ import LoginForm from "../forms/LoginForm";
 import {useMutation} from "react-query";
 import sweetalert from 'sweetalert';
 import {CREATE_CUSTOMER, DEFAULT_API_KEY, fetchThis, LOGIN_CUSTOMER} from "../../api";
-import {useAuth} from "../../context/auth";
 import {useLocation, useNavigate} from "react-router-dom";
+import useAuth from "../../store/hooks/useAuth";
 
-function Login(props) {
+function Login() {
     /* Props */
     const navigate = useNavigate();
     const location = useLocation();
 
-    /* context */
-    const { login } = useAuth();
+    /* hooks */
+    const {
+        login,
+        account,
+    } = useAuth();
 
     /* States */
     const [loading, setLoading] = useState(false);
     const [crumb] = useState([
         { url: '#', title: 'Giriş Yap / Kayıt Ol' }
     ]);
+
 
     /* Mutations */
     const loginMutation = useMutation((data) => {
@@ -51,7 +55,9 @@ function Login(props) {
                 icon: 'error',
                 title: 'Hata',
                 text: error?.message || error || 'Bilinmeyen bir hata ile karşılaşıldı!',
-                button: null,
+                button: {
+                    text: 'Tamam',
+                },
             }).then();
         }
         setSubmitting(false);
@@ -70,14 +76,18 @@ function Login(props) {
                 icon: 'error',
                 title: 'Hata',
                 text: errors?.msg || 'Bilinmeyen bir hata ile karşılaşıldı!',
-                button: null,
+                button: {
+                    text: 'Tamam',
+                },
             }).then();
         } else {
             sweetalert({
                 icon: 'success',
                 title: 'Başarılı',
                 text: successMessage || 'İşlem başarılı',
-                button: null,
+                button: {
+                    text: 'Tamam',
+                }
             }).then(() => {
                 resetForm();
                 if (waitSweetThen && cb) cb(data);
@@ -90,13 +100,18 @@ function Login(props) {
     const handleLoginFormSubmit = (values, { setSubmitting, resetForm }) => {
         setSubmitting(true);
         setLoading(true);
-        loginMutation.mutate(values, {
+        loginMutation.mutate({
+            ...values,
+            guid: account.customer_id,
+        }, {
             onSuccess: onSuccess(
                 'Giriş başarılı',
                 resetForm,
                 setSubmitting,
                 (data) => {
-                    login(data);
+                    const loginData = data.customer;
+                    loginData.type = 'user';
+                    login(loginData);
                 },
                 false,
             ),

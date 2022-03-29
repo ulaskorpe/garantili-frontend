@@ -18,18 +18,24 @@ class RelatedProductList extends Component {
 
 
     render() {
-        const { onAddToBasket } = this.props
+        const { openModalEvent } = this.props
         return (<div className="tm-related-products-carousel section-products-carousel" id="tm-related-products-carousel"
             data-ride="tm-related-slick-carousel" data-wrap=".products"
             data-slick="{&quot;slidesToShow&quot;:7,&quot;slidesToScroll&quot;:7,&quot;dots&quot;:true,&quot;arrows&quot;:true,&quot;prevArrow&quot;:&quot;&lt;a href=\&quot;#\&quot;&gt;&lt;i className=\&quot;tm tm-arrow-left\&quot;&gt;&lt;\/i&gt;&lt;\/a&gt;&quot;,&quot;nextArrow&quot;:&quot;&lt;a href=\&quot;#\&quot;&gt;&lt;i className=\&quot;tm tm-arrow-right\&quot;&gt;&lt;\/i&gt;&lt;\/a&gt;&quot;,&quot;appendArrows&quot;:&quot;#tm-related-products-carousel .custom-slick-nav&quot;,&quot;responsive&quot;:[{&quot;breakpoint&quot;:767,&quot;settings&quot;:{&quot;slidesToShow&quot;:1,&quot;slidesToScroll&quot;:1}},{&quot;breakpoint&quot;:780,&quot;settings&quot;:{&quot;slidesToShow&quot;:3,&quot;slidesToScroll&quot;:3}},{&quot;breakpoint&quot;:1200,&quot;settings&quot;:{&quot;slidesToShow&quot;:4,&quot;slidesToScroll&quot;:4}},{&quot;breakpoint&quot;:1400,&quot;settings&quot;:{&quot;slidesToShow&quot;:5,&quot;slidesToScroll&quot;:5}}]}">
             <section className="related">
                 <header className="section-header">
                     <h2 className="section-title">Benzer Ürünler</h2>
-                    <nav className="custom-slick-nav"></nav>
+                    <nav className="custom-slick-nav" />
                 </header>
                 <div className="products">
                     {this.state.products.map((product, i) => {
-                        return <Product product={product} onAddToBasket={onAddToBasket} key={i} />
+                        return (
+                            <Product
+                                product={product}
+                                openModalEvent={openModalEvent}
+                                key={i}
+                            />
+                        )
                     })}
                 </div>
             </section>

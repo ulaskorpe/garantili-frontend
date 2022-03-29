@@ -8,25 +8,25 @@ import OrderItemList from "../ordercomponents/OrderItemList"
 import {useQuery} from "react-query";
 import {DEFAULT_API_KEY, fetchThis, GET_ORDER_SUMMARY, retry} from "../../api";
 import {useParams} from "react-router-dom";
-import {useAuth} from "../../context";
+import useAuth from "../../store/hooks/useAuth";
 
 const ROOT_CRUMB = { url: '/siparislerim', title: 'Siparişlerim' };
 
 function OrderDetail() {
     const params = useParams();
-    const { state: customer, isLogged } = useAuth();
+    const { account, isLogged = false } = useAuth();
     const [crumb, setCrumb] = useState([
         ROOT_CRUMB,
     ]);
 
     const orderDetail = useQuery(
-        ['get-order-detail', params, customer],
+        ['get-order-detail', params, account],
         () => (
             fetchThis(
                 GET_ORDER_SUMMARY,
                 {
                     order_id: params.id,
-                    customer_id: customer.customer_id.toString(),
+                    customer_id: account.customer_id.toString(),
                 },
                 DEFAULT_API_KEY,
                 {},

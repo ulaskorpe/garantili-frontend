@@ -1,39 +1,36 @@
-import React, {Component, useCallback} from 'react';
+import React, {useCallback} from 'react';
 import useBasket from "../../store/hooks/useBasket";
-import {useSelector} from "react-redux";
-import {ayir, getBasketObject, getItemPrice} from "../../store/selectors/basket";
+import {ayir, getItemPrice} from "../../store/selectors/basket";
 
+
+let timer = null;
 const CartListItem = (props) => {
     const {item} = props;
 
     const basket = useBasket();
-    const basketObject = useSelector(getBasketObject)
 
-
-    const handleInputBlur = useCallback((e) => {
-        const quantity = parseInt(e.target.value);
-        if (
-            !quantity
-            && typeof quantity !== 'number'
-            || quantity === 0
-        ) return false;
-
-        const basketDeg = basketObject[item.id];
-        if (
-            !basketDeg
-            || basketDeg.quantity === quantity
-        ) return false;
-
-        basket.setItemQuantity(
-            item.id,
-            quantity,
-        )(e);
-    }, [item, basketObject]);
-    const handleInputKeyUp = useCallback((e) => {
-        if (e.key === 'Enter' || e.keyCode === 13) {
-            handleInputBlur(e);
+    const changer = useCallback((quantity) => {
+        if (timer) {
+            clearTimeout(timer);
+            timer = null;
         }
-    }, [handleInputBlur]);
+        timer = setTimeout(() => {
+            basket.setItemQuantity(
+                item.item_code,
+                quantity,
+            )();
+        }, 510);
+    }, [item.item_code, basket]);
+    const handleChange = useCallback((e) => {
+        if (
+            basket.quantityStats.isLoading
+            || basket.quantityStats.isError
+        ) return;
+        const value = parseInt(e.target.value);
+        if (Number.isInteger(value)) {
+            changer(value);
+        }
+    }, [changer, basket.quantityStats])
 
     return (
       <tr>
@@ -65,14 +62,14 @@ const CartListItem = (props) => {
               <div className="quantity">
                   <label htmlFor="quantity-input-1">Adet</label>
                   <input
+                      disabled={basket.quantityStats.isError || basket.quantityStats.isError}
                       type="number"
                       defaultValue={item.quantity}
                       title="Adet"
                       className="input-text qty text"
                       size="40"
                       min="1"
-                      onBlur={handleInputBlur}
-                      onKeyUp={handleInputKeyUp}
+                      onChange={handleChange}
                   />
               </div>
           </td>
@@ -83,7 +80,7 @@ const CartListItem = (props) => {
                   title="Remove this item"
                   className="remove"
                   href="#"
-                  onClick={basket.remove(item.id)}
+                  onClick={basket.remove(item.item_code)}
               >
                   ×
               </a>

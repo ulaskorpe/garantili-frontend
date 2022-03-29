@@ -1,10 +1,10 @@
-import React, {Component, useCallback, useMemo} from "react";
+import React, {Component, useCallback} from "react";
 import {useSelector} from "react-redux";
 import {
     ayir,
-    getBasketArrayList,
+    getBasketItemsArrayList,
     getBasketCount,
-    getBasketObject, getBasketTotalPrice, getItemPrice,
+    getItemPrice,
     getSplitBasketTotalPrice
 } from "../../../../store/selectors/basket";
 import {useLocation, useNavigate} from "react-router-dom";
@@ -19,7 +19,7 @@ const BasketListItem = (props) => {
             <a href="#"
                className="remove"
                aria-label="Sil"
-               onClick={basketItem.remove(item.id)}>
+               onClick={basketItem.remove(item.item_code)}>
                 ×
             </a>
             <a href="#">
@@ -42,7 +42,7 @@ const BasketListItem = (props) => {
 }
 
 const BasketItem = () => {
-    const basketArray = useSelector(getBasketArrayList);
+    const basketArray = useSelector(getBasketItemsArrayList);
 
     return (
         basketArray.map((item, index) => {
@@ -84,7 +84,13 @@ const Basket = () => {
                     <li>
                         <div className="widget woocommerce widget_shopping_cart">
                             <div className="widget_shopping_cart_content">
-                                <ul className="woocommerce-mini-cart cart_list product_list_widget ">
+                                <ul
+                                    className="woocommerce-mini-cart cart_list product_list_widget"
+                                    style={{
+                                        maxHeight: 400,
+                                        overflowY: 'auto',
+                                    }}
+                                >
                                     <BasketItem />
                                 </ul>
                                 <p className="woocommerce-mini-cart__total total">

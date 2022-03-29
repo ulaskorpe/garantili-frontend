@@ -8,7 +8,7 @@ import {Formik, Form, Field, ErrorMessage} from "formik";
 import DatePickerField from "../fields/DatePickerField";
 import PhoneInputField from "../fields/PhoneInputField";
 import sweetalert from "sweetalert";
-import {useAuth} from "../../context";
+import useAuth from "../../store/hooks/useAuth";
 import {useMutation} from "react-query";
 import {CUSTOMER_UPDATE, DEFAULT_API_KEY, fetchThis} from "../../api";
 import {useLocation, useNavigate} from "react-router-dom";
@@ -28,7 +28,7 @@ function MemberInformations() {
     const formikRef = useRef();
     const navigate = useNavigate();
     const location = useLocation();
-    const { state: account, isLogged = false, update } = useAuth();
+    const { account, isLogged = false, update = () => null } = useAuth(); // todo
     const [loading, setLoading] = useState(false);
     const [crumb] = useState([
         { url: '#', title: 'Üyelik Bilgilerim' }
@@ -68,14 +68,18 @@ function MemberInformations() {
                         icon: 'error',
                         title: 'Hata',
                         text: errors?.msg || 'Bilinmeyen bir hata ile karşılaşıldı!',
-                        button: null,
+                        button: {
+                            text: 'Tamam',
+                        },
                     }).then();
                 } else {
                     sweetalert({
                         icon: 'success',
                         title: 'Başarılı',
                         text: 'Bilgilerin başarıyla güncellendi.',
-                        button: null,
+                        button: {
+                            text: 'Tamam',
+                        },
                     }).then(() => {
                         update(values);
                     });
@@ -88,13 +92,15 @@ function MemberInformations() {
                     icon: 'error',
                     title: 'Hata',
                     text: error?.message || error || 'Bilinmeyen bir hata ile karşılaşıldı!',
-                    button: null,
+                    button: {
+                        text: 'Tamam',
+                    },
                 }).then();
                 setSubmitting(false);
                 setLoading(false);
             },
         });
-    }, [account, isLogged]);
+    }, [account, isLogged, update, updateCustomerMutation]);
 
     const validateForm = (values) => {
         const errors = {};

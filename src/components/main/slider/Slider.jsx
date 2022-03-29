@@ -1,12 +1,13 @@
 import React, { Component } from "react";
-import $ from 'jquery'
-import slick from "slick-carousel";
+import DSlick from 'react-slick';
+
 const SliderItem = (props) => {
     const backgroundImageUrl = 'url('.concat(props.item.backgroundImageUrl, ')')
     const sliderStyle = {
         backgroundImage: backgroundImageUrl
     }
-    let item = (
+
+    return (
         <div className="slider-1" style={sliderStyle}>
             <img src={props.item.imageUrl} alt={props.item.title} />
             <div className="caption pl-2 pl-sm-5">
@@ -15,23 +16,27 @@ const SliderItem = (props) => {
                 <div className="sub-title">{props.item.subTitle}
                 </div>
                 <div className="button">{props.item.buttonTitle}
-                    <i className="tm tm-long-arrow-right"></i>
+                    <i className="tm tm-long-arrow-right" />
                 </div>
                 <div className="bottom-caption">{props.item.bottomTitle}</div>
             </div>
         </div>
-    )
-
-    return item
+    );
 }
 
-const SliderList = (props) => {
-    const items = props.data.map((_, index) => {
-        return <SliderItem item={_} key={index} />
-    })
-
-    return items
-}
+const slickSettings = {
+    dots: true,
+    infinite: false,
+    speed: 300,
+    slidesToShow: 1,
+    autoplay: false,
+    pauseOnHover: false,
+    arrows: false,
+    autoplaySpeed: 3000,
+    fade: true,
+    lazyLoad: 'progressive',
+    cssEase: 'linear'
+};
 
 class Slider extends Component {
     constructor(props) {
@@ -66,31 +71,17 @@ class Slider extends Component {
             )
     }
 
-    componentDidUpdate() {
-        $('.home-slider').slick({
-            dots: true,
-            infinite: false,
-            speed: 300,
-            slidesToShow: 1,
-            autoplay: false,
-            pauseOnHover: false,
-            arrows: false,
-            autoplaySpeed: 3000,
-            fade: true,
-            lazyLoad: 'progressive',
-            cssEase: 'linear'
-
-
-        });
-    }
-
 
     render() {
         return (
-            <div className="home-v1-slider home-slider">
-                <SliderList data={this.state.sliders} />
-
-            </div>
+            <DSlick
+                className="home-v1-slider home-slider"
+                {...slickSettings}
+            >
+                {this.state.sliders.map((_, index) => {
+                    return <SliderItem item={_} key={index} />
+                })}
+            </DSlick>
         )
     }
 }

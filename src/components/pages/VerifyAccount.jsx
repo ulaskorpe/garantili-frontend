@@ -8,10 +8,10 @@ import {useMutation} from "react-query";
 import {CUSTOMER_ACTIVATION, CUSTOMER_RESEND_ACTIVE_CODE, DEFAULT_API_KEY, fetchThis} from "../../api";
 import {useLocation, useNavigate} from "react-router-dom";
 import VerifyForm from "../forms/VerifyForm";
-import {useAuth} from "../../context/auth";
 import sweetalert from "sweetalert";
+import useAuth from "../../store/hooks/useAuth";
 
-function ForgetPassword(props) {
+function ForgetPassword() {
     /* Props */
     const location = useLocation();
     const navigate = useNavigate();
@@ -22,7 +22,7 @@ function ForgetPassword(props) {
         { url: '#', title: 'Hesap Doğrulama' }
     ]);
 
-    const { state, isLogged } = useAuth();
+    const { account, isLogged = false } = useAuth();
 
     /* Mutations */
     const verifyMutation = useMutation((data) => {
@@ -58,14 +58,18 @@ function ForgetPassword(props) {
                         icon: 'error',
                         title: 'Hata',
                         text: data?.errors?.msg || 'Bilinmeyen bir hata ile karşılaşıldı!',
-                        button: null,
+                        button: {
+                            text: 'Tamam',
+                        },
                     }).then();
                 } else {
                     sweetalert({
                         icon: 'success',
                         title: 'Doğrulandı.',
                         text: 'Hesabınızı doğruladınız, teşekkürler.',
-                        button: null,
+                        button: {
+                            text: 'Tamam',
+                        },
                     }).then(() => {
                         resetForm();
                         navigate(
@@ -86,7 +90,9 @@ function ForgetPassword(props) {
                     icon: 'error',
                     title: 'Hata',
                     text: error?.message || error || 'Bilinmeyen bir hata ile karşılaşıldı!',
-                    button: null,
+                    button: {
+                        text: 'Tamam',
+                    },
                 }).then();
                 resetForm();
                 setSubmitting(false);
@@ -106,14 +112,18 @@ function ForgetPassword(props) {
                         icon: 'error',
                         title: 'Hata',
                         text: data?.errors?.msg || 'Bilinmeyen bir hata ile karşılaşıldı!',
-                        button: null,
+                        button: {
+                            text: 'Tamam',
+                        },
                     }).then();
                 } else {
                     sweetalert({
                         icon: 'success',
                         title: 'Başarılı',
                         text: 'Doğrulama mesajı tekrardan gönderildi, lütfen istenmeyen klasörünü kontrol edin..',
-                        button: null,
+                        button: {
+                            text: 'Tamam',
+                        },
                     }).then();
                     resetForm();
                 }
@@ -124,7 +134,9 @@ function ForgetPassword(props) {
                     icon: 'error',
                     title: 'Hata',
                     text: error?.message || error || 'Bilinmeyen bir hata ile karşılaşıldı!',
-                    button: null,
+                    button: {
+                        text: 'Tamam',
+                    },
                 }).then();
                 resetForm();
                 setLoading(false);
@@ -176,7 +188,7 @@ function ForgetPassword(props) {
         let redirectPath = '/login';
 
         if (isLogged) {
-            if (state.status === 0) {
+            if (account.status === 0) {
                 redirect = false;
             } else {
                 redirect = true;
@@ -186,7 +198,7 @@ function ForgetPassword(props) {
 
         if (redirect) navigate(redirectPath, { fromTo: location, replace: true });
 
-    }, [location, navigate, state, isLogged])
+    }, [location, navigate, account, isLogged])
 
     /* Memos */
     const defaultFormProps = useMemo(() => ({

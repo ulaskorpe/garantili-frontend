@@ -7,7 +7,7 @@ import { useState } from "react"
 import {useMutation, useQuery} from "react-query";
 import {DEFAULT_API_KEY, DELETE_ADDRESS, fetchThis, retry} from "../../api";
 import {SHOW_ADDRESSES} from "../../api";
-import {useAuth} from "../../context";
+import useAuth from "../../store/hooks/useAuth";
 import {calcPageCount} from "../../api/utils/pagination";
 import PaginationBar from "../Shop/ProductList/PaginationBar";
 import useRouterDOM from "../../hooks/useRouterDOM";
@@ -35,7 +35,7 @@ function Addresses() {
     const [crumb] = useState([
         { url: '#', title: 'Adreslerim' }
     ])
-    const { state: customer, isLogged } = useAuth();
+    const { account, isLogged } = useAuth();
     const [totalCount, setTotalCount] = useState(0);
     const [pagination, setPagination] = useState({
         page: { value: 1 },
@@ -43,16 +43,18 @@ function Addresses() {
     });
     const { goEvent } = useRouterDOM();
 
+
     const list = useQuery(
         [
             'adresses',
+            account,
             isLogged,
         ],
         () => (
             fetchThis(
                 SHOW_ADDRESSES,
                 {
-                    customer_id: customer.customer_id.toString(),
+                    customer_id: account.customer_id.toString(),
                     page: pagination.page.value,
                     page_count: pagination.perPage.value,
                 },
@@ -84,7 +86,7 @@ function Addresses() {
         if (!address_id) return;
 
         deleteMutation?.mutate({
-            customer_id: customer.customer_id,
+            customer_id: account.customer_id,
             address_id,
         }, {
             onSuccess: ({ status = false, errors = { msg: '' }}) => {
@@ -93,7 +95,9 @@ function Addresses() {
                         icon: 'error',
                         title: 'Hata',
                         text: errors?.msg || 'Bilinmeyen bir hata ile karşılaşıldı!',
-                        button: null,
+                        button: {
+                            text: 'Tamam',
+                        },
                     }).then();
                 } else {
                     list.refetch().then(() => {
@@ -101,7 +105,9 @@ function Addresses() {
                             icon: 'success',
                             title: 'Başarılı',
                             text: 'Adresin başarıyla silindi.',
-                            button: null,
+                            button: {
+                                text: 'Tamam',
+                            },
                         }).then(() => {});
                     });
                 }
@@ -111,11 +117,13 @@ function Addresses() {
                     icon: 'error',
                     title: 'Hata',
                     text: error?.message || error || 'Bilinmeyen bir hata ile karşılaşıldı!',
-                    button: null,
+                    button: {
+                        text: 'Tamam',
+                    },
                 }).then();
             },
         })
-    }, [customer, list])
+    }, [account, list, deleteMutation])
 
     const perPagesObject = useMemo(() => {
         const obj = {};

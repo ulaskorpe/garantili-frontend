@@ -7,7 +7,7 @@ import TopBar from "../layout/TopBar"
 import DeviceList from "../phone-sell/DeviceList"
 import ShopFilterItem from "../Shop/ShopFilters/ShopFilterItem"
 
-export default function PhoneSell(props) {
+export default function PhoneSell() {
     const crumbs = [
         { url: '#', title: 'Telefon Sat' }
     ]
@@ -57,11 +57,9 @@ export default function PhoneSell(props) {
             if (_.filterName !== filterType) return
             _.items.forEach(pf => {
                 if (pf.filterName !== filterValue) return
-                pf.isChosen = pf.isChosen === true ? false : true
+                pf.isChosen = pf.isChosen !== true
             })
         })
-
-        console.log('status', filters)
 
         const filterdProducts = []
         filters.forEach(_ => {
@@ -91,7 +89,7 @@ export default function PhoneSell(props) {
                                 <div className="shop-control-bar">
                                     <div className="handheld-sidebar-toggle">
                                         <button type="button" className="btn sidebar-toggler">
-                                            <i className="fa fa-sliders"></i>
+                                            <i className="fa fa-sliders" />
                                             <span>Filtre</span>
                                         </button>
                                     </div>
@@ -99,29 +97,29 @@ export default function PhoneSell(props) {
                                     <ul role="tablist" className="shop-view-switcher nav nav-tabs">
                                         <li className="nav-item">
                                             <a href="#grid" title="Grid View" data-toggle="tab" className="nav-link active">
-                                                <i className="tm tm-grid-small"></i>
+                                                <i className="tm tm-grid-small" />
                                             </a>
                                         </li>
                                         <li className="nav-item">
                                             <a href="#grid-extended" title="Grid Extended View" data-toggle="tab"
                                                 className="nav-link">
-                                                <i className="tm tm-grid"></i>
+                                                <i className="tm tm-grid" />
                                             </a>
                                         </li>
                                         <li className="nav-item">
                                             <a href="#list-view-large" title="List View Large" data-toggle="tab" className="nav-link ">
-                                                <i className="tm tm-listing-large"></i>
+                                                <i className="tm tm-listing-large" />
                                             </a>
                                         </li>
                                         <li className="nav-item">
                                             <a href="#list-view" title="List View" data-toggle="tab" className="nav-link ">
-                                                <i className="tm tm-listing"></i>
+                                                <i className="tm tm-listing" />
                                             </a>
                                         </li>
                                         <li className="nav-item">
                                             <a href="#list-view-small" title="List View Small" data-toggle="tab"
                                                 className="nav-link ">
-                                                <i className="tm tm-listing-small"></i>
+                                                <i className="tm tm-listing-small" />
                                             </a>
                                         </li>
                                     </ul>

@@ -1,6 +1,4 @@
-import React, {useState} from "react";
-import {basketAdd} from "../../../store/actions/basket";
-import useBasket from "../../../store/hooks/useBasket";
+import React from "react";
 import {ayir, getItemPrice} from "../../../store/selectors/basket";
 import useProductTools from "../../../hooks/useProductTools";
 
@@ -28,9 +26,12 @@ const getClasses = (i) => {
     return 'product'
 }
 const GridItem = (props) => {
-    const { item, listCount, isPlaceholder = false } = props;
-    const [added, setAdded] = useState(false);
-    const basket = useBasket();
+    const {
+        item,
+        listCount,
+        isPlaceholder = false,
+        openModalEvent,
+    } = props;
     const { goProductEvent } = useProductTools();
 
     const className = getClasses(listCount);
@@ -55,18 +56,9 @@ const GridItem = (props) => {
                 <a
                     className="button"
                     href="#"
-                    onClick={(e) => {
-                        e.preventDefault();
-                        basket.add(item)(e);
-                        setAdded(true);
-                        setTimeout(() => {
-                            setAdded(false);
-                        }, 1250)
-                    }}
-                    style={added ? { backgroundColor: '#e86708', color: '#fff' } : {}}
+                    onClick={openModalEvent(item)}
                 >
-                    {!added && 'Sepete ekle'}
-                    {added && 'Sepete eklendi'}
+                    Sepete ekle
                 </a>
             </div>
         </div>

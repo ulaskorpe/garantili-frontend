@@ -6,7 +6,7 @@ const Accessory = (props) => {
         <div className="product">
             <a className="woocommerce-LoopProduct-link woocommerce-loop-product__link"
                 href="#">
-                <img width="224" height="197" alt="" className="attachment-shop_catalog size-shop_catalog wp-post-image" src={`https://buyback.garantiliteknoloji.com/${product.imageUrl}`} />
+                <img width="224" height="197" alt="" className="attachment-shop_catalog size-shop_catalog wp-post-image" src={product.imageUrl} />
                 <span className="price">
                     <del>
                         <span className="woocommerce-Price-amount amount">

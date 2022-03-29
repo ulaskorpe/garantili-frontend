@@ -7,7 +7,7 @@ import { useState } from "react"
 import CartList from "../cart/CartList"
 import CartTotals from "../cart/CartTotals"
 function Cart() {
-    const [crumb, setCrumb] = useState([
+    const [crumb] = useState([
         { url: '#', title: 'Alışveriş Sepeti' }
     ])
 

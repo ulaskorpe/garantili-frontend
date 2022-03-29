@@ -92,7 +92,7 @@ export default function NewsDetails() {
                                                         height="560"
                                                         alt=""
                                                         className="wp-post-image"
-                                                        src={`https://buyback.garantiliteknoloji.com/${details.data.data.imageUrl}`}
+                                                        src={details.data.data.imageUrl}
                                                     />
                                                 </div>
                                             </div>

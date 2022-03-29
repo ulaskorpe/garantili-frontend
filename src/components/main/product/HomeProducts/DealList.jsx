@@ -1,4 +1,4 @@
-import React, {Component, useCallback, useEffect, useRef} from "react";
+import React, {useCallback, useRef} from "react";
 import DSlick from 'react-slick';
 import {useQuery} from "react-query";
 import {DEFAULT_API_KEY, fetchThis, GET_SUPER_OFFER, retry} from "../../../../api";
@@ -57,7 +57,7 @@ const DealItem = (props) => {
                         <span className="line-2">İndirim Süresi:</span>
                     </div>
                     <span className="deal-time-diff d-none" >{dealItem.seconds}</span>
-                    <div className="deal-countdown countdown"></div>
+                    <div className="deal-countdown countdown" />
                 </div>
             </a>
         </div>
@@ -105,7 +105,7 @@ const DealList = () => {
         ) {
             slickRef.current.slickNext()
         }
-    }, [list, slickRef]);
+    }, [slickRef]);
 
     const handlePrev = useCallback((e) => {
         e.preventDefault();
@@ -116,7 +116,7 @@ const DealList = () => {
         ) {
             slickRef.current.slickPrev()
         }
-    }, [list, slickRef]);
+    }, [slickRef]);
 
     return (
         <section className="column-1 deals-carousel" id="sale-with-timer-carousel">
@@ -137,7 +137,7 @@ const DealList = () => {
                                     {...slickSettings}
                                     ref={slickRef}
                                 >
-                                    {list.data.map((item, itemIDX) => (
+                                    {list?.data?.map((item, itemIDX) => (
                                         <DealItem
                                             dealItem={item}
                                             key={itemIDX}

@@ -1,8 +1,9 @@
 import React, { Component } from "react";
+import {ayir} from "../../../store/selectors/basket";
 
 class Product extends Component {
     render() {
-        const { product, onAddToBasket} = this.props
+        const { product, openModalEvent } = this.props
         return (
             <div className="product">
                 <a href={product.url} className="woocommerce-LoopProduct-link">
@@ -11,12 +12,12 @@ class Product extends Component {
                         <ins>
                             <span className="amount"> </span>
                         </ins>
-                        <span className="amount">{product.price}</span>
+                        <span className="amount">{ayir(product.price)}₺</span>
                     </span>
                     <h2 className="woocommerce-loop-product__title">{product.title}</h2>
                 </a>
                 <div className="hover-area">
-                    <a className="button add_to_cart_button" onClick={() => onAddToBasket(product.id)} rel="nofollow">Sepete Ekle</a>
+                    <a className="button add_to_cart_button" onClick={openModalEvent(product)} rel="nofollow">Sepete Ekle</a>
                 </div>
             </div>
         )

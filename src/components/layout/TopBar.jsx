@@ -1,9 +1,9 @@
 import React, {useCallback} from "react";
-import {useAuth} from "../../context/auth";
 import {useLocation, useNavigate} from "react-router-dom";
+import useAuth from "../../store/hooks/useAuth";
 
 const TopBar = () => {
-    const { isLogged, state } = useAuth();
+    const { isLogged, account } = useAuth();
 
     const MenuItem = (props) => {
         const location = useLocation();
@@ -83,7 +83,7 @@ const TopBar = () => {
                     />
                     {isLogged && (
                         <MenuItem
-                            title={`Çıkış yap (${state.name})`}
+                            title={`Çıkış yap (${account.name})`}
                             className="menu-item"
                             icon={<i className="tm tm-login-register" />}
                             path="/log-out"

@@ -1,10 +1,10 @@
 import React from 'react';
 import CartListItem from "./CartListItem"
 import {useSelector} from "react-redux";
-import {getBasketArrayList} from "../../store/selectors/basket";
+import {getBasketItemsObject} from "../../store/selectors/basket";
 
 function CartList() {
-    const basketArrayList = useSelector(getBasketArrayList);
+    const basket = useSelector(getBasketItemsObject);
 
     return (
         <form method="post" onClick={(e) => e.preventDefault()} className="woocommerce-cart-form">
@@ -20,8 +20,16 @@ function CartList() {
                     </tr>
                 </thead>
                 <tbody>
-                {Boolean(basketArrayList.length) ? (
-                    basketArrayList.map((basketItem, basketItemIDX) => <CartListItem item={basketItem} key={`basket_item_${basketItem.id}_${basketItemIDX}`} />)
+                {Boolean(Object.keys(basket).length) ? (
+                    Object.keys(basket).map((basketItemKey, basketItemIDX) => {
+                        const basketItem = basket[basketItemKey];
+                        return (
+                            <CartListItem
+                                item={basketItem}
+                                key={`basket_item_${basketItem.id}_${basketItemIDX}`}
+                            />
+                        );
+                    })
                 ): (
                     <tr>
                         <td colSpan={6}>

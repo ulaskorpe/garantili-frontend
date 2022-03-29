@@ -1,6 +1,5 @@
-import React, {Component, useCallback, useMemo, useState} from "react";
+import React from "react";
 import DSlick from "react-slick";
-import useBasket from "../../../../store/hooks/useBasket";
 import useProductTools from "../../../../hooks/useProductTools";
 import {useQuery} from "react-query";
 import {
@@ -17,7 +16,7 @@ import {
 const Headers = (props) => {
     // tabId
     return (props.header.map((item, index) => {
-        if (index == 0) {
+        if (index === 0) {
             return (
                 <li className="nav-item" key={index}>
                     <a className="nav-link active" href={`#${item.tabId}`} data-toggle="tab">{item.title}</a>
@@ -66,42 +65,33 @@ const productTabSlickSettings = {
 
 const AddButton = (props) => {
     const {
-        item
+        item,
+        openModalEvent,
     } = props;
-    const basket = useBasket();
-    const [added, setAdded] = useState(false);
-
-    const handleAddBasketClick = useCallback((item) => (e) => {
-        e.preventDefault();
-        basket.add(item)(e);
-
-        setAdded(true);
-        setTimeout(() => {
-            setAdded(false);
-        }, 1250)
-    }, [basket, added])
 
     return (
       <a
           className="button add_to_cart_button"
           rel="nofollow"
-          onClick={handleAddBasketClick(item)}
-          style={added ? { backgroundColor: '#e86708', color: '#fff' } : {}}
+          onClick={openModalEvent(item)}
       >
-          {!added && 'Sepete ekle'}
-          {added && 'Sepete eklendi'}
+          Sepete ekle
       </a>
   );
 };
 
 const ProductList = (props) => {
+    const {
+        openModalEvent,
+        products,
+    } = props;
     const { goProductEvent } = useProductTools();
     return (
         <DSlick
             className="products"
             {...productTabSlickSettings}
         >
-            {props.products.map((item, index) => (
+            {products.map((item, index) => (
                 <div className="product" key={index}>
                     <a
                         className="woocommerce-LoopProduct-link"
@@ -113,7 +103,7 @@ const ProductList = (props) => {
                         <span className="woocommerce-Price-currencySymbol" />{item.discount}
                     </span>
                 </span>
-                        <img src={`https://buyback.garantiliteknoloji.com/${item.imageUrl}`} width="224" height="197" className="wp-post-image" alt="" />
+                        <img src={item.imageUrl} width="224" height="197" className="wp-post-image" alt="" />
                         <span className="price">
                     <ins><span className="woocommerce-Price-currencySymbol">₺</span><span className="amount">{item.listPrice}</span></ins>
                     <del><span className="woocommerce-Price-currencySymbol">₺</span><span className="amount">{item.price}</span></del>
@@ -121,7 +111,10 @@ const ProductList = (props) => {
                         <h2 className="woocommerce-loop-product__title">{item.title}</h2>
                     </a>
                     <div className="hover-area">
-                        <AddButton item={item} />
+                        <AddButton
+                            item={item}
+                            openModalEvent={openModalEvent}
+                        />
                     </div>
                 </div>
             ))}
@@ -137,6 +130,7 @@ const ProductTab = (props) => {
         error = false,
         success = false,
         products,
+        openModalEvent,
     } = props;
 
     const tabStyle = isActive ? "tab-pane active" : "tab-pane";
@@ -162,6 +156,7 @@ const ProductTab = (props) => {
                         <div className="woocommerce">
                             <ProductList
                                 products={products}
+                                openModalEvent={openModalEvent}
                             />
                         </div>
                     </div>
@@ -179,6 +174,7 @@ const homeProductHeaders = [
 ];
 
 const HomeProducts = (props) => {
+    const { openModalEvent } = props;
 
     const defaultUQOptions = {
         retry,
@@ -256,6 +252,7 @@ const HomeProducts = (props) => {
                       error={weeklyDeals.isError}
                       loading={weeklyDeals.isLoading}
                       success={weeklyDeals.isSuccess}
+                      openModalEvent={openModalEvent}
                       isActive
                   />
                   <ProductTab
@@ -264,6 +261,7 @@ const HomeProducts = (props) => {
                       error={bestSellers.isError}
                       loading={bestSellers.isLoading}
                       success={bestSellers.isSuccess}
+                      openModalEvent={openModalEvent}
                   />
                   <ProductTab
                       id="newproducts"
@@ -271,6 +269,7 @@ const HomeProducts = (props) => {
                       error={newProducts.isError}
                       loading={newProducts.isLoading}
                       success={newProducts.isSuccess}
+                      openModalEvent={openModalEvent}
                   />
                   <ProductTab
                       id="highrated"
@@ -278,6 +277,7 @@ const HomeProducts = (props) => {
                       error={highestRated.isError}
                       loading={highestRated.isLoading}
                       success={highestRated.isSuccess}
+                      openModalEvent={openModalEvent}
                   />
               </div>
           </div>
