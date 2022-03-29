@@ -42,7 +42,5 @@ export const endpointToURL = (
         path = path.replace(`{${key}}`, value);
     });
 
-    console.log(pathValues, endpoint.path);
-
     return `${API_URL}/${path || ''}`;
 };

@@ -3,6 +3,7 @@ export const GET_ARTICLES = {
     path: 'api/site/get-article',
     method: 'GET',
     apiKeyRequired: true,
+    doNotCheckStatus: true,
     pathVars: [],
     body: [],
 };
@@ -21,6 +22,7 @@ export const GET_SUPER_OFFER = {
     path: 'api/site/super-offer',
     method: 'GET',
     apiKeyRequired: true,
+    doNotCheckStatus: true,
     pathVars: [],
     body: [],
 };

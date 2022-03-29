@@ -23,7 +23,7 @@ export const LOGIN_CUSTOMER = {
     body: [
         { name: 'email', type: String, default: '',  isRequired: true },
         { name: 'password', type: String, default: '',  isRequired: true },
-        { name: 'ip_address', type: String, default: '1.1.1.1.',  isRequired: false },
+        { name: 'guid', type: String, default: '',  isRequired: false },
     ],
 };
 
