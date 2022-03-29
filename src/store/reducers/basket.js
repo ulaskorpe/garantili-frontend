@@ -1,16 +1,32 @@
 import {createReducer} from "@reduxjs/toolkit";
-import {basketAdd, basketRemove, basketSet, basketSetItemQuantity} from "../actions/basket";
+import {
+    basketAdd,
+    basketRemove,
+    basketSetItemQuantity,
+    setBasketWithFetchedData
+} from "../actions/basket";
 
-const INITIAL_STATE = {};
+const INITIAL_STATE = {
+    items: {},
+};
 const basketReducer = createReducer(
     INITIAL_STATE,
     (builder) => {
+
         //
-        builder.addCase(basketSet.type, (
+        builder.addCase(setBasketWithFetchedData.type, (
             state,
             action,
         ) => {
-            console.log(action, state);
+            if (
+                !Array.isArray(action.payload)
+                || !action.payload.length
+            ) return;
+
+            action.payload.forEach((basketItem) => {
+                if (!basketItem?.item_code) return;
+                state.items[basketItem.item_code] = basketItem;
+            })
         });
 
         //
@@ -18,16 +34,15 @@ const basketReducer = createReducer(
             state,
             action,
         ) => {
-            const stateVal = state[action.payload.id];
+            const stateVal = state.items[action.payload.id];
             let isAlreadyDefined = Boolean(stateVal);
 
             let val = action.payload;
             if (isAlreadyDefined) {
-                val = stateVal;
                 stateVal.quantity += 1;
             } else {
                 val.quantity = 1;
-                state[action.payload.id] = val;
+                state.items[action.payload.id] = val;
             }
         });
 
@@ -46,12 +61,12 @@ const basketReducer = createReducer(
                 || typeof quantity === 'undefined'
             ) return false;
 
-            const item = state[itemID];
+            const item = state.items[itemID];
             if (!item) return false;
 
             if (quantity > 0) {
-                state[itemID].quantity = quantity;
-            } else delete state[itemID];
+                state.items[itemID].quantity = quantity;
+            } else delete state.items[itemID];
         });
 
         //
@@ -59,7 +74,7 @@ const basketReducer = createReducer(
             state,
             action,
         ) => {
-            if (state[action.payload]) delete state[action.payload];
+            if (state.items[action.payload]) delete state.items[action.payload];
         });
 
     }

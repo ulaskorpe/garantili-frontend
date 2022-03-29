@@ -1,7 +1,7 @@
 import {createAction} from "@reduxjs/toolkit";
 
-export const basketSet = createAction(
-    'basket/SET',
+export const setBasketWithFetchedData = createAction(
+    'basket/SET_WITH_FETCHED_DATA',
 );
 
 export const basketAdd = createAction(
@@ -9,11 +9,7 @@ export const basketAdd = createAction(
 );
 
 export const basketSetItemQuantity = createAction(
-    'basket/DECREASE',
-);
-
-export const basketClear = createAction(
-    'basket/CLEAR',
+    'basket/SET_ITEM_QUANTITY',
 );
 
 export const basketRemove = createAction(

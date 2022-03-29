@@ -26,8 +26,13 @@ export const getBasketObject = createDraftSafeSelector(
     state => state.basket
 );
 
-export const getBasketArrayList = createDraftSafeSelector(
-    getBasketObject,
+export const getBasketItemsObject = createDraftSafeSelector(
+    selectSelf,
+    state => state.basket.items
+);
+
+export const getBasketItemsArrayList = createDraftSafeSelector(
+    getBasketItemsObject,
     (basket = {}) => {
         let basketList = [];
 
@@ -40,7 +45,7 @@ export const getBasketArrayList = createDraftSafeSelector(
 );
 
 export const getSplitBasketTotalPrice = createDraftSafeSelector(
-    getBasketObject,
+    getBasketItemsObject,
     (basket = {}) => {
         let total = 0;
 
@@ -52,7 +57,7 @@ export const getSplitBasketTotalPrice = createDraftSafeSelector(
     }
 );
 export const getBasketTotalPrice = createDraftSafeSelector(
-    getBasketObject,
+    getBasketItemsObject,
     (basket = {}) => {
         let total = 0;
 
@@ -65,7 +70,7 @@ export const getBasketTotalPrice = createDraftSafeSelector(
 );
 
 export const getBasketCount = createDraftSafeSelector(
-    getBasketObject,
+    getBasketItemsObject,
     (basket = {}) => (
         Object.keys(basket).length
     )
