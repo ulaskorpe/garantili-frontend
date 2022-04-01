@@ -93,3 +93,22 @@ export const CUSTOMER_UPDATE = {
         { name: 'gender', type: 'any', default: '',  isRequired: true },
     ],
 };
+
+/** @type Endpoint */
+export const CONTACT_POST = {
+    path: 'api/customers/contact-post',
+    method: 'POST',
+    apiKeyRequired: true,
+    doNotCheckStatus: true,
+    pathVars: [],
+    body: [
+        { name: 'customer_id', type: String, default: 0,  isRequired: false },
+        { name: 'guid', type: String, default: '',  isRequired: true },
+        { name: 'name', type: String, default: '',  isRequired: true },
+        { name: 'surname', type: String, default: '',  isRequired: true },
+        { name: 'email', type: String, default: '',  isRequired: true },
+        { name: 'phone_number', type: String, default: '',  isRequired: true },
+        { name: 'subject', type: String, default: '',  isRequired: true },
+        { name: 'message', type: String, default: '',  isRequired: true },
+    ],
+};

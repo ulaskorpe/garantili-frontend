@@ -117,3 +117,13 @@ export const GET_INSTALLMENTS = {
         { name: 'cc_no', type: String, default: '',  isRequired: true },
     ],
 };
+
+/** @type Endpoint */
+export const GET_CONTACT_INFO = {
+    path: 'api/contact-info',
+    method: 'GET',
+    apiKeyRequired: true,
+    doNotCheckStatus: true,
+    pathVars: [],
+    body: [],
+};
