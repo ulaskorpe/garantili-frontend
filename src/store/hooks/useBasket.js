@@ -1,11 +1,12 @@
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {useCallback} from "react";
-import swal from 'sweetalert';
+import sweetAlert from 'sweetalert';
 import { toast } from 'react-toastify';
-import {basketRemove, basketSetItemQuantity, setBasketWithFetchedData} from "../actions/basket";
+import {basketClear, basketRemove, basketSetItemQuantity, setBasketWithFetchedData} from "../actions/basket";
 import {useMutation} from "react-query";
 import {DEFAULT_API_KEY, fetchThis, REMOVE_CART_ITEM_QUANTITY, UPDATE_CART_ITEM_QUANTITY} from "../../api";
 import useAuth from "./useAuth";
+import {getBasketItemsArrayList, getBasketTotalPrice} from "../selectors/basket";
 
 const useBasket = () => {
     const dispatch = useDispatch();
@@ -74,9 +75,9 @@ const useBasket = () => {
         if (isUser) customer_id = account.customer_id;
         if (isGuest) guid = account.customer_id;
 
-        swal({
+        sweetAlert({
             title: "Emin misin?",
-            text: "Bu işlemi geri alamayacaksın, sepete eklediğin ürünü silmiş olacaksın. Devam etmek istiyor musun?",
+            text: "Bu işlemi geri alamazsın. Sepete eklediğin ürünü silmiş olacaksın. Devam etmek istiyor musun?",
             icon: "warning",
             buttons: ['Hayır', 'Evet'],
             dangerMode: true,
@@ -104,8 +105,17 @@ const useBasket = () => {
         })
 
     }, [dispatch, account, isUser, isGuest, setBasketQuantityMutation, removeFromBasketMutation]);
+    const clearLocalBasket = useCallback(() => {
+        dispatch(basketClear())
+    }, [dispatch])
+
+    const totalPrice = useSelector(getBasketTotalPrice);
+    const basketArray = useSelector(getBasketItemsArrayList);
 
     return ({
+        totalPrice,
+        clearLocalBasket,
+        basketArray,
         setFetchedData,
         setItemQuantity,
         remove,

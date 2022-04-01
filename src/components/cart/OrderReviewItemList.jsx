@@ -1,58 +1,102 @@
-import React, { Component } from 'react';
+import React  from 'react';
+import useBasket from "../../store/hooks/useBasket";
+import {ayir} from "../../store/selectors/basket";
 
-class OrderReviewItemList extends Component {
-    state = {
-        products : [
-            {id: 1, title: 'Apple iPhone 13 Pro Sapphire Blue', quantity:1, price: 24000}
-        ],
-        subtotal: 24000,
-        totalPrice: 25000
-    }
-    render() {
-        return (
-            <table class="shop_table woocommerce-checkout-review-order-table">
-                <thead>
-                    <tr>
-                        <th class="product-name">Ürün</th>
-                        <th class="product-total">Fiyat</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {this.state.products.map((item, index) => {
-                        return (
-                            <tr class="cart_item">
-                                <td class="product-name">
-                                    <strong class="product-quantity">{item.quantity} ×</strong>{item.title}
-                                </td>
-                                <td class="product-total">
-                                    <span class="woocommerce-Price-amount amount">
-                                        <span class="woocommerce-Price-currencySymbol">₺</span>{item.price}</span>
-                                </td>
-                            </tr>
-                        )
-                    })}
-                </tbody>
-                <tfoot>
-                    <tr class="cart-subtotal">
-                        <th>Ara Toplam</th>
-                        <td>
-                            <span class="woocommerce-Price-amount amount">
-                                <span class="woocommerce-Price-currencySymbol">₺</span>{this.state.subtotal}</span>
+const OrderReviewItemList = (props) => {
+    const {
+        interestRate = 0
+    } = props;
+    const {
+        totalPrice: subTotal,
+        basketArray,
+    } = useBasket();
+    const shippingPrice = 50;
+
+    const kdv = 3;
+    const kdvTotal = subTotal * kdv / 100;
+
+    const totalPrice = subTotal + kdvTotal + shippingPrice;
+    const interestTotal = (totalPrice * interestRate) / 100;
+
+    return (
+        <table className="shop_table woocommerce-checkout-review-order-table">
+            <thead>
+            <tr>
+                <th className="product-name">Ürün</th>
+                <th className="product-total">Fiyat</th>
+            </tr>
+            </thead>
+            <tbody>
+            {basketArray.map((item) => {
+                return (
+                    <tr className="cart_item" key={`cartItem_${item.id}`}>
+                        <td className="product-name">
+                            <strong className="product-quantity">{item.quantity} ×</strong>
+                            <span> {item.product}</span>
+                        </td>
+                        <td className="product-total">
+                                    <span className="woocommerce-Price-amount amount">
+                                        {ayir(item.price)}
+                                        <span className="woocommerce-Price-currencySymbol">₺</span>
+                                    </span>
                         </td>
                     </tr>
-                    <tr class="order-total">
-                        <th>Toplam</th>
-                        <td>
-                            <strong>
-                                <span class="woocommerce-Price-amount amount">
-                                    <span class="woocommerce-Price-currencySymbol">₺</span>{this.state.totalPrice}</span>
-                            </strong>
-                        </td>
-                    </tr>
-                </tfoot>
-            </table>
-        );
-    }
+                )
+            })}
+            </tbody>
+            <tfoot>
+            <tr className="cart-subtotal">
+                <th>Ara Toplam</th>
+                <td>
+                            <span className="woocommerce-Price-amount amount">
+                                {ayir(subTotal)}
+                                <span className="woocommerce-Price-currencySymbol">₺</span>
+                            </span>
+                </td>
+            </tr>
+            <tr className="cart-subtotal">
+                <th>Kargo Ücreti</th>
+                <td>
+                            <span className="woocommerce-Price-amount amount">
+                                {ayir(shippingPrice)}
+                                <span className="woocommerce-Price-currencySymbol">₺</span>
+                            </span>
+                </td>
+            </tr>
+            <tr className="cart-subtotal">
+                <th>KDV (%{kdv})</th>
+                <td>
+                            <span className="woocommerce-Price-amount amount">
+                                {ayir(kdvTotal)}
+                                <span className="woocommerce-Price-currencySymbol">₺</span>
+                            </span>
+                </td>
+            </tr>
+            {Boolean(interestRate) && (
+                <tr className="cart-subtotal">
+                    <th>Taksit Komisyonu (%{interestRate})</th>
+                    <td>
+                            <span className="woocommerce-Price-amount amount">
+                                {ayir(interestTotal)}
+                                <span className="woocommerce-Price-currencySymbol">₺</span>
+                            </span>
+                    </td>
+                </tr>
+            )}
+            <tr className="order-total">
+                <th>Toplam</th>
+                <td>
+                    <strong>
+                                <span className="woocommerce-Price-amount amount">
+                                    {ayir(totalPrice + interestTotal)}
+                                    <span className="woocommerce-Price-currencySymbol">₺</span>
+                                </span>
+                    </strong>
+                </td>
+            </tr>
+            </tfoot>
+        </table>
+    );
 }
 
 export default OrderReviewItemList;

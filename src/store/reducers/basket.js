@@ -1,6 +1,6 @@
 import {createReducer} from "@reduxjs/toolkit";
 import {
-    basketAdd,
+    basketAdd, basketClear,
     basketRemove,
     basketSetItemQuantity,
     setBasketWithFetchedData
@@ -44,6 +44,13 @@ const basketReducer = createReducer(
                 val.quantity = 1;
                 state.items[action.payload.id] = val;
             }
+        });
+
+        //
+        builder.addCase(basketClear.type, (
+            state,
+        ) => {
+            state.items = INITIAL_STATE.items;
         });
 
         //

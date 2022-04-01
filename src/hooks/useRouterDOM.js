@@ -18,6 +18,19 @@ const useRouterDOM = () => {
             }
         );
     }, [location, navigate]);
+    const goWithState = useCallback((path, state, replace = false) => {
+        if (!path) return;
+        if (path === location.pathname) return;
+
+        navigate(
+            path,
+            {
+                replace,
+                state,
+                fromTo: location,
+            }
+        );
+    }, [location, navigate]);
     const goEvent = useCallback((...args) => (e) => {
         e.preventDefault();
         go(...args);
@@ -25,6 +38,7 @@ const useRouterDOM = () => {
 
     return ({
         go,
+        goWithState,
         goEvent,
         params,
     });

@@ -15,3 +15,7 @@ export const basketSetItemQuantity = createAction(
 export const basketRemove = createAction(
     'basket/REMOVE',
 );
+
+export const basketClear = createAction(
+    'basket/CLEAR',
+);

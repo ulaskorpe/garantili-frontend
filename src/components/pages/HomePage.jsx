@@ -32,7 +32,6 @@ const HomePage = () => {
                                         <HomeProductList
                                             openModalEvent={openModalEvent}
                                         />
-                                        {/* todo: Burası hata veriyor */}
                                         <PartnerList />
                                         <NewArrivals
                                             openModalEvent={openModalEvent}

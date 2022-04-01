@@ -1,27 +1,60 @@
-import React from 'react';
+import React, {useMemo} from 'react';
 import { useState } from "react"
 import BreadCrumb from "../layout/BreadCrumb"
 import Footer from "../layout/Footer/Footer"
 import HeaderMain from "../layout/Header/Header"
 import TopBar from "../layout/TopBar"
+import {useQuery} from "react-query";
+import {DEFAULT_API_KEY, fetchThis, GET_ORDER_SUMMARY, retry} from "../../api";
+import useAuth from "../../store/hooks/useAuth";
+import {ayir} from "../../store/selectors/basket";
+import moment from "moment";
+import {useLocation} from "react-router-dom";
 
 function OrderSummary() {
+    const location = useLocation();
+    const { account, isLogged = false } = useAuth();
     const [crumb] = useState([
         { url: '#', title: ' Sipariş Özeti' }
     ])
 
-    const [orderDetails] = useState({
-        products: [
-            { id: 1, title: 'iPhone 13 Pro', quantity: 1, price: '23000', url: '/' }
-        ],
-        orderNumber: "301A23",
-        orderDate: '10 Mart, 2022',
-        price: 5032,
-        paymentMethod: 'Kredi Kartı',
-        subTotal: 24000,
-        shippingPrice: 1000,
-        totalPrice: 25000
-    })
+    const orderDetail = useQuery(
+        ['get-order-detail', account, location],
+        () => (
+            fetchThis(
+                GET_ORDER_SUMMARY,
+                {
+                    order_id: location?.state?.order_id,
+                    customer_id: account.customer_id.toString(),
+                },
+                DEFAULT_API_KEY,
+                {},
+            )
+        ),
+        {
+            retry,
+            refetchOnWindowFocus: false,
+            enabled: Boolean(
+                isLogged
+                && typeof location?.state?.order_id !== 'undefined'
+            ),
+        },
+    );
+    const order = useMemo(() => (
+        orderDetail.isSuccess ? (orderDetail?.data?.data?.order || {}) : {}
+    ), [orderDetail]);
+    const paymentInformations = useMemo(() => (
+        orderDetail.isSuccess ? (orderDetail?.data?.data?.payment_informations || {}) : {}
+    ), [orderDetail]);
+
+    const date = useMemo(() => (
+        moment
+            .unix(order?.date_time || (new Date()).getTime())
+            .format('DD MMMM YYYY')
+    ), [order]);
+
+
+
 
     return (
         <div className=" woocommerce-checkout woocommerce-page woocommerce-order-received can-uppercase woocommerce-active full-width">
@@ -40,7 +73,8 @@ function OrderSummary() {
                                         <div className="woocommerce">
                                             <div className="woocommerce-order">
                                                 <p className="woocommerce-notice woocommerce-notice--success woocommerce-thankyou-order-received">
-                                                    Teşekkürler, siparişiz alındı.</p>
+                                                    Teşekkürler, siparişiniz alındı.
+                                                </p>
 
                                                 <section className="woocommerce-order-details">
                                                     <br />
@@ -48,17 +82,22 @@ function OrderSummary() {
                                                     <hr />
                                                     <ul className="woocommerce-order-overview woocommerce-thankyou-order-details order_details">
                                                         <li className="woocommerce-order-overview__order order">
-                                                            Sipariş Numarası:<strong>{orderDetails.orderNumber}</strong>
+                                                            Sipariş Numarası:<strong>{order?.order_id || location?.state?.order_id}</strong>
                                                         </li>
                                                         <li className="woocommerce-order-overview__date date">
-                                                            Tarih:<strong>{orderDetails.orderDate}</strong>
+                                                            Tarih:<strong>{date}</strong>
                                                         </li>
                                                         <li className="woocommerce-order-overview__total total">
-                                                            Toplam:<strong><span className="woocommerce-Price-amount amount"><span
-                                                                className="woocommerce-Price-currencySymbol">₺</span>{orderDetails.price}</span></strong>
+                                                            Toplam:
+                                                            <strong>
+                                                                <span className="woocommerce-Price-amount amount">
+                                                                    <span className="woocommerce-Price-currencySymbol">₺</span>
+                                                                    {ayir(paymentInformations.total)}
+                                                                </span>
+                                                            </strong>
                                                         </li>
                                                         <li className="woocommerce-order-overview__payment-method method">
-                                                            Ödeme Yöntemi: <strong>{orderDetails.paymentMethod}</strong>
+                                                            Ödeme Yöntemi: <strong>{order.order_method}</strong>
                                                         </li>
                                                     </ul>
                                                     <table className="woocommerce-table woocommerce-table--order-details shop_table order_details">
@@ -70,47 +109,48 @@ function OrderSummary() {
                                                         </thead>
 
                                                         <tbody>
-                                                            {orderDetails.products.map((item, index) => {
+                                                            {order?.items?.map((item, index) => {
                                                                 return (
                                                                     <tr className="woocommerce-table__line-item order_item" key={index}>
-
                                                                         <td className="woocommerce-table__product-name product-name">
                                                                             <a href={item.url}>{item.title}</a>
                                                                             <strong className="product-quantity"> × {item.quantity}</strong>
                                                                         </td>
 
                                                                         <td className="woocommerce-table__product-total product-total">
-                                                                            <span className="woocommerce-Price-amount amount"><span
-                                                                                className="woocommerce-Price-currencySymbol">₺</span>{item.price}</span>
+                                                                            <span className="woocommerce-Price-amount amount">
+                                                                                {ayir(item.price)}
+                                                                                <span className="woocommerce-Price-currencySymbol">₺</span>
+                                                                            </span>
                                                                         </td>
-
                                                                     </tr>
-
                                                                 )
                                                             })}
                                                         </tbody>
 
                                                         <tfoot>
-                                                            <tr>
-                                                                <th scope="row">Ara Toplam:</th>
-                                                                <td><span className="woocommerce-Price-amount amount"><span
-                                                                    className="woocommerce-Price-currencySymbol">₺</span>{orderDetails.subTotal}</span>
+                                                        {paymentInformations.details?.map((item, index) => (
+                                                            <tr key={`item_${index}_${item.id}`}>
+                                                                <th>{item.name}</th>
+                                                                <td>
+                                                                    <span className="woocommerce-Price-amount amount"><span
+                                                                    className="woocommerce-Price-currencySymbol">₺</span>{ayir(item.value)}</span>
                                                                 </td>
                                                             </tr>
-                                                            <tr>
-                                                                <th scope="row">Kargo:</th>
-                                                                <td><span className="woocommerce-Price-amount amount"><span
-                                                                    className="woocommerce-Price-currencySymbol">₺</span>{orderDetails.shippingPrice}</span></td>
-                                                            </tr>
+                                                        ))}
                                                             <tr>
                                                                 <th scope="row">Ödeme Yöntemi:</th>
-                                                                <td>{orderDetails.paymentMethod}</td>
+                                                                <td>{order.order_method}</td>
                                                             </tr>
                                                             <tr>
                                                                 <th scope="row">Toplam:</th>
                                                                 <td><span className="woocommerce-Price-amount amount">
-                                                                    <span
-                                                                        className="woocommerce-Price-currencySymbol"><strong>₺<span>{orderDetails.totalPrice}</span></strong></span>
+                                                                    <span className="woocommerce-Price-currencySymbol">
+                                                                        <strong>
+                                                                        <span>{ayir(paymentInformations.total)}</span>
+                                                                        ₺
+                                                                    </strong>
+                                                                    </span>
                                                                 </span>
                                                                 </td>
                                                             </tr>

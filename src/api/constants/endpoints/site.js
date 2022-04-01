@@ -85,3 +85,35 @@ export const GET_NEIGHBORHOODS = {
     pathVars: [ 'district_id' ],
     body: [],
 };
+
+/** @type Endpoint */
+export const GET_BANK_ACCOUNTS = {
+    path: 'api/bank-accounts',
+    method: 'GET',
+    apiKeyRequired: true,
+    doNotCheckStatus: true,
+    pathVars: [],
+    body: [],
+};
+
+/** @type Endpoint */
+export const GET_CARGO_COMPANIES = {
+    path: 'api/cargo-companies',
+    method: 'GET',
+    apiKeyRequired: true,
+    doNotCheckStatus: true,
+    pathVars: [],
+    body: [],
+};
+
+/** @type Endpoint */
+export const GET_INSTALLMENTS = {
+    path: 'api/installments',
+    method: 'POST',
+    apiKeyRequired: true,
+    doNotCheckStatus: true,
+    pathVars: [],
+    body: [
+        { name: 'cc_no', type: String, default: '',  isRequired: true },
+    ],
+};

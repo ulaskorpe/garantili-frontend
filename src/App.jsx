@@ -187,10 +187,13 @@ function App() {
                                 path='/sepet'
                                 element={<Cart />}
                             />
-                            <Route
-                                path='/odeme'
-                                element={<Payment />}
-                            />
+                            <Route path='/odeme' element={(
+                                <AuthController
+                                    redirectTo="/login"
+                                >
+                                    <Payment />
+                                </AuthController>
+                            )} />
                             <Route path='/siparis-ozeti' element={(
                                 <AuthController
                                     redirectTo="/login"

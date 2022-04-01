@@ -88,7 +88,7 @@ export const fetchThis = async (
             const defaultValueIsDefined = typeof defaultValue !== 'undefined';
 
             if (typeof value !== 'undefined') {
-                const isValid = type === 'any' || type(value) === value;
+                const isValid = (type === 'any' || type === 'file') || type(value) === value;
                 if (!isValid) {
                     if (isDev) {
                         errors.push(
@@ -116,7 +116,8 @@ export const fetchThis = async (
                 }
             }
 
-            formData.append(name, value)
+            if (type !== 'file') formData.append(name, value)
+            else if (value && value?.name && value?.type) formData.append(name, value, value.name);
         });
 
         if (errors.length) {
