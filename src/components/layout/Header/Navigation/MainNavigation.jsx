@@ -1,10 +1,9 @@
-import React, {useCallback} from "react";
+import React from "react";
+import {useQuery} from "react-query";
+import {DEFAULT_API_KEY, fetchThis, GET_TOP_MENU} from "../../../../api";
+import {useNavigate} from "react-router-dom";
 
 const MenuItemWithChild = (props) => {
-
-    const push = useCallback((route) => () => {
-        // window.location.replace(route);
-    }, []);
 
     return (
         <li className="menu-item menu-item-has-children animate-dropdown dropdown">
@@ -14,7 +13,6 @@ const MenuItemWithChild = (props) => {
                 data-toggle="dropdown"
                 className="dropdown-toggle"
                 aria-haspopup="true"
-                onClick={push(props.data.url)}
             >
                 {props.data.title}
                 <span className="caret" />
@@ -27,71 +25,88 @@ const MenuItemWithChild = (props) => {
 }
 
 const SubItem = (props) => {
-    const items = props.row.map((item, index) => {
+    const navigate = useNavigate();
+
+    return props.row.map((item, index) => {
         return (
             <li className="menu-item animate-dropdown" key={index}>
-                <a title={item.url} href={item.url}>
+                <a
+                    title={item.title}
+                    href={item.url}
+                    onClick={(e) => {
+                        e.preventDefault();
+                        console.log('selam')
+                        navigate(item.url)
+                    }}
+                >
                     {item.title}
                 </a>
             </li>
         )
     })
-    return items
 }
 
 const MenuItemNoChild = (props) => {
+    const navigate = useNavigate();
     return (
         <li className="menu-item animate-dropdown">
-            <a title={props.data.title} href={props.data.url}>{props.data.title}</a>
+            <a
+                title={props.data.title}
+                href={props.data.url}
+                onClick={(e) => {
+                    e.preventDefault();
+                    navigate(props.data.url)
+                }}
+            >
+                {props.data.title}
+            </a>
         </li>
     )
 }
 const MenuItem = (props) => {
-    const items = props.menuData.map((item, index) => {
+    return props.menuData.map((item, index) => {
         if (item.isDropdown) {
             return <MenuItemWithChild data={item} key={index} />
         }
         else {
             return <MenuItemNoChild data={item} key={index} />
         }
-    })
-
-    return items
+    });
 }
 
 
 const MainNavigation = () => {
-    const menuItems = [
+    const topMenu = useQuery(
+        [
+            'get-top-menu'
+        ],
+        () => (
+            fetchThis(
+                GET_TOP_MENU,
+                {},
+                DEFAULT_API_KEY,
+                {}
+            )
+        ),
         {
-            id: 2, isDropdown: true, title: 'TELEFONLAR', url: '#', subItems: [
-                { id: 11, isDropdown: false, 'title': 'Apple', url: '/urunler/telefonlar-2?brand=apple' },
-                { id: 12, isDropdown: false, 'title': 'Samsung', url: '/urunler/telefonlar-2?brand=samsung' },
-                { id: 13, isDropdown: false, 'title': 'Xiaomi', url: '/urunler/telefonlar-2?brand=xiaomi' },
-                { id: 14, isDropdown: false, 'title': 'Huawei', url: '/urunler/telefonlar-2?brand=huawei' }
-            ]
-        },
-        {
-            id: 3, isDropdown: true, title: 'TABLETLER', url: '#', subItems: [
-                { id: 21, isDropdown: false, 'title': 'Apple', url: '/urunler/tabletler-3?brand=apple' },
-                { id: 22, isDropdown: false, 'title': 'Samsung', url: '/urunler/telefonlar-3?brand=samsung' },
-                { id: 23, isDropdown: false, 'title': 'Xiaomi', url: '/urunler/telefonlar-3?brand=xiaomi' },
-                { id: 24, isDropdown: false, 'title': 'Huawei', url: '/urunler/telefonlar-3?brand=huawei' }
-            ]
-        },
-        { id: 3, isDropdown: false, title: 'TELEFON SAT', url: '/telefon-sat', subItems: [] },
-        { id: 4, isDropdown: false, title: 'TELEFON ONAR / YENİLE', url: '/telefon-onar', subItems: [] },
-        { id: 5, isDropdown: false, title: 'GARANTİ SORGULA', url: '/garanti-sorgula', subItems: [] },
-    ];
+            retry: false,
+            refetchOnWindowFocus: false,
+        }
+    )
 
     return (
         <nav id="primary-navigation" className="primary-navigation" aria-label="Primary Navigation" data-nav="flex-menu">
             <ul id="menu-primary-menu" className="nav yamm">
+                {/*
                 <li className="sale-clr yamm-fw menu-item animate-dropdown">
                     <a title="Süper Teklif" href="/super-teklif">
                         SÜPER TEKLİF
                     </a>&nbsp;
                 </li>
-                <MenuItem menuData={menuItems} />
+                */}
+                {topMenu.isSuccess && (
+                    <MenuItem menuData={topMenu.data} />
+                )}
                 <li className="garantili-flex-more-menu-item dropdown">
                     <a title="..." href="#" data-toggle="dropdown" className="dropdown-toggle">...</a>
                     <ul className="overflow-items dropdown-menu" />

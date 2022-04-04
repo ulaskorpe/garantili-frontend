@@ -127,3 +127,13 @@ export const GET_CONTACT_INFO = {
     pathVars: [],
     body: [],
 };
+
+/** @type Endpoint */
+export const GET_TOP_MENU = {
+    path: 'api/site/top-menu',
+    method: 'GET',
+    apiKeyRequired: true,
+    doNotCheckStatus: true,
+    pathVars: [],
+    body: [],
+};
