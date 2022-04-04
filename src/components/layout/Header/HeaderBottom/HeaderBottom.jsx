@@ -1,15 +1,14 @@
-import React, { Component } from "react";
+import React  from "react";
 import Search from "./Search";
 import LeftMenu from './LeftMenu';
-class HeaderBottom extends Component {
-    render() {
-        return (
-            <div className="row align-items-center">
-                <LeftMenu />
-                <Search />
-            </div>
-        )
-    }
-}
+
+const HeaderBottom = (props) => {
+    return (
+        <div className="row align-items-center">
+            <LeftMenu />
+            <Search {...(props?.parentProps || {})} />
+        </div>
+    )
+};
 
 export default HeaderBottom;

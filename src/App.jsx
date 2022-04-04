@@ -76,7 +76,7 @@ function App() {
                                 element={<ShopPage />}
                             />
                             <Route
-                                path='/urunler/:categoryId'
+                                path='/urunler/:category_slug/:categoryId'
                                 element={<ShopPage />}
                             />
                             {/***/}

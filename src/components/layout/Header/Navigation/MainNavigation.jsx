@@ -1,9 +1,8 @@
-import React, {Component, useCallback} from "react";
+import React, {useCallback} from "react";
 
 const MenuItemWithChild = (props) => {
 
     const push = useCallback((route) => () => {
-        console.log(route);
         // window.location.replace(route);
     }, []);
 
@@ -61,9 +60,8 @@ const MenuItem = (props) => {
 }
 
 
-
-class MainNavigation extends Component {
-    menuItems = [
+const MainNavigation = () => {
+    const menuItems = [
         {
             id: 2, isDropdown: true, title: 'TELEFONLAR', url: '#', subItems: [
                 { id: 11, isDropdown: false, 'title': 'Apple', url: '/urunler/telefonlar-2?brand=apple' },
@@ -85,26 +83,22 @@ class MainNavigation extends Component {
         { id: 5, isDropdown: false, title: 'GARANTİ SORGULA', url: '/garanti-sorgula', subItems: [] },
     ];
 
-    render() {
-        return (
-            <nav id="primary-navigation" className="primary-navigation" aria-label="Primary Navigation" data-nav="flex-menu">
-                <ul id="menu-primary-menu" className="nav yamm">
-                    <li className="sale-clr yamm-fw menu-item animate-dropdown"><a title="Süper Teklif" href="/urunler/super-teklif-1">SÜPER
-                        TEKLİF</a>&nbsp;
-                    </li>
-                    <MenuItem menuData={this.menuItems} />
-                    <li className="garantili-flex-more-menu-item dropdown">
-                        <a title="..." href="#" data-toggle="dropdown" className="dropdown-toggle">...</a>
-                        <ul className="overflow-items dropdown-menu"></ul>
-                    </li>
-                </ul>
-            </nav>
-        )
-    }
+    return (
+        <nav id="primary-navigation" className="primary-navigation" aria-label="Primary Navigation" data-nav="flex-menu">
+            <ul id="menu-primary-menu" className="nav yamm">
+                <li className="sale-clr yamm-fw menu-item animate-dropdown">
+                    <a title="Süper Teklif" href="/super-teklif">
+                        SÜPER TEKLİF
+                    </a>&nbsp;
+                </li>
+                <MenuItem menuData={menuItems} />
+                <li className="garantili-flex-more-menu-item dropdown">
+                    <a title="..." href="#" data-toggle="dropdown" className="dropdown-toggle">...</a>
+                    <ul className="overflow-items dropdown-menu" />
+                </li>
+            </ul>
+        </nav>
+    );
 }
-
-
-
-
 
 export default MainNavigation

@@ -1,5 +1,5 @@
 import React, {useState, useCallback, useMemo, useEffect} from 'react';
-import {useLocation} from 'react-router-dom';
+import {useLocation, useSearchParams} from 'react-router-dom';
 import BreadCrumb from '../layout/BreadCrumb';
 import Footer from '../layout/Footer/Footer';
 import HeaderMain from '../layout/Header/Header';
@@ -23,11 +23,11 @@ const INITIAL_HEADER = {
     imageUrl: '/assets/images/products/jumbo.jpg'
 };
 const INITIAL_CATEGORIES = [
-    { id: 0, title: 'Mağaza', url: '/urunler/0' },
+    { id: 0, title: 'Mağaza', url: '/urunler' },
     { id: 1, title: 'Süper Teklifler', url: '/super-teklifler' },
-    { id: 2, title: 'Telefonlar', url: '/urunler/2' },
-    { id: 3, title: 'Tabletler', url: '/urunler/3' },
-    { id: 4, title: 'Aksesuarlar', url: '/urunler/4' },
+    { id: 2, title: 'Telefonlar', url: '/urunler/telefonlar/2'},
+    { id: 3, title: 'Tabletler', url: '/urunler/tabletler/3' },
+    { id: 4, title: 'Aksesuarlar', url: '/urunler/aksesuarlar/4' },
 ];
 
 // constants
@@ -53,6 +53,7 @@ const perPages = [
 function CustomShopPage(props) {
     const { endpoint, category } = props;
     /* States */
+    const [searchKeyword, setSearchKeyword] = useState('');
     const [filterQuery, setFilterQuery] = useState({});
     const [priceLimit] = useState(INITIAL_PRICE_LIMIT);
     const [crumbs] = useState(INITIAL_CRUMBS);
@@ -120,7 +121,7 @@ function CustomShopPage(props) {
             'products',
             pagination.page, pagination.perPage,
             filterQuery, filtersToString,
-            selectedCategory,
+            selectedCategory, searchKeyword,
         ],
         () => (
             fetchThis(
@@ -129,7 +130,7 @@ function CustomShopPage(props) {
                     page: pagination.page.value,
                     page_count: pagination.perPage.value,
                     category_id: (selectedCategory?.id || 0).toString(),
-                    keyword: '',
+                    keyword: searchKeyword,
                     ...(filtersToString() || {}),
                 },
                 DEFAULT_API_KEY,
@@ -250,7 +251,10 @@ function CustomShopPage(props) {
             <Modal />
             <div id="page" className="hfeed site">
                 <TopBar />
-                <HeaderMain />
+                <HeaderMain
+                    searchKeyword={searchKeyword}
+                    setSearchKeyword={setSearchKeyword}
+                />
                 <div id="content" className="site-content" tabIndex="-1">
                     <div className="col-full">
                         <div className="row">

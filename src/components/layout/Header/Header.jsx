@@ -5,7 +5,7 @@ import MainBasket from './Basket/MainBasket'
 import HeaderBottom from "./HeaderBottom/HeaderBottom";
 import MobileNav from "./Navigation/MobileNav";
 
-const HeaderMain = () => {
+const HeaderMain = (props) => {
     return (
         <header id="masthead" className="site-header header-v1">
             <div className="col-full desktop-only">
@@ -16,7 +16,7 @@ const HeaderMain = () => {
                         <MainBasket />
                     </div>
                 </div>
-                <HeaderBottom />
+                <HeaderBottom parentProps={props} />
             </div>
             <MobileNav />
         </header>
