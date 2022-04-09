@@ -4,26 +4,26 @@ import {getBasketCount} from "../../../../store/selectors/basket";
 import useRouterDOM from "../../../../hooks/useRouterDOM";
 
 const INITIAL_MOBILE_NAV_ITEMS = [
-    { id: 1, title: "Süper Teklif", url: "#" },
-    { id: 2, title: "Telefonlar", url: "#" },
-    { id: 3, title: "Tabletler", url: "#" },
-    { id: 4, title: "Aksesuarlar", url: "#" },
-    { id: 5, title: "Telefon Sat", url: "#" },
-    { id: 6, title: "Telefon Onar / Yenile", url: "#" },
+    { id: 1, title: "Süper Teklif", url: "/super-teklifler" },
+    { id: 2, title: "Telefonlar", url: "/urunler/telefonlar/2" },
+    { id: 3, title: "Tabletler", url: "/urunler/tabletler/3" },
+    { id: 4, title: "Aksesuarlar", url: "/urunler/aksesuarlar/4" },
+    { id: 5, title: "Telefon Sat", url: "/telefon-sat" },
+    { id: 6, title: "Telefon Onar / Yenile", url: "/telefon-onar" },
     {
         id: 7, title: "Kurumsal", url: "#",
         subs: [
             { id: 71, title: 'Hakkımızda', url: '/sayfa/hakkimizda/10' },
             { id: 72, title: 'Hizmetlerimiz', url: '/sayfa/hizmetlerimiz/11' },
             { id: 73, title: 'Bizden Haberler', url: '/bizden-haberler' },
-            { id: 74, title: 'İnsan Kaynakları', url: '#' },
+            { id: 74, title: 'İnsan Kaynakları', url: '/insan-kaynaklari' },
         ]
     },
     { id: 8, title: "Garantili Sorgula", url: "#" },
-    { id: 9, title: "IMEI Sorgula", url: "#" },
-    { id: 10, title: "İade Formu", url: "#" },
+    { id: 9, title: "IMEI Sorgula", url: "/imei-sorgula" },
+    { id: 10, title: "İade Formu", url: "/iade-formu" },
     { id: 11, title: "S.S.S.", url: "/sss" },
-    { id: 11, title: "Bize Ulaşın", url: "#" },
+    { id: 11, title: "Bize Ulaşın", url: "/iletisim" },
 ]
 const INITIAL_LOGO_STYLE = {
     height: 39

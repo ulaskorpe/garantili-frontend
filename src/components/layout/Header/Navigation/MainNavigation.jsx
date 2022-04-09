@@ -35,7 +35,6 @@ const SubItem = (props) => {
                     href={item.url}
                     onClick={(e) => {
                         e.preventDefault();
-                        console.log('selam')
                         navigate(item.url)
                     }}
                 >
