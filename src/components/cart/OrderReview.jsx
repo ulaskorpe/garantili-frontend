@@ -11,7 +11,7 @@ class OrderReview extends Component {
             <div className="woocommerce-checkout-review-order" id="order_review">
                 <div className="order-review-wrapper">
                     <h3 className="order_review_heading">Siparişiniz</h3>
-                   <OrderReviewItemList interestRate={this?.props?.interestRate || 0} />
+                   <OrderReviewItemList installmentFee={this?.props?.installmentFee || 0} />
                     <div className="woocommerce-checkout-payment" id="payment">
                         <div className="form-row place-order">
                             <button

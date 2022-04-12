@@ -4,19 +4,21 @@ import {ayir} from "../../store/selectors/basket";
 
 const OrderReviewItemList = (props) => {
     const {
-        interestRate = 0
+        installmentFee = { fee: 0 }
     } = props;
     const {
         totalPrice: subTotal,
         basketArray,
     } = useBasket();
-    const shippingPrice = 50;
 
-    const kdv = 3;
+    const kdv = 18;
     const kdvTotal = subTotal * kdv / 100;
 
-    const totalPrice = subTotal + kdvTotal + shippingPrice;
-    const interestTotal = (totalPrice * interestRate) / 100;
+    let totalPrice = subTotal + kdvTotal;
+
+    let installmentFeeCalc = (installmentFee?.fee || 0) - totalPrice;
+    if (installmentFeeCalc < 0) installmentFeeCalc = 0;
+    else totalPrice += installmentFeeCalc;
 
     return (
         <table className="shop_table woocommerce-checkout-review-order-table">
@@ -31,7 +33,6 @@ const OrderReviewItemList = (props) => {
                 return (
                     <tr className="cart_item" key={`cartItem_${item.id}`}>
                         <td className="product-name">
-                            <strong className="product-quantity">{item.quantity} ×</strong>
                             <span> {item.product}</span>
                         </td>
                         <td className="product-total">
@@ -54,15 +55,17 @@ const OrderReviewItemList = (props) => {
                             </span>
                 </td>
             </tr>
-            <tr className="cart-subtotal">
-                <th>Kargo Ücreti</th>
-                <td>
+            {Boolean(installmentFeeCalc) && (
+                <tr className="cart-subtotal">
+                    <th>Taksit Ücreti</th>
+                    <td>
                             <span className="woocommerce-Price-amount amount">
-                                {ayir(shippingPrice)}
+                                {ayir(installmentFeeCalc)}
                                 <span className="woocommerce-Price-currencySymbol">₺</span>
                             </span>
-                </td>
-            </tr>
+                    </td>
+                </tr>
+            )}
             <tr className="cart-subtotal">
                 <th>KDV (%{kdv})</th>
                 <td>
@@ -72,23 +75,12 @@ const OrderReviewItemList = (props) => {
                             </span>
                 </td>
             </tr>
-            {Boolean(interestRate) && (
-                <tr className="cart-subtotal">
-                    <th>Taksit Komisyonu (%{interestRate})</th>
-                    <td>
-                            <span className="woocommerce-Price-amount amount">
-                                {ayir(interestTotal)}
-                                <span className="woocommerce-Price-currencySymbol">₺</span>
-                            </span>
-                    </td>
-                </tr>
-            )}
             <tr className="order-total">
                 <th>Toplam</th>
                 <td>
                     <strong>
                                 <span className="woocommerce-Price-amount amount">
-                                    {ayir(totalPrice + interestTotal)}
+                                    {ayir(totalPrice)}
                                     <span className="woocommerce-Price-currencySymbol">₺</span>
                                 </span>
                     </strong>

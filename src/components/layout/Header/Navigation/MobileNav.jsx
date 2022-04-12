@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React  from 'react';
 import {useSelector} from "react-redux";
 import {getBasketCount} from "../../../../store/selectors/basket";
 import useRouterDOM from "../../../../hooks/useRouterDOM";
@@ -19,7 +19,6 @@ const INITIAL_MOBILE_NAV_ITEMS = [
             { id: 74, title: 'İnsan Kaynakları', url: '/insan-kaynaklari' },
         ]
     },
-    { id: 8, title: "Garantili Sorgula", url: "#" },
     { id: 9, title: "IMEI Sorgula", url: "/imei-sorgula" },
     { id: 10, title: "İade Formu", url: "/iade-formu" },
     { id: 11, title: "S.S.S.", url: "/sss" },

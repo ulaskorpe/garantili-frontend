@@ -1,5 +1,4 @@
 import React from 'react';
-import { useState } from "react"
 import OrderBox from "./OrderBox"
 import OrderItem from "./OrderItem"
 import {ayir} from "../../store/selectors/basket";
@@ -41,7 +40,6 @@ function OrderItemList(props) {
                                 <tr>
                                     <th className="product-name">Ürünler</th>
                                     <th className="product-price">Fiyat</th>
-                                    <th className="product-quantity">Adet</th>
                                     <th className="product-subtotal text-right">Toplam</th>
                                 </tr>
                             </thead>

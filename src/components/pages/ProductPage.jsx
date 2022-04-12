@@ -1,4 +1,4 @@
-import React, {useState, useMemo} from "react";
+import React, {useMemo} from "react";
 import { useParams, } from "react-router-dom";
 import BreadCrumb from "../layout/BreadCrumb";
 import Footer from "../layout/Footer/Footer";
@@ -14,7 +14,6 @@ import {ayir} from "../../store/selectors/basket";
 
 function ProductPage() {
     const { productId } = useParams();
-    const [quantity, setQuantity] = useState(1);
     const { Modal, openModalEvent } = BasketFilterModal();
 
     const getProduct = useQuery(
@@ -41,16 +40,6 @@ function ProductPage() {
 
         return returnData;
     }, [getProduct?.data])
-
-    const handleChangeQuantity = (e) => {
-        const value = parseInt(e.target.value);
-        if (
-            Number.isInteger(value)
-            && value > 0
-        ) {
-            setQuantity(value);
-        }
-    }
 
     if (!product) {
         return <></>;
@@ -126,23 +115,10 @@ function ProductPage() {
                                                             </ins>
                                                         </p>
                                                         <form encType="multipart/form-data" method="post" className="cart">
-                                                            <div className="quantity">
-                                                                <label htmlFor="quantity-input">Adet</label>
-                                                                <input
-                                                                    type="number"
-                                                                    size="4"
-                                                                    className="input-text qty text"
-                                                                    title="Qty"
-                                                                    value={quantity}
-                                                                    onChange={handleChangeQuantity}
-                                                                    min={1}
-                                                                    name="quantity"
-                                                                    id="quantity-input"
-                                                                />
-                                                            </div>
                                                             <button
                                                                 className="single_add_to_cart_button button alt" value="185" name="add-to-cart"
-                                                                onClick={openModalEvent(product, quantity)}
+                                                                onClick={openModalEvent(product)}
+                                                                style={{ marginLeft: 0, marginRight: 0 }}
                                                             >
                                                                 Sepete ekle
                                                             </button>

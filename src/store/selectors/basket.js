@@ -15,7 +15,10 @@ export const ayir = (count = 0) => {
     )) count = count.toFixed(2);
     let deg = count;
     if (count > 999) {
-        deg = count.toString().replace(/\B(?=(\d{3})+(?!\d))/g, BINLIK_AYRACI);
+        let q = count.toFixed(2).toString().split('.');
+        console.log(q)
+        deg = q[0].replace(/\B(?=(\d{3})+(?!\d))/g, BINLIK_AYRACI);
+        if (q[1]) deg += `.${q[1]}`;
     }
 
     return deg;
@@ -62,7 +65,7 @@ export const getBasketTotalPrice = createDraftSafeSelector(
         let total = 0;
 
         Object.entries(basket).forEach(([_, basketItem]) => {
-            total+= getItemPrice(basketItem) * basketItem.quantity;
+            total+= getItemPrice(basketItem);
         });
 
         return total;

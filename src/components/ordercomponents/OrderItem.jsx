@@ -20,15 +20,9 @@ class OrderItem extends Component {
                     <span className="woocommerce-Price-amount amount">
                         <span className="woocommerce-Price-currencySymbol">₺</span>{ayir(item.price)}</span>
                 </td>
-                <td className="product-quantity" data-title="Quantity">
-                    <div className="quantity">
-                        <label htmlFor="quantity-input-1">Adet</label>
-                        <span id="quantity-input-1" className="qty text">{item.quantity}</span>
-                    </div>
-                </td>
                 <td data-title="Total" className="product-subtotal text-right">
                     <span className="woocommerce-Price-amount amount">
-                        <span className="woocommerce-Price-currencySymbol">₺</span>{ayir(item.price * item.quantity)}</span>
+                        <span className="woocommerce-Price-currencySymbol">₺</span>{ayir(item.price)}</span>
                 </td>
             </tr>
         );

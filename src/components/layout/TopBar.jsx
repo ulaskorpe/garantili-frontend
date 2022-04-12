@@ -83,6 +83,13 @@ const TopBar = () => {
                     />
                     {isLogged && (
                         <MenuItem
+                            title="Adreslerim"
+                            className="hidden-sm-down menu-item animate-dropdown"
+                            path="/adreslerim"
+                        />
+                    )}
+                    {isLogged && (
+                        <MenuItem
                             title={`Çıkış yap (${account.name})`}
                             className="menu-item"
                             icon={<i className="tm tm-login-register" />}

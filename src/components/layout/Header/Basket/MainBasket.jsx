@@ -31,7 +31,6 @@ const BasketListItem = (props) => {
                 {item.product}
             </a>
             <span className="quantity">
-                {item.quantity} ×&nbsp;
                 <span className="woocommerce-Price-amount amount">
                     {ayir(getItemPrice(item))}
                     <span className="woocommerce-Price-currencySymbol">₺</span>

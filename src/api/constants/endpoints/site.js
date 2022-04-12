@@ -108,14 +108,12 @@ export const GET_CARGO_COMPANIES = {
 
 /** @type Endpoint */
 export const GET_INSTALLMENTS = {
-    path: 'api/installments',
-    method: 'POST',
+    path: 'api/bankalar-taksitler/{bank_id}',
+    method: 'GET',
     apiKeyRequired: true,
     doNotCheckStatus: true,
-    pathVars: [],
-    body: [
-        { name: 'cc_no', type: String, default: '',  isRequired: true },
-    ],
+    pathVars: [ 'bank_id' ],
+    body: [],
 };
 
 /** @type Endpoint */
@@ -136,4 +134,28 @@ export const GET_TOP_MENU = {
     doNotCheckStatus: true,
     pathVars: [],
     body: [],
+};
+
+/** @type Endpoint */
+export const GET_BANK_LIST = {
+    path: 'api/bankalar-list',
+    method: 'GET',
+    apiKeyRequired: true,
+    doNotCheckStatus: true,
+    pathVars: [],
+    body: [],
+};
+
+/** @type Endpoint */
+export const CALC_INSTALLMENT_FEE = {
+    path: 'api/banka-taksit-hesapla',
+    method: 'POST',
+    apiKeyRequired: true,
+    doNotCheckStatus: true,
+    pathVars: [],
+    body: [
+        { name: 'banka_id', type: String, default: '',  isRequired: true },
+        { name: 'taksit', type: String, default: '',  isRequired: true },
+        { name: 'tutar', type: String, default: '',  isRequired: true },
+    ],
 };

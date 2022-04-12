@@ -15,7 +15,6 @@ function CartList() {
                         <th className="product-thumbnail">&nbsp;</th>
                         <th className="product-name">Ürünler</th>
                         <th className="product-price">Fiyat</th>
-                        <th className="product-quantity">Adet</th>
                         <th className="product-subtotal">Toplam</th>
                     </tr>
                 </thead>

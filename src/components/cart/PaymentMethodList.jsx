@@ -7,14 +7,13 @@ class PaymentMethodList extends Component {
     ]
     render() {
         return (
-            <ul class="wc_payment_methods payment_methods methods">
+            <ul className="wc_payment_methods payment_methods methods">
                 {this.state.map((_, index) => {
                     return (
-                        <li class="wc_payment_method payment_method_bacs" key={index}>
+                        <li className="wc_payment_method payment_method_bacs" key={index}>
                             <input type="radio" data-order_button_text="" checked={index === 0 ? '': 'checked'} value={_.value} name="payment_method"
-                                class="input-radio" />
-                            <label for="payment_method_bacs">{_.title}</label>
-
+                                className="input-radio" />
+                            <label htmlFor="payment_method_bacs">{_.title}</label>
                         </li>
                     )
                 })}

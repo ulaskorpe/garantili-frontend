@@ -1,12 +1,11 @@
-import React, { Component } from 'react';
+import React from 'react';
 import {useSelector} from "react-redux";
 import {ayir, getBasketTotalPrice} from "../../store/selectors/basket";
 
 const CartTotals = () => {
     const totalPrice = useSelector(getBasketTotalPrice);
-    const shippingPrice = ayir(50);
 
-    const kdv = 3;
+    const kdv = 18;
     const kdvTotal = totalPrice * kdv / 100;
 
     return (
@@ -33,25 +32,12 @@ const CartTotals = () => {
                                     </span>
                         </td>
                     </tr>
-                    <tr className="cart-subtotal">
-                        <th>Kargo Ücreti</th>
-                        <td data-title="Subtotal">
-                                    <span className="woocommerce-Price-amount amount">
-                                        {shippingPrice !== 0 ? (
-                                            <>
-                                                {ayir(shippingPrice)}
-                                                <span className="woocommerce-Price-currencySymbol">₺</span>
-                                            </>
-                                        ): 'Ücretsiz'}
-                                    </span>
-                        </td>
-                    </tr>
                     <tr className="order-total">
                         <th>Toplam</th>
                         <td data-title="Total">
                             <strong>
                                         <span className="woocommerce-Price-amount amount">
-                                            {ayir(totalPrice + kdvTotal + shippingPrice)}
+                                            {ayir(totalPrice + kdvTotal)}
                                             <span className="woocommerce-Price-currencySymbol">₺</span>
                                         </span>
                             </strong>

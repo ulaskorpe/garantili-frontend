@@ -172,12 +172,6 @@ export default function Contact() {
                                     <div className="entry-content">
                                         <br />
                                         <div className="track-order w-100 text-center">
-                                        <p className="w-80 text-center ml-auto">
-                                            {getContactDetail.isSuccess && (
-                                                getContactDetail?.data?.data?.description
-                                            )}
-                                        </p>
-                                        <br />
                                         <br />
                                         </div>
                                         <div className="stretch-full-width-map">

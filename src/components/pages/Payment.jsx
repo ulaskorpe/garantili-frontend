@@ -10,9 +10,10 @@ import useAuth from "../../store/hooks/useAuth";
 import Select from "react-select";
 import {useMutation, useQuery, useQueryClient} from "react-query";
 import {
+    CALC_INSTALLMENT_FEE,
     DEFAULT_API_KEY,
     fetchThis,
-    GET_BANK_ACCOUNTS,
+    GET_BANK_ACCOUNTS, GET_BANK_LIST,
     GET_CARGO_COMPANIES, GET_INSTALLMENTS,
     PLACE_ORDER,
     retry,
@@ -25,8 +26,10 @@ import useRouterDOM from "../../hooks/useRouterDOM";
 const initialInputValues = {
     customer_address_id: null,
     billing_address_id: null,
+    installment_fee: null,
     empty_billing_address: true,
     payment_method: 0,
+    bank_id: null,
     name_surname: '',
     cc_no: '',
     expires_at: '',
@@ -54,11 +57,11 @@ const SelectField = ({options, disabled, loading, field, form, onChange = () => 
 };
 
 const INITIAL_INSTALLMENT_ELEM = {
-    id: 0,
+    value: 1,
     title: 'Tek çekim',
-    interestRate: 0,
 }
 let timer = null;
+let timer2 = null;
 function Payment() {
     const [crumb] = useState([
         { url: '#', title: 'Ödeme' }
@@ -67,9 +70,9 @@ function Payment() {
     const { go, goWithState } = useRouterDOM();
     const { account, isLogged = false } = useAuth();
     const [loading, setLoading] = useState(false);
-    const { basketArray, clearLocalBasket } = useBasket();
-    const [interestRate, setInterestRate] = useState(0);
-    const [lastCCNo, setLastCCNo] = useState('');
+    const { basketArray, clearLocalBasket, totalPrice } = useBasket();
+    const [installmentFee, setInstallmentFee] = useState(0);
+    const [lastBank, setLastBank] = useState('');
 
     const itemCodes = useMemo(() => (
         basketArray.map((item) => item.item_code)
@@ -103,16 +106,30 @@ function Payment() {
         mutationFn: (data) => (
             fetchThis(
                 GET_INSTALLMENTS,
-                {
-                    cc_no: data.cc_no,
-                },
+                {},
                 DEFAULT_API_KEY,
-                {}
+                { bank_id: data.bank_id.toString() }
             )
         ),
         retry: false,
         mutationKey: 'get-installments',
-    })
+    });
+    const calcInstallmentFee = useMutation({
+        mutationFn: (data) => {
+            return fetchThis(
+                CALC_INSTALLMENT_FEE,
+                {
+                    banka_id: data?.bank_id?.toString(),
+                    taksit: data?.installment?.toString(),
+                    tutar: data?.total?.toString(),
+                },
+                DEFAULT_API_KEY,
+                {}
+            );
+        },
+        retry: false,
+        mutationKey: 'calc-installment-fee',
+    });
     const cargoCompanies = useQuery(
         [
             'cargo_companies',
@@ -137,11 +154,30 @@ function Payment() {
             enabled: isLogged,
         }
     );
+    const banks = useQuery(
+        [
+            'banks',
+            isLogged,
+        ],
+        () => (
+            fetchThis(
+                GET_BANK_LIST,
+                {},
+                DEFAULT_API_KEY,
+                {}
+            )
+        ),
+        {
+            retry,
+            refetchOnWindowFocus: false,
+            enabled: isLogged,
+        }
+    );
 
-    const setCCNo = useCallback((val) => {
+    const handleChangeBank = useCallback((val) => {
         if (
-            val.length === 16
-            && val !== lastCCNo
+            val.value
+            && JSON.stringify(val) !== JSON.stringify(lastBank)
         ) {
             if (timer) {
                 clearTimeout(timer);
@@ -150,19 +186,53 @@ function Payment() {
 
              timer = setTimeout(() => {
                  queryClient
-                     .cancelQueries('get-installments')
+                     .cancelQueries('banks')
                      .then(() => {
                          getInstallments.mutate({
-                             cc_no: lastCCNo,
+                             bank_id: val.value,
                          }, {
                              onSuccess: () => {
-                                 setLastCCNo(val);
+                                 setLastBank(val);
                              },
                          })
                      });
             }, 285);
         }
-    }, [lastCCNo, getInstallments, queryClient]);
+    }, [lastBank, getInstallments, queryClient]);
+    const handleChangeInstallment = useCallback((
+        installment,
+        bank_id,
+        total,
+    ) => {
+        if (
+            installment
+            && ((installmentFee && installmentFee.installment) ? installment?.toString() !== installmentFee.installment?.toString() : true)
+        ) {
+            if (timer2) {
+                clearTimeout(timer2);
+                timer2 = null;
+            }
+
+            timer2 = setTimeout(() => {
+                queryClient
+                    .cancelQueries('calc-installment-fee')
+                    .then(() => {
+                        calcInstallmentFee.mutate({
+                            bank_id,
+                            total,
+                            installment,
+                        }, {
+                            onSuccess: ({data}) => {
+                                if (data?.tutar) setInstallmentFee({
+                                    installment,
+                                    fee: data?.tutar,
+                                });
+                            },
+                        })
+                    });
+            }, 285);
+        }
+    }, [calcInstallmentFee, queryClient, installmentFee]);
     const placeOrder = useMutation((data) => (
         fetchThis(
             PLACE_ORDER,
@@ -203,6 +273,16 @@ function Payment() {
         }
     );
 
+    const banksOption = useMemo(() => {
+        if (!banks.isSuccess) return [];
+        if (!banks?.data?.status) return [];
+
+        return banks?.data?.data?.bankalar.map(({ bank_name, bank_id }) => ({
+            label: bank_name,
+            value: bank_id,
+        }))
+    }, [banks]);
+
     const addressesOption = useMemo(() => {
         if (!addressesList.isSuccess) return [];
         if (!addressesList?.data?.status) return [];
@@ -232,17 +312,19 @@ function Payment() {
         const initialInstallments = [INITIAL_INSTALLMENT_ELEM];
         if (!getInstallments.isSuccess) return formatInstallments(initialInstallments);
 
+        let val = (
+            Array.isArray(getInstallments?.data?.data?.purchases)
+                ? getInstallments?.data?.data?.purchases
+                : []
+        ).filter((value)=> value.toString() !== "1")
+            .map((value) => ({value}));
+
         return [
             INITIAL_INSTALLMENT_ELEM,
-            ...(
-                Array.isArray(getInstallments?.data?.data)
-                    ? getInstallments.data.data
-                    : []
-            ),
+            ...val,
         ].map((installment) => ({
-            label: `${installment?.title} ${installment?.interestRate ? `(+%${installment.interestRate})` : ''}`,
-            value: (typeof installment?.id === 'undefined') || -1,
-            isDisabled: Boolean(typeof installment?.id === 'undefined'),
+            label: installment?.title || installment.value,
+            value: installment.value,
         }))
     }, [getInstallments]);
     const inputsDisabled = useMemo(() => Boolean(
@@ -280,6 +362,10 @@ function Payment() {
         !bankAccountList.isSuccess || inputsDisabled
     ), [bankAccountList, inputsDisabled]);
 
+    const bankListSelectBoxDisabled = useMemo(() => Boolean(
+        !banks.isSuccess || inputsDisabled
+    ), [banks, inputsDisabled]);
+
     const getBankAccountItem = useCallback((id) => {
         if (!id) return {};
         if (!bankAccountList.isSuccess) return {};
@@ -314,6 +400,9 @@ function Payment() {
         if (values.payment_method.toString() === '0') {
             if (!values.name_surname || !values.name_surname?.toString()?.length) {
                 errors.name_surname = errorMessages.required;
+            }
+            if (!values.bank_id) {
+                errors.bank_id = errorMessages.required;
             }
             if (!values.cc_no || !values.cc_no?.toString()?.length) {
                 errors.cc_no = errorMessages.required;
@@ -472,9 +561,13 @@ function Payment() {
                                                                                                 setFieldValue("receipt", null);
                                                                                             }
 
-                                                                                            setFieldValue('installments', null);
                                                                                             setTouched({...touched, installments: false});
-                                                                                            setInterestRate(0)
+
+                                                                                            setFieldValue('bank_id', null);
+                                                                                            setFieldValue('installments', null);
+
+                                                                                            setLastBank('')
+                                                                                            setInstallmentFee(0)
                                                                                         }}
                                                                                     />
                                                                                         <ErrorMessage name="payment_method" />
@@ -487,9 +580,60 @@ function Payment() {
                                                                             ) && (
                                                                                 <>
                                                                                     <div className="form-group row col-md-12">
+                                                                                        <div className="col-xs-12 col-md-12">
+                                                                                            <label>Banka
+                                                                                                <abbr title="required" className="required">*</abbr>
+                                                                                            </label>
+                                                                                            <br />
+                                                                                            <span className="wpcf7-form-control-wrap first-name">
+                                                                                    <Field
+                                                                                        name="bank_id"
+                                                                                        component={SelectField}
+                                                                                        options={banksOption}
+                                                                                        disabled={bankListSelectBoxDisabled || isLoading(isSubmitting)}
+                                                                                        loading={banks.isLoading}
+                                                                                        onChange={(val) => {
+                                                                                            setFieldValue("bank_id", val);
+                                                                                            handleChangeBank(val);
+                                                                                        }}
+                                                                                    />
+                                                                                        <ErrorMessage name="bank_id" />
+                                                                                </span>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div className="form-group row col-md-12">
+                                                                                        <div className="col-xs-12 col-md-12">
+                                                                                            <label>Taksit sayısı
+                                                                                                <abbr title="required" className="required">*</abbr>
+                                                                                            </label>
+                                                                                            <br />
+                                                                                            <span className="wpcf7-form-control-wrap first-name">
+                                                                                    <Field
+                                                                                        name={'installments'}
+                                                                                        component={SelectField}
+                                                                                        options={installmentOptions}
+                                                                                        disabled={Boolean(
+                                                                                            banksSelectBoxDisabled
+                                                                                            || isLoading(isSubmitting)
+                                                                                            || !values.bank_id
+                                                                                        )}
+                                                                                        loading={getInstallments.isLoading}
+                                                                                        onChange={(installment) => {
+                                                                                            handleChangeInstallment(
+                                                                                                installment.value,
+                                                                                                values.bank_id.value,
+                                                                                                totalPrice,
+                                                                                            )
+                                                                                        }}
+                                                                                    />
+                                                                                        <ErrorMessage name="installments" />
+                                                                                </span>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div className="form-group row col-md-12 mt-4">
                                                                                         <div className="col-xs-12 col-md-6 mb-0">
                                                                                             <p className="mb-0 bold">
-                                                                                                Lütfen kredi kartı bilgilerini giriniz.
+                                                                                                Lütfen kredi kartı bilgilerini girin.
                                                                                             </p>
                                                                                         </div>
                                                                                     </div>
@@ -531,10 +675,6 @@ function Payment() {
                                                                                                 name="cc_no"
                                                                                                 autoComplete="cc-number"
                                                                                                 disabled={isLoading(isSubmitting)}
-                                                                                                onChange={(e) => {
-                                                                                                    setFieldValue('cc_no', e.target.value);
-                                                                                                    setCCNo(e.target.value)
-                                                                                                }}
                                                                                             />
                                                                                             <br/>
                                                                                             <ErrorMessage name="cc_no" />
@@ -585,33 +725,7 @@ function Payment() {
                                                                                             <ErrorMessage name="cvc" />
                                                                                         </div>
                                                                                     </div>
-                                                                                    <div className="form-group row col-md-12">
-                                                                                        <div className="col-xs-12 col-md-12">
-                                                                                            <label>Taksit sayısı
-                                                                                                <abbr title="required" className="required">*</abbr>
-                                                                                            </label>
-                                                                                            <br />
-                                                                                            <span className="wpcf7-form-control-wrap first-name">
-                                                                                    <Field
-                                                                                        name={'installments'}
-                                                                                        component={SelectField}
-                                                                                        options={installmentOptions}
-                                                                                        disabled={Boolean(
-                                                                                            banksSelectBoxDisabled
-                                                                                            || isLoading(isSubmitting)
-                                                                                            || !values.cc_no
-                                                                                            || !(values.cc_no.length === 16)
-                                                                                        )}
-                                                                                        loading={getInstallments.isLoading}
-                                                                                        onChange={(installment) => {
-                                                                                            const newVal = installment.interestRate || 0;
-                                                                                            if (interestRate !== newVal) setInterestRate(newVal);
-                                                                                        }}
-                                                                                    />
-                                                                                        <ErrorMessage name="installments" />
-                                                                                </span>
-                                                                                        </div>
-                                                                                    </div>
+
                                                                                 </>
                                                                             )}
                                                                             {Boolean(
@@ -682,7 +796,7 @@ function Payment() {
                                                                     </div>
                                                                 </div>
                                                             </div>
-                                                            <div className="col-1">
+                                                            <div className="col-1 mt-4">
                                                                 <div className="woocommerce-billing-fields">
                                                                     <h3>Adres</h3>
                                                                     <div className="woocommerce-billing-fields__field-wrapper-outer">
@@ -765,7 +879,7 @@ function Payment() {
                                                         </div>
                                                         <OrderReview
                                                             disabled={submitIsDisabled(isSubmitting, errors, values)}
-                                                            interestRate={interestRate}
+                                                            installmentFee={installmentFee}
                                                         />
                                                     </Form>
                                                 )}

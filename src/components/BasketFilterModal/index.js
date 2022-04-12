@@ -159,15 +159,40 @@ const BasketFilterModal = () => {
         productInfo,
     ) => {
         if (!productInfo || !productInfo?.id) return false;
+        const data = JSON.parse(JSON.stringify(productInfo));
 
-        setProductInfo(productInfo);
-        setShow(true);
-    }, []);
+        data[(
+            isUser
+                ? 'customer_id'
+                : 'guid'
+        )] = account.customer_id.toString();
+        data.product_id = data.id.toString();
+        data.quantity = "1";
+
+        addCartMutation.mutate(data, {
+            onSuccess: (response) => {
+                if (
+                    response
+                    && response?.data
+                    && Array.isArray(response?.data?.cart_items)
+                ) {
+                    setFetchedData(response.data.cart_items);
+                    clearAll()
+                }
+                toast('🎉 Ürün, sepetine eklendi!');
+                closeModal();
+            },
+            onError: () => {
+                toast('❌ Ürünü sepetine eklerken bir hata ile karşılaştık :(');
+                console.log('error');
+            }
+        })
+    }, [addCartMutation, account, clearAll, closeModal, isUser, setFetchedData]);
     const openModalEvent = useCallback((
-        productInfo, quantity = 1
+        productInfo
     ) => (e) => {
         e.preventDefault();
-        openModal({...productInfo, quantity})
+        openModal({...productInfo, quantity: 1})
     }, [openModal]);
 
     const handleSubmit = useCallback((e) => {
@@ -193,7 +218,7 @@ const BasketFilterModal = () => {
             data.product_id = data.id.toString();
             data.memory_id = selectedValues.memory.value.toString();
             data.color_id = selectedValues.color.value.toString();
-            data.quantity = (data.quantity || 1).toString();
+            data.quantity = "1";
 
             // mutate
             addCartMutation.mutate(data, {

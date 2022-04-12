@@ -114,7 +114,6 @@ function OrderSummary() {
                                                                     <tr className="woocommerce-table__line-item order_item" key={index}>
                                                                         <td className="woocommerce-table__product-name product-name">
                                                                             <a href={item.url}>{item.title}</a>
-                                                                            <strong className="product-quantity"> × {item.quantity}</strong>
                                                                         </td>
 
                                                                         <td className="woocommerce-table__product-total product-total">
