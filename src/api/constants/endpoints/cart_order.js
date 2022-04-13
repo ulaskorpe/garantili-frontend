@@ -79,6 +79,18 @@ export const REMOVE_CART_ITEM_QUANTITY = {
 };
 
 /** @type Endpoint */
+export const GET_ORDER_CODE = {
+    path: 'api/customers/cart/get-order-code',
+    method: 'POST',
+    apiKeyRequired: true,
+    pathVars: [],
+    body: [
+        { name: 'customer_id', type: String, default: '',  isRequired: false },
+        { name: 'guid', type: String, default: '',  isRequired: false },
+    ],
+};
+
+/** @type Endpoint */
 export const PLACE_ORDER = {
     path: 'api/customers/cart/place-order',
     method: 'POST',
@@ -86,21 +98,27 @@ export const PLACE_ORDER = {
     pathVars: [],
     body: [
         /**/
-        { name: 'customer_id', type: String, default: '',  isRequired: true },
-        { name: 'item_array', type: String, default: '',  isRequired: true },
+        { name: 'order_code', type: String, default: '',  isRequired: true },
+        { name: 'customer_id', type: String, default: '',  isRequired: false },
+        { name: 'guid', type: String, default: '',  isRequired: false },
         { name: 'customer_address_id', type: String, default: '',  isRequired: true },
-        { name: 'delivery_address_id', type: String, default: '',  isRequired: false },
+        { name: 'invoice_address_id', type: String, default: '',  isRequired: false },
         { name: 'cargo_company_id', type: String, default: '',  isRequired: true },
 
+        { name: 'amount', type: String, default: '0',  isRequired: true },
         { name: 'payment_method', type: String, default: '0',  isRequired: true },
         { name: 'receipt', type: 'file', default: null,  isRequired: false },
-        /**/
-        { name: 'name_surname', type: String, default: '',  isRequired: false },
-        { name: 'cc_no', type: String, default: '',  isRequired: false },
-        { name: 'expires_at', type: String, default: '',  isRequired: false },
-        { name: 'cvc', type: String, default: '',  isRequired: false },
 
         /**/
-        { name: 'installments', type: String, default: '',  isRequired: false },
+        { name: 'delivery_full_name', type: String, default: '',  isRequired: true },
+        { name: 'delivery_city_id', type: String, default: '',  isRequired: true },
+        { name: 'delivery_phone', type: String, default: '',  isRequired: true },
+        { name: 'delivery_address', type: String, default: '',  isRequired: true },
+
+        /**/
+        { name: 'invoice_full_name', type: String, default: '',  isRequired: false },
+        { name: 'invoice_address', type: String, default: '',  isRequired: false },
+        { name: 'invoice_phone', type: String, default: '',  isRequired: false },
+        { name: 'invoice_city_id', type: String, default: '',  isRequired: false },
     ],
 };

@@ -9,7 +9,7 @@ const LogOut = () => {
         logOut,
     } = useAuth();
     const {
-        clear,
+        clearLocalBasket,
     } = useBasket();
     const navigate = useNavigate();
     const location = useLocation();
@@ -17,10 +17,10 @@ const LogOut = () => {
     useEffect(() => {
         if (isLogged && logOut) {
             logOut();
-            if (clear) clear()
-            navigate('/', { fromTo: location, replace: true });
+            if (clearLocalBasket) clearLocalBasket()
+            navigate('/', { fromTo: location });
         }
-    }, [isLogged, logOut, clear, navigate, location]);
+    }, [isLogged, logOut, clearLocalBasket, navigate, location]);
     return <></>;
 };
 

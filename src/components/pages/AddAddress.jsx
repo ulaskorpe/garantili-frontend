@@ -19,6 +19,7 @@ import {
 import sweetalert from "sweetalert";
 import useRouterDOM from "../../hooks/useRouterDOM";
 import useAuth from "../../store/hooks/useAuth";
+import {useLocation} from "react-router-dom";
 
 const NOT_SELECTED = { value: -1, label: 'Seçilmedi' };
 
@@ -39,6 +40,7 @@ function AddAddress() {
     ]);
     const { account, isLogged = false } = useAuth();
     const [loading, setLoading] = useState(false);
+    const location = useLocation();
     const { go } = useRouterDOM();
     
     const [addressesSelectBox, setAddressesSelectBox] = useState({
@@ -253,7 +255,7 @@ function AddAddress() {
                             text: 'Tamam',
                         },
                     }).then(() => {
-                        go('/adreslerim');
+                        go(location?.state['redirect'] || '/adreslerim');
                     });
                 }
                 setSubmitting(false);
@@ -272,7 +274,7 @@ function AddAddress() {
                 setLoading(false);
             },
         });
-    }, [account, isLogged, addAddressMutation, addressesSelectBox]);
+    }, [account, isLogged, addAddressMutation, addressesSelectBox, go, location]);
     const isLoading = useCallback((isSubmitting = false) => (
         loading || isSubmitting || addAddressMutation?.isLoading
     ), [loading, addAddressMutation]);

@@ -13,13 +13,15 @@ export const ayir = (count = 0) => {
     if (!(
         count !== count.toFixed(2)
     )) count = count.toFixed(2);
+
     let deg = count;
     if (count > 999) {
         let q = count.toFixed(2).toString().split('.');
-        console.log(q)
         deg = q[0].replace(/\B(?=(\d{3})+(?!\d))/g, BINLIK_AYRACI);
         if (q[1]) deg += `.${q[1]}`;
     }
+
+    if (deg?.toFixed) deg = deg.toFixed(2)
 
     return deg;
 }
@@ -53,7 +55,7 @@ export const getSplitBasketTotalPrice = createDraftSafeSelector(
         let total = 0;
 
         Object.entries(basket).forEach(([_, basketItem]) => {
-            total+= getItemPrice(basketItem) * basketItem.quantity;
+            total+= getItemPrice(basketItem);
         });
 
         return ayir(total);

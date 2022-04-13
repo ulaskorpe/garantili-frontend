@@ -14,7 +14,7 @@ import {
     DEFAULT_API_KEY,
     fetchThis,
     GET_BANK_ACCOUNTS, GET_BANK_LIST,
-    GET_CARGO_COMPANIES, GET_INSTALLMENTS,
+    GET_CARGO_COMPANIES, GET_CITIES, GET_INSTALLMENTS, GET_ORDER_CODE,
     PLACE_ORDER,
     retry,
     SHOW_ADDRESSES
@@ -25,7 +25,7 @@ import useRouterDOM from "../../hooks/useRouterDOM";
 
 const initialInputValues = {
     customer_address_id: null,
-    billing_address_id: null,
+    invoice_address_id: null,
     installment_fee: null,
     empty_billing_address: true,
     payment_method: 0,
@@ -37,6 +37,16 @@ const initialInputValues = {
     cargo_company_id: null,
     receipt: null,
     installments: null,
+    // delivery
+    delivery_full_name: '',
+    delivery_city_id: '',
+    delivery_phone: '',
+    delivery_address: '',
+    // invoice
+    invoice_full_name: '',
+    invoice_city_id: '',
+    invoice_phone: '',
+    invoice_address: '',
 };
 
 const SelectField = ({options, disabled, loading, field, form, onChange = () => null}) => {
@@ -67,16 +77,49 @@ function Payment() {
         { url: '#', title: 'Ödeme' }
     ]);
     const queryClient = useQueryClient();
-    const { go, goWithState } = useRouterDOM();
-    const { account, isLogged = false } = useAuth();
+    const { go, goEvent, goWithState } = useRouterDOM();
+    const { account, isLogged = false, isUser = false, isGuest } = useAuth();
     const [loading, setLoading] = useState(false);
-    const { basketArray, clearLocalBasket, totalPrice } = useBasket();
+    const { clearLocalBasket, totalPrice } = useBasket();
     const [installmentFee, setInstallmentFee] = useState(0);
     const [lastBank, setLastBank] = useState('');
 
-    const itemCodes = useMemo(() => (
-        basketArray.map((item) => item.item_code)
-    ), [basketArray]);
+    const getOrderCode = useQuery(
+        [
+            'get-order-code',
+            isGuest,
+            isUser,
+            account,
+        ],
+        () => {
+            return fetchThis(
+                GET_ORDER_CODE,
+                {
+                    customer_id: isUser ? account?.customer_id?.toString() : '',
+                    guid: isGuest ? account?.customer_id?.toString() : '',
+                },
+                DEFAULT_API_KEY,
+                {},
+            );
+        },
+        {
+            refetchOnWindowFocus: false,
+        }
+    );
+    const getCities =  useQuery(
+        ['get-cities'],
+        () => {
+            return fetchThis(
+                GET_CITIES,
+                {},
+                DEFAULT_API_KEY,
+                {},
+            );
+        },
+        {
+            refetchOnWindowFocus: false,
+        }
+    );
 
     const addressesList = useQuery(
         [
@@ -133,14 +176,11 @@ function Payment() {
     const cargoCompanies = useQuery(
         [
             'cargo_companies',
-            account,
-            isLogged,
         ],
         () => (
             fetchThis(
                 GET_CARGO_COMPANIES,
                 {
-                    customer_id: account.customer_id.toString(),
                     page: 1,
                     page_count: 99999999,
                 },
@@ -151,13 +191,11 @@ function Payment() {
         {
             retry,
             refetchOnWindowFocus: false,
-            enabled: isLogged,
         }
     );
     const banks = useQuery(
         [
             'banks',
-            isLogged,
         ],
         () => (
             fetchThis(
@@ -170,7 +208,6 @@ function Payment() {
         {
             retry,
             refetchOnWindowFocus: false,
-            enabled: isLogged,
         }
     );
 
@@ -226,6 +263,7 @@ function Payment() {
                                 if (data?.tutar) setInstallmentFee({
                                     installment,
                                     fee: data?.tutar,
+                                    ...data,
                                 });
                             },
                         })
@@ -237,17 +275,26 @@ function Payment() {
         fetchThis(
             PLACE_ORDER,
             {
+                order_code: data?.order_code?.toString(),
                 customer_id: data?.customer_id?.toString(),
-                item_array: data?.item_array?.toString(),
+                guid: data?.guid?.toString(),
                 customer_address_id: data?.customer_address_id?.toString(),
+                invoice_address_id: data?.invoice_address_id?.toString(),
                 cargo_company_id: data?.cargo_company_id?.toString(),
+
+                amount: data?.amount?.toString(),
                 payment_method: data?.payment_method?.toString(),
-                name_surname: data?.name_surname?.toString(),
-                cc_no: data?.cc_no?.toString(),
-                expires_at: data?.expires_at?.toString(),
-                cvc: data?.cvc?.toString(),
                 receipt: data?.receipt,
-                installments: data?.installments,
+
+                delivery_full_name: data?.delivery_full_name,
+                delivery_city_id: data?.delivery_city_id,
+                delivery_phone: data?.delivery_phone,
+                delivery_address: data?.delivery_address,
+
+                invoice_full_name: data?.invoice_full_name,
+                invoice_address: data?.invoice_address,
+                invoice_phone: data?.invoice_phone,
+                invoice_city_id: data?.invoice_city_id,
             },
             DEFAULT_API_KEY,
             {}
@@ -256,7 +303,6 @@ function Payment() {
     const bankAccountList = useQuery(
         [
             'bank-accounts',
-            isLogged,
         ],
         () => (
             fetchThis(
@@ -269,7 +315,6 @@ function Payment() {
         {
             retry,
             refetchOnWindowFocus: false,
-            enabled: isLogged,
         }
     );
 
@@ -340,6 +385,14 @@ function Payment() {
         addressesSelectBoxDisabled || billingAddressBlank
     ), [addressesSelectBoxDisabled]);
 
+    const cities = useMemo(() => {
+        if (!getCities.isSuccess) return [];
+
+        return (getCities?.data?.map((city) => ({
+            label: city.name,
+            value: city.id,
+        })) || []);
+    }, [getCities]);
     const bankAccounts = useMemo(() => {
         if (!bankAccountList.isSuccess) return [];
         if (!bankAccountList?.data?.status) return [];
@@ -361,6 +414,9 @@ function Payment() {
     const banksSelectBoxDisabled = useMemo(() => Boolean(
         !bankAccountList.isSuccess || inputsDisabled
     ), [bankAccountList, inputsDisabled]);
+    const citiesSelectBoxDisabled = useCallback((billingAddressBlank = true) => Boolean(
+        !getCities.isSuccess || billingAddressBlank || inputsDisabled
+    ), [getCities, inputsDisabled]);
 
     const bankListSelectBoxDisabled = useMemo(() => Boolean(
         !banks.isSuccess || inputsDisabled
@@ -384,12 +440,41 @@ function Payment() {
         if (!values.cargo_company_id || !values?.cargo_company_id?.toString()?.length) {
             errors.cargo_company_id = errorMessages.required;
         }
-        if (!values.customer_address_id || !values?.customer_address_id?.toString()?.length) {
+        if (isLogged && (!values.customer_address_id || !values?.customer_address_id?.toString()?.length)) {
             errors.customer_address_id = errorMessages.required;
         }
         if (!values.empty_billing_address) {
-            if (!values.billing_address_id) {
-                errors.billing_address_id = errorMessages.required;
+            if (isLogged && !values.invoice_address_id) {
+                errors.invoice_address_id = errorMessages.required;
+            }
+            if (!isLogged) {
+                if (!values.delivery_full_name || !values?.delivery_full_name?.toString()?.length) {
+                    errors.delivery_full_name = errorMessages.required;
+                }
+                if (!values.delivery_city_id || !values?.delivery_city_id?.toString()?.length) {
+                    errors.delivery_city_id = errorMessages.required;
+                }
+                if (!values.delivery_phone || !values?.delivery_phone?.toString()?.length) {
+                    errors.delivery_phone = errorMessages.required;
+                }
+                if (!values.delivery_address || !values?.delivery_address?.toString()?.length) {
+                    errors.delivery_address = errorMessages.required;
+                }
+            }
+        }
+
+        if (!isLogged && !values.empty_billing_address) {
+            if (!values.invoice_full_name || !values?.invoice_full_name?.toString()?.length) {
+                errors.invoice_full_name = errorMessages.required;
+            }
+            if (!values.invoice_city_id || !values?.invoice_city_id?.toString()?.length) {
+                errors.invoice_city_id = errorMessages.required;
+            }
+            if (!values.invoice_phone || !values?.invoice_phone?.toString()?.length) {
+                errors.invoice_phone = errorMessages.required;
+            }
+            if (!values.invoice_address || !values?.invoice_address?.toString()?.length) {
+                errors.invoice_address = errorMessages.required;
             }
         }
 
@@ -435,25 +520,39 @@ function Payment() {
         }
 
         return errors;
-    }, []);
+    }, [isLogged]);
     const handleSubmit = useCallback((iValues, {
         setSubmitting,
     }) => {
-        if (!isLogged) return;
+        if (getOrderCode.isSuccess && !getOrderCode?.data?.data?.order_code) return;
+        if (!isUser && !isGuest) return;
         const values = JSON.parse(JSON.stringify(iValues));
 
-        values.customer_id = account.customer_id?.toString();
-        values.item_array = (itemCodes || []).join(',');
+        values.order_code = getOrderCode?.data?.data?.order_code?.toString();
+        values.customer_id = '';
+        if (isUser) values.customer_id = account?.customer_id?.toString();
+
+        values.guid = '';
+        if (isGuest) values.guid = account?.customer_id?.toString();
+
         values.customer_address_id = values.customer_address_id?.toString();
-        values.delivery_address_id = values.delivery_address_id?.toString();
+        values.invoice_address_id = values.invoice_address_id?.toString();
         values.cargo_company_id = values.cargo_company_id?.toString();
+
+        values.amount = 0;
+        if (installmentFee?.tutar) values.amount = installmentFee?.tutar?.toString();
         values.payment_method = values.payment_method?.toString();
-        values.name_surname = values.name_surname?.toString();
-        values.cc_no = values.cc_no?.toString();
-        values.expires_at = values.expires_at?.toString();
-        values.cvc = values.cvc?.toString();
         values.receipt = iValues.receipt;
-        values.installments = values?.installments?.toString();
+
+        values.delivery_full_name = values?.delivery_full_name?.toString();
+        values.delivery_city_id = values?.delivery_city_id?.toString();
+        values.delivery_phone = values?.delivery_phone?.toString();
+        values.delivery_address = values?.delivery_address?.toString();
+
+        values.invoice_full_name = values?.invoice_full_name?.toString();
+        values.invoice_address = values?.invoice_address?.toString();
+        values.invoice_phone = values?.invoice_phone?.toString();
+        values.invoice_city_id = values?.invoice_city_id?.toString();
 
         setSubmitting(true);
         setLoading(true);
@@ -496,14 +595,14 @@ function Payment() {
                 setLoading(false);
             },
         });
-    }, [account, isLogged, itemCodes, placeOrder, clearLocalBasket, go,  goWithState]);
+    }, [account, isUser, isGuest, placeOrder, clearLocalBasket, go,  goWithState, installmentFee, getOrderCode]);
 
     const isLoading = useCallback((isSubmitting = false) => (
-        loading || isSubmitting || placeOrder?.isLoading || !itemCodes?.length
-    ), [loading, placeOrder, itemCodes]);
+        loading || isSubmitting || placeOrder?.isLoading
+    ), [loading, placeOrder]);
     const submitIsDisabled = useCallback((isSubmitting, errors = {}, values) => (
-        isLoading(isSubmitting) || Boolean(Object.keys(errors).length) || Boolean(Object.keys(validateForm(values)).length) || !itemCodes?.length
-    ), [isLoading, validateForm, itemCodes]);
+        isLoading(isSubmitting) || Boolean(Object.keys(errors).length) || Boolean(Object.keys(validateForm(values)).length)
+    ), [isLoading, validateForm]);
 
     return (
         <div className="woocommerce-active single-product full-width normal">
@@ -516,10 +615,119 @@ function Payment() {
                     <div className="row">
                         <BreadCrumb crumbs={crumb} />
                         <div id="primary" className="content-area">
-
                             <main className="site-main" id="main">
                                 <div className="type-page hentry">
                                     <div className="entry-content">
+                                        {Boolean(
+                                            isLogged
+                                            && addressesList.isSuccess
+                                            && !addressesOption.length
+                                        ) && (
+                                            <div
+                                                style={{
+                                                    display: 'flex',
+                                                    flexDirection: 'column',
+                                                    justifyContent: 'center',
+                                                    alignItems: 'flex-start',
+                                                    width: '100%',
+                                                    padding: '20px 20px',
+                                                    backgroundColor: '#FFE0B2',
+                                                    color: '#FB8C00',
+                                                    marginBottom: 20,
+                                                    borderRadius: 6,
+                                                }}
+                                            >
+                                                <h4
+                                                    style={{
+                                                        color: 'inherit',
+                                                        margin: 0,
+                                                        padding: 0,
+                                                        paddingBottom: 4,
+                                                    }}
+                                                >
+                                                    UYARI
+                                                </h4>
+                                                <p
+                                                    style={{
+                                                        color: 'inherit',
+                                                        margin: 0,
+                                                        padding: 0,
+                                                    }}
+                                                >
+                                                    Sisteme kayıtlı kayıtlı adresiniz <b>bulunmamakta</b>. Adres eklemeden işlem sipariş <b>veremezsiniz</b>.
+                                                    <br />
+                                                    <b>Adres eklemek için </b>
+                                                    <a
+                                                        href="/adreslerim/ekle"
+                                                        style={{
+                                                            color: 'inherit',
+                                                            margin: 0,
+                                                            padding: 0,
+                                                            fontWeight: 500,
+                                                            textDecoration: 'underline',
+                                                        }}
+                                                        onClick={(e) => {
+                                                            e.preventDefault();
+                                                            goWithState('/adreslerim/ekle', { redirect: '/odeme' });
+                                                        }}
+                                                    >lütfen buraya tıklayın.</a>
+                                                    .
+                                                </p>
+                                            </div>
+                                        )}
+                                        {!isLogged && (
+                                            <div
+                                                style={{
+                                                    display: 'flex',
+                                                    flexDirection: 'column',
+                                                    justifyContent: 'center',
+                                                    alignItems: 'flex-start',
+                                                    width: '100%',
+                                                    padding: '20px 20px',
+                                                    backgroundColor: '#FFE0B2',
+                                                    color: '#FB8C00',
+                                                    marginBottom: 20,
+                                                    borderRadius: 6,
+                                                }}
+                                            >
+                                                <h4
+                                                    style={{
+                                                        color: 'inherit',
+                                                        margin: 0,
+                                                        padding: 0,
+                                                        paddingBottom: 4,
+                                                    }}
+                                                >
+                                                    UYARI
+                                                </h4>
+                                                <p
+                                                    style={{
+                                                        color: 'inherit',
+                                                        margin: 0,
+                                                        padding: 0,
+                                                    }}
+                                                >
+                                                    Şu anda misafir olarak (üye girişi yapılmadan) işlem yapıyorsunuz.
+                                                    Garantili Teknoloji üzerinden&nbsp;
+                                                    <b>üye girişi yapmadan da sipariş verebilirsiniz.</b>
+                                                    <br/>
+                                                    Yine de&nbsp;
+                                                    <b>üye girişi yapmak veya kayıt olmak istiyorsanız &nbsp;</b>
+                                                    <a
+                                                        href="/login"
+                                                        style={{
+                                                            color: 'inherit',
+                                                            margin: 0,
+                                                            padding: 0,
+                                                            fontWeight: 500,
+                                                            textDecoration: 'underline',
+                                                        }}
+                                                        onClick={goEvent('/login')}
+                                                    >buraya tıklayabilirsiniz</a>
+                                                    .
+                                                </p>
+                                            </div>
+                                        )}
                                         <div className="woocommerce">
                                             <Formik
                                                 onSubmit={handleSubmit}
@@ -796,18 +1004,216 @@ function Payment() {
                                                                     </div>
                                                                 </div>
                                                             </div>
-                                                            <div className="col-1 mt-4">
-                                                                <div className="woocommerce-billing-fields">
-                                                                    <h3>Adres</h3>
-                                                                    <div className="woocommerce-billing-fields__field-wrapper-outer">
-                                                                        <div className="woocommerce-billing-fields__field-wrapper">
-                                                                            <div className="form-group row col-md-12">
-                                                                                <div className="col-xs-12 col-md-12">
-                                                                                    <label>Teslimat adresi
-                                                                                        <abbr title="required" className="required">*</abbr>
-                                                                                    </label>
-                                                                                    <br />
-                                                                                    <span className="wpcf7-form-control-wrap first-name">
+                                                            {!isLogged && (
+                                                                <>
+                                                                    <div className="col-1 mt-4">
+                                                                        <div className="woocommerce-billing-fields">
+                                                                            <h3>Teslimat adresi</h3>
+                                                                            <div className="woocommerce-billing-fields__field-wrapper-outer">
+                                                                                <div className="woocommerce-billing-fields__field-wrapper">
+                                                                                    <div className="form-group row col-md-12">
+                                                                                        <div className="col-xs-12 col-md-6">
+                                                                                            <label>
+                                                                                                Ad soyad
+                                                                                                <abbr title="required" className="required">*</abbr>
+                                                                                            </label>
+                                                                                            <br />
+                                                                                            <Field
+                                                                                                required
+                                                                                                type="text"
+                                                                                                aria-invalid="false"
+                                                                                                aria-required="true"
+                                                                                                className="input-text w-100"
+                                                                                                size="40"
+                                                                                                name="delivery_full_name"
+                                                                                                autoComplete="cc-name"
+                                                                                                disabled={isLoading(isSubmitting)}
+                                                                                            />
+                                                                                            <br/>
+                                                                                            <ErrorMessage name="delivery_full_name" />
+                                                                                        </div>
+                                                                                        <div className="col-xs-12 col-md-6">
+                                                                                            <label>
+                                                                                                Telefon
+                                                                                                <abbr title="required" className="required">*</abbr>
+                                                                                            </label>
+                                                                                            <br />
+                                                                                            <Field
+                                                                                                required
+                                                                                                type="text"
+                                                                                                aria-invalid="false"
+                                                                                                aria-required="true"
+                                                                                                className="input-text w-100"
+                                                                                                size="40"
+                                                                                                name="delivery_phone"
+                                                                                                autoComplete="cc-name"
+                                                                                                disabled={isLoading(isSubmitting)}
+                                                                                            />
+                                                                                            <br/>
+                                                                                            <ErrorMessage name="delivery_phone" />
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div className="form-group row col-md-12">
+                                                                                        <div className="col-xs-12 col-md-12">
+                                                                                            <label>Şehir
+                                                                                                <abbr title="required" className="required">*</abbr>
+                                                                                            </label>
+                                                                                            <br />
+                                                                                            <span className="wpcf7-form-control-wrap first-name">
+                                                                                    <Field
+                                                                                        name={'delivery_city_id'}
+                                                                                        component={SelectField}
+                                                                                        options={cities}
+                                                                                        disabled={citiesSelectBoxDisabled(false) || isLoading(isSubmitting)}
+                                                                                        loading={getCities.isLoading}
+                                                                                    />
+                                                                                        <ErrorMessage name="delivery_city_id" />
+                                                                                </span>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div className="form-group row col-md-12">
+                                                                                        <div className="col-xs-12 col-md-12">
+                                                                                            <label>Açık Adres
+                                                                                                <abbr title="required" className="required">*</abbr>
+                                                                                            </label>
+                                                                                            <br />
+                                                                                            <span className="wpcf7-form-control-wrap first-name">
+                                                                                    <Field
+                                                                                        className="wpcf7-form-control wpcf7-text wpcf7-validates-as-required input-text"
+                                                                                        name="delivery_address"
+                                                                                        component="textarea"
+                                                                                        disabled={isLoading(isSubmitting)}
+                                                                                    />
+                                                                                            <ErrorMessage name="delivery_address" />
+                                                                                </span>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div className="col-1 mt-4">
+                                                                        <div className="woocommerce-billing-fields">
+                                                                            <h3>Fatura adresi</h3>
+                                                                            <div className="woocommerce-billing-fields__field-wrapper-outer">
+                                                                                <div className="woocommerce-billing-fields__field-wrapper">
+                                                                                    <div className="form-group row col-md-12">
+                                                                                        <div className="col-xs-12 col-md-12">
+                                                                                            <label
+                                                                                                htmlFor="empty_billing_address"
+                                                                                                className="woocommerce-form__label woocommerce-form__label-for-checkbox inline"
+                                                                                            >
+                                                                                                <Field
+                                                                                                    id="empty_billing_address"
+                                                                                                    name="empty_billing_address"
+                                                                                                    className="woocommerce-form__input woocommerce-form__input-checkbox"
+                                                                                                    type="checkbox"
+                                                                                                    disabled={isLoading(isSubmitting)}
+                                                                                                />
+                                                                                                Fatura, teslimat adresine kesilsin.
+                                                                                            </label>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    {!Boolean(values.empty_billing_address) && (
+                                                                                        <>
+                                                                                            <div className="form-group row col-md-12">
+                                                                                                <div className="col-xs-12 col-md-6">
+                                                                                                    <label>
+                                                                                                        Ad soyad
+                                                                                                        <abbr title="required" className="required">*</abbr>
+                                                                                                    </label>
+                                                                                                    <br />
+                                                                                                    <Field
+                                                                                                        required
+                                                                                                        type="text"
+                                                                                                        aria-invalid="false"
+                                                                                                        aria-required="true"
+                                                                                                        className="input-text w-100"
+                                                                                                        size="40"
+                                                                                                        name="invoice_full_name"
+                                                                                                        autoComplete="cc-name"
+                                                                                                        disabled={isLoading(isSubmitting) || values.empty_billing_address}
+                                                                                                    />
+                                                                                                    <br/>
+                                                                                                    <ErrorMessage name="invoice_full_name" />
+                                                                                                </div>
+                                                                                                <div className="col-xs-12 col-md-6">
+                                                                                                    <label>
+                                                                                                        Telefon
+                                                                                                        <abbr title="required" className="required">*</abbr>
+                                                                                                    </label>
+                                                                                                    <br />
+                                                                                                    <Field
+                                                                                                        required
+                                                                                                        type="text"
+                                                                                                        aria-invalid="false"
+                                                                                                        aria-required="true"
+                                                                                                        className="input-text w-100"
+                                                                                                        size="40"
+                                                                                                        name="invoice_phone"
+                                                                                                        autoComplete="cc-name"
+                                                                                                        disabled={isLoading(isSubmitting) || values.empty_billing_address}
+                                                                                                    />
+                                                                                                    <br/>
+                                                                                                    <ErrorMessage name="invoice_phone" />
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <div className="form-group row col-md-12">
+                                                                                                <div className="col-xs-12 col-md-12">
+                                                                                                    <label>Şehir
+                                                                                                        <abbr title="required" className="required">*</abbr>
+                                                                                                    </label>
+                                                                                                    <br />
+                                                                                                    <span className="wpcf7-form-control-wrap first-name">
+                                                                                    <Field
+                                                                                        name={'invoice_city_id'}
+                                                                                        component={SelectField}
+                                                                                        options={cities}
+                                                                                        disabled={citiesSelectBoxDisabled(values.empty_billing_address) || isLoading(isSubmitting)}
+                                                                                        loading={getCities.isLoading}
+                                                                                    />
+                                                                                        <ErrorMessage name="invoice_city_id" />
+                                                                                </span>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <div className="form-group row col-md-12">
+                                                                                                <div className="col-xs-12 col-md-12">
+                                                                                                    <label>Açık Adres
+                                                                                                        <abbr title="required" className="required">*</abbr>
+                                                                                                    </label>
+                                                                                                    <br />
+                                                                                                    <span className="wpcf7-form-control-wrap first-name">
+                                                                                    <Field
+                                                                                        className="wpcf7-form-control wpcf7-text wpcf7-validates-as-required input-text"
+                                                                                        name="invoice_address"
+                                                                                        component="textarea"
+                                                                                        disabled={isLoading(isSubmitting) || values.empty_billing_address}
+                                                                                    />
+                                                                                            <ErrorMessage name="invoice_address" />
+                                                                                </span>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </>
+                                                                                    )}
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </>
+                                                            )}
+                                                            {isLogged && (
+                                                                <div className="col-1 mt-4">
+                                                                    <div className="woocommerce-billing-fields">
+                                                                        <h3>Adres</h3>
+                                                                        <div className="woocommerce-billing-fields__field-wrapper-outer">
+                                                                            <div className="woocommerce-billing-fields__field-wrapper">
+                                                                                <div className="form-group row col-md-12">
+                                                                                    <div className="col-xs-12 col-md-12">
+                                                                                        <label>Teslimat adresi
+                                                                                            <abbr title="required" className="required">*</abbr>
+                                                                                        </label>
+                                                                                        <br />
+                                                                                        <span className="wpcf7-form-control-wrap first-name">
                                                                                     <Field
                                                                                         name="customer_address_id"
                                                                                         component={SelectField}
@@ -817,43 +1223,71 @@ function Payment() {
                                                                                     />
                                                                                             <ErrorMessage name="customer_address_id" />
                                                                                 </span>
+                                                                                    </div>
                                                                                 </div>
-                                                                            </div>
-                                                                            <div className="form-group row col-md-12">
-                                                                                <div className="col-xs-12 col-md-12">
-                                                                                    <label>Fatura adresi
-                                                                                        <abbr title="required" className="required">*</abbr>
-                                                                                    </label>
-                                                                                    <br />
-                                                                                    <span className="wpcf7-form-control-wrap first-name">
+                                                                                <div className="form-group row col-md-12">
+                                                                                    <div className="col-xs-12 col-md-12">
+                                                                                        <label>Fatura adresi
+                                                                                            <abbr title="required" className="required">*</abbr>
+                                                                                        </label>
+                                                                                        <br />
+                                                                                        <span className="wpcf7-form-control-wrap first-name">
                                                                                     <Field
-                                                                                        name="billing_address_id"
+                                                                                        name="invoice_address_id"
                                                                                         component={SelectField}
                                                                                         options={addressesOption}
                                                                                         disabled={billingAddressDisabled(values.empty_billing_address) || isLoading(isSubmitting)}
                                                                                         loading={!values.empty_billing_address && addressesList.isLoading}
                                                                                     />
-                                                                                        <ErrorMessage name="billing_address_id" />
+                                                                                        <ErrorMessage name="invoice_address_id" />
                                                                                 </span>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div className="form-group row col-md-12">
+                                                                                    <div className="col-xs-12 col-md-12">
+                                                                                        <label
+                                                                                            htmlFor="empty_billing_address"
+                                                                                            className="woocommerce-form__label woocommerce-form__label-for-checkbox inline"
+                                                                                        >
+                                                                                            <Field
+                                                                                                id="empty_billing_address"
+                                                                                                name="empty_billing_address"
+                                                                                                className="woocommerce-form__input woocommerce-form__input-checkbox"
+                                                                                                type="checkbox"
+                                                                                                disabled={isLoading(isSubmitting)}
+                                                                                            />
+                                                                                            Fatura, teslimat adresine kesilsin.
+                                                                                        </label>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div className="form-group row col-md-12">
+                                                                                    <div className="col-xs-12 col-md-12">
+                                                                                        <label>Kargo Şirketi
+                                                                                            <abbr title="required" className="required">*</abbr>
+                                                                                        </label>
+                                                                                        <br />
+                                                                                        <span className="wpcf7-form-control-wrap first-name">
+                                                                                    <Field
+                                                                                        name="cargo_company_id"
+                                                                                        component={SelectField}
+                                                                                        options={cargoCompaniesOption}
+                                                                                        disabled={cargoCompaniesSelectBoxDisabled || isLoading(isSubmitting)}
+                                                                                        loading={cargoCompanies.isLoading}
+                                                                                    />
+                                                                                        <ErrorMessage name="cargo_company_id" />
+                                                                                </span>
+                                                                                    </div>
                                                                                 </div>
                                                                             </div>
-                                                                            <div className="form-group row col-md-12">
-                                                                                <div className="col-xs-12 col-md-12">
-                                                                                    <label
-                                                                                        htmlFor="empty_billing_address"
-                                                                                        className="woocommerce-form__label woocommerce-form__label-for-checkbox inline"
-                                                                                    >
-                                                                                        <Field
-                                                                                            id="empty_billing_address"
-                                                                                            name="empty_billing_address"
-                                                                                            className="woocommerce-form__input woocommerce-form__input-checkbox"
-                                                                                            type="checkbox"
-                                                                                            disabled={isLoading(isSubmitting)}
-                                                                                        />
-                                                                                        Fatura, teslimat adresine kesilsin.
-                                                                                    </label>
-                                                                                </div>
-                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            )}
+                                                            <div className="col-1 mt-4">
+                                                                <div className="woocommerce-billing-fields">
+                                                                    <h3>Kargo</h3>
+                                                                    <div className="woocommerce-billing-fields__field-wrapper-outer">
+                                                                        <div className="woocommerce-billing-fields__field-wrapper">
                                                                             <div className="form-group row col-md-12">
                                                                                 <div className="col-xs-12 col-md-12">
                                                                                     <label>Kargo Şirketi
@@ -898,4 +1332,4 @@ function Payment() {
     )
 }
 
-export default Payment
+export default Payment;

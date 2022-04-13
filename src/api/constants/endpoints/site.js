@@ -55,7 +55,6 @@ export const GET_CITIES = {
     body: [],
 };
 
-
 /** @type Endpoint */
 export const GET_TOWNS = {
     path: 'api/get-towns/{city_id}',
