@@ -190,12 +190,8 @@ function App() {
                             <Route path='/odeme' element={(
                                 <Payment />
                             )} />
-                            <Route path='/siparis-ozeti' element={(
-                                <AuthController
-                                    redirectTo="/login"
-                                >
-                                    <OrderSummary />
-                                </AuthController>
+                            <Route path='/siparis-ozeti/:id' element={(
+                                <OrderSummary />
                             )} />
 
                             {/* /login => Login page */}

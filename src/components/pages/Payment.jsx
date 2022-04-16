@@ -447,19 +447,20 @@ function Payment() {
             if (isLogged && !values.invoice_address_id) {
                 errors.invoice_address_id = errorMessages.required;
             }
-            if (!isLogged) {
-                if (!values.delivery_full_name || !values?.delivery_full_name?.toString()?.length) {
-                    errors.delivery_full_name = errorMessages.required;
-                }
-                if (!values.delivery_city_id || !values?.delivery_city_id?.toString()?.length) {
-                    errors.delivery_city_id = errorMessages.required;
-                }
-                if (!values.delivery_phone || !values?.delivery_phone?.toString()?.length) {
-                    errors.delivery_phone = errorMessages.required;
-                }
-                if (!values.delivery_address || !values?.delivery_address?.toString()?.length) {
-                    errors.delivery_address = errorMessages.required;
-                }
+        }
+
+        if (!isLogged) {
+            if (!values.delivery_full_name || !values?.delivery_full_name?.toString()?.length) {
+                errors.delivery_full_name = errorMessages.required;
+            }
+            if (!values.delivery_city_id || !values?.delivery_city_id?.toString()?.length) {
+                errors.delivery_city_id = errorMessages.required;
+            }
+            if (!values.delivery_phone || !values?.delivery_phone?.toString()?.length) {
+                errors.delivery_phone = errorMessages.required;
+            }
+            if (!values.delivery_address || !values?.delivery_address?.toString()?.length) {
+                errors.delivery_address = errorMessages.required;
             }
         }
 
@@ -557,7 +558,7 @@ function Payment() {
         setSubmitting(true);
         setLoading(true);
         placeOrder?.mutate(values, {
-            onSuccess: ({ status = false, order_id, errors = { msg: '' }}) => {
+            onSuccess: ({ status = false, order_code, errors = { msg: '' }}) => {
                 if (!status) {
                     sweetalert({
                         icon: 'error',
@@ -569,11 +570,10 @@ function Payment() {
                     }).then();
                 } else {
                     clearLocalBasket();
-                    if (order_id) {
-                        goWithState(
-                            `/siparis-ozeti`,
-                            { order_id },
-                            false,
+                    if (order_code) {
+                        go(
+                            `/siparis-ozeti/${order_code}`,
+                            false
                         );
                     } else {
                         go(`/siparislerim`);
@@ -595,7 +595,7 @@ function Payment() {
                 setLoading(false);
             },
         });
-    }, [account, isUser, isGuest, placeOrder, clearLocalBasket, go,  goWithState, installmentFee, getOrderCode]);
+    }, [account, isUser, isGuest, placeOrder, clearLocalBasket, go, installmentFee, getOrderCode]);
 
     const isLoading = useCallback((isSubmitting = false) => (
         loading || isSubmitting || placeOrder?.isLoading

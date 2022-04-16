@@ -5,9 +5,6 @@ import {ayir, getBasketTotalPrice} from "../../store/selectors/basket";
 const CartTotals = () => {
     const totalPrice = useSelector(getBasketTotalPrice);
 
-    const kdv = 18;
-    const kdvTotal = totalPrice * kdv / 100;
-
     return (
         <div className="cart-collaterals">
             <div className="cart_totals">
@@ -23,21 +20,12 @@ const CartTotals = () => {
                                     </span>
                         </td>
                     </tr>
-                    <tr className="cart-subtotal">
-                        <th>KDV (%{kdv})</th>
-                        <td data-title="Subtotal">
-                                    <span className="woocommerce-Price-amount amount">
-                                        {ayir(kdvTotal)}
-                                        <span className="woocommerce-Price-currencySymbol">₺</span>
-                                    </span>
-                        </td>
-                    </tr>
                     <tr className="order-total">
                         <th>Toplam</th>
                         <td data-title="Total">
                             <strong>
                                         <span className="woocommerce-Price-amount amount">
-                                            {ayir(totalPrice + kdvTotal)}
+                                            {ayir(totalPrice)}
                                             <span className="woocommerce-Price-currencySymbol">₺</span>
                                         </span>
                             </strong>

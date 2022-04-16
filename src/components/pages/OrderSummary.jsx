@@ -6,26 +6,24 @@ import HeaderMain from "../layout/Header/Header"
 import TopBar from "../layout/TopBar"
 import {useQuery} from "react-query";
 import {DEFAULT_API_KEY, fetchThis, GET_ORDER_SUMMARY, retry} from "../../api";
-import useAuth from "../../store/hooks/useAuth";
 import {ayir} from "../../store/selectors/basket";
 import moment from "moment";
-import {useLocation} from "react-router-dom";
+import {useLocation, useParams} from "react-router-dom";
 
 function OrderSummary() {
     const location = useLocation();
-    const { account, isLogged = false } = useAuth();
+    const params = useParams();
     const [crumb] = useState([
         { url: '#', title: ' Sipariş Özeti' }
     ])
 
     const orderDetail = useQuery(
-        ['get-order-detail', account, location],
+        ['get-order-detail', params],
         () => (
             fetchThis(
                 GET_ORDER_SUMMARY,
                 {
-                    order_id: location?.state?.order_id,
-                    customer_id: account.customer_id.toString(),
+                    order_id: params?.id,
                 },
                 DEFAULT_API_KEY,
                 {},
@@ -35,8 +33,7 @@ function OrderSummary() {
             retry,
             refetchOnWindowFocus: false,
             enabled: Boolean(
-                isLogged
-                && typeof location?.state?.order_id !== 'undefined'
+                typeof params?.id !== 'undefined'
             ),
         },
     );

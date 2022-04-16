@@ -11,10 +11,7 @@ const OrderReviewItemList = (props) => {
         basketArray,
     } = useBasket();
 
-    const kdv = 18;
-    const kdvTotal = subTotal * kdv / 100;
-
-    let totalPrice = subTotal + kdvTotal;
+    let totalPrice = subTotal;
 
     let installmentFeeCalc = (installmentFee?.fee || 0) - totalPrice;
     if (installmentFeeCalc < 0) installmentFeeCalc = 0;
@@ -66,15 +63,6 @@ const OrderReviewItemList = (props) => {
                     </td>
                 </tr>
             )}
-            <tr className="cart-subtotal">
-                <th>KDV (%{kdv})</th>
-                <td>
-                            <span className="woocommerce-Price-amount amount">
-                                {ayir(kdvTotal)}
-                                <span className="woocommerce-Price-currencySymbol">₺</span>
-                            </span>
-                </td>
-            </tr>
             <tr className="order-total">
                 <th>Toplam</th>
                 <td>
