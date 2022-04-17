@@ -376,7 +376,12 @@ function MemberInformations() {
                                                 <a href="/adreslerim">
                                                     <span className="no-child" />Adreslerim</a>
                                             </li>
-
+                                            <li className="cat-item  current-cat">
+                                                <a href="/log-out">
+                                                    <span className="no-child" />
+                                                    Çıkış yap
+                                                </a>
+                                            </li>
                                         </ul>
                                     </li>
                                     <li className="product_cat">

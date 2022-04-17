@@ -251,11 +251,20 @@ function EditAddress() {
                         value: selected.id,
                     });
             }
-
-
-
         }
-    }, [getAddressInfo, addressesSelectBox])
+    }, [
+        getAddressInfo,
+        addressesSelectBox,
+        getCities.data,
+        getCities.isSuccess,
+        getTowns.data,
+        getTowns.isSuccess,
+        getDistricts.data,
+        getDistricts.isSuccess,
+        getNeighborhoods.data,
+        getNeighborhoods.isSuccess,
+        setSelectBox,
+    ])
 
     const validateForm = useCallback((values) => {
         const errors = {};
@@ -368,7 +377,15 @@ function EditAddress() {
         || getAddressInfo?.isLoading || getCities?.isLoading
         || getTowns?.isLoading || getDistricts?.isLoading
         || getNeighborhoods?.isLoading
-    ), [loading, editAddressMutation, getAddressInfo]);
+    ), [
+        loading,
+        editAddressMutation,
+        getAddressInfo,
+        getCities?.isLoading,
+        getTowns?.isLoading,
+        getDistricts?.isLoading,
+        getNeighborhoods?.isLoading,
+    ]);
     const submitIsDisabled = useCallback((isSubmitting, errors = {}, values) => (
         isLoading(isSubmitting) || Boolean(Object.keys(errors).length) || Boolean(Object.keys(validateForm(values)).length)
     ), [isLoading, validateForm]);
@@ -834,7 +851,12 @@ function EditAddress() {
                                                 <a href="/adreslerim">
                                                     <span className="no-child" /><strong>Adreslerim</strong></a>
                                             </li>
-
+                                            <li className="cat-item  current-cat">
+                                                <a href="/log-out">
+                                                    <span className="no-child" />
+                                                    Çıkış yap
+                                                </a>
+                                            </li>
                                         </ul>
                                     </li>
                                     <li className="product_cat">

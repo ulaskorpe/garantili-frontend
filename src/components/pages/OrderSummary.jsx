@@ -9,10 +9,16 @@ import {DEFAULT_API_KEY, fetchThis, GET_ORDER_SUMMARY, retry} from "../../api";
 import {ayir} from "../../store/selectors/basket";
 import moment from "moment";
 import {useLocation, useParams} from "react-router-dom";
+import useAuth from "../../store/hooks/useAuth";
 
 function OrderSummary() {
     const location = useLocation();
     const params = useParams();
+    const {
+        isGuest,
+        isUser,
+        account,
+    } = useAuth()
     const [crumb] = useState([
         { url: '#', title: ' Sipariş Özeti' }
     ])
@@ -24,6 +30,8 @@ function OrderSummary() {
                 GET_ORDER_SUMMARY,
                 {
                     order_id: params?.id,
+                    customer_id: isUser ? account.customer_id : '',
+                    guid: isGuest ? account.customer_id : '',
                 },
                 DEFAULT_API_KEY,
                 {},
@@ -69,9 +77,11 @@ function OrderSummary() {
                                     <div className="entry-content">
                                         <div className="woocommerce">
                                             <div className="woocommerce-order">
-                                                <p className="woocommerce-notice woocommerce-notice--success woocommerce-thankyou-order-received">
-                                                    Teşekkürler, siparişiniz alındı.
-                                                </p>
+                                                {orderDetail.isSuccess && (
+                                                    <p className="woocommerce-notice woocommerce-notice--success woocommerce-thankyou-order-received">
+                                                        Teşekkürler, siparişiniz alındı.
+                                                    </p>
+                                                )}
 
                                                 <section className="woocommerce-order-details">
                                                     <br />

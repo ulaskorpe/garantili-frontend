@@ -28,7 +28,7 @@ const OrderReviewItemList = (props) => {
             <tbody>
             {basketArray.map((item) => {
                 return (
-                    <tr className="cart_item" key={`cartItem_${item.id}`}>
+                    <tr className="cart_item" key={`cartItem_${item.item_code}`}>
                         <td className="product-name">
                             <span> {item.product}</span>
                         </td>

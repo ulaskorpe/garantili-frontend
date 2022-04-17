@@ -5,7 +5,8 @@ export const GET_ORDER_SUMMARY = {
     apiKeyRequired: true,
     pathVars: [],
     body: [
-        { name: 'customer_id', type: String, default: '',  isRequired: true },
+        { name: 'customer_id', type: String, default: '',  isRequired: false },
+        { name: 'guid', type: String, default: '',  isRequired: false },
         { name: 'order_id', type: String, default: '',  isRequired: true },
     ],
 };

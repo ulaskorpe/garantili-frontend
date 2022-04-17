@@ -90,10 +90,10 @@ const TopBar = () => {
                     )}
                     {isLogged && (
                         <MenuItem
-                            title={`Çıkış yap (${account.name})`}
+                            title={`Hesabım (${account.name})`}
                             className="menu-item"
-                            icon={<i className="tm tm-login-register" />}
-                            path="/log-out"
+                            icon={<i className="fa fa-12x fa-user-circle-o" />}
+                            path="/uyelik-bilgilerim"
                         />
                     )}
                     {!isLogged && (

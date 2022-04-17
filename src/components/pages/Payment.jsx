@@ -5,7 +5,7 @@ import BreadCrumb from "../layout/BreadCrumb"
 import Footer from "../layout/Footer/Footer"
 import HeaderMain from "../layout/Header/Header"
 import TopBar from "../layout/TopBar"
-import {Formik, Form, Field, ErrorMessage} from "formik";
+import {Formik, Field, ErrorMessage} from "formik";
 import useAuth from "../../store/hooks/useAuth";
 import Select from "react-select";
 import {useMutation, useQuery, useQueryClient} from "react-query";
@@ -22,13 +22,15 @@ import {
 import useBasket from "../../store/hooks/useBasket";
 import sweetalert from "sweetalert";
 import useRouterDOM from "../../hooks/useRouterDOM";
+import * as moment from "moment";
+import useTemp from "../../store/hooks/useTemp";
 
 const initialInputValues = {
     customer_address_id: null,
     invoice_address_id: null,
     installment_fee: null,
     empty_billing_address: true,
-    payment_method: 0,
+    payment_method: '',
     bank_id: null,
     name_surname: '',
     cc_no: '',
@@ -54,10 +56,19 @@ const SelectField = ({options, disabled, loading, field, form, onChange = () => 
         <Select
             options={options}
             name={field.name}
-            value={options ? options.find(option => option.value === field.value) : ''}
+            value={
+                !Boolean(
+                    typeof field?.value === 'undefined'
+                    || field?.value === null
+                ) ?
+                    (options ? options.find(option => option.value === field.value) : '')
+                    : ''
+            }
             onChange={(option) => {
-                form.setFieldValue(field.name, option.value)
-                if (onChange && onChange?.call) onChange(option);
+                if (field.value !== option.value) {
+                    form.setFieldValue(field.name, option.value)
+                    if (onChange && onChange?.call) onChange(option);
+                }
             }}
             onBlur={field.onBlur}
             isDisabled={disabled}
@@ -80,6 +91,10 @@ function Payment() {
     const { go, goEvent, goWithState } = useRouterDOM();
     const { account, isLogged = false, isUser = false, isGuest } = useAuth();
     const [loading, setLoading] = useState(false);
+    const {
+        temps = { fetchedBasket: false },
+    } = useTemp();
+    const { basketArray } = useBasket();
     const { clearLocalBasket, totalPrice } = useBasket();
     const [installmentFee, setInstallmentFee] = useState(0);
     const [lastBank, setLastBank] = useState('');
@@ -431,11 +446,46 @@ function Payment() {
             bankAccountList?.data?.data?.bank_accounts.find((bank) => (bank.id === id)) || {}
         );
     }, [bankAccountList]);
+    const parseExpireDate = useCallback((expire) => {
+        let returnedData = [];
+
+        const split = expire.split('/');
+        if (split.length === 2) {
+            const currentDate = moment();
+            const [month, year] = split.map((deg) => parseInt(deg));
+
+            if (
+                !Number.isNaN(month)
+                && month <= 12
+                && !Number.isNaN(year)
+            ) {
+                const momentMonth = parseInt(currentDate.format('MM'));
+                const momentYear = parseInt(currentDate.format('YY'));
+
+                if (
+                    (year > momentYear)
+                    || (year === momentYear && month >= momentMonth)
+                ) {
+                    returnedData = [
+                        (month > 9 ? month : (`0${month}`)).toString(),
+                        (year > 9 ? year : (`0${year}`)).toString(),
+                    ];
+                }
+            }
+        }
+
+        return returnedData;
+    }, []);
     const validateForm = useCallback((values) => {
         const errors = {};
         const errorMessages = {
             required: 'Bu alan zorunlu!',
         }
+
+        if (
+            getOrderCode.isSuccess
+            && !(getOrderCode?.data?.data?.order_code)
+        ) errors.order_id = 'Order verisi gelmedi!'
 
         if (!values.cargo_company_id || !values?.cargo_company_id?.toString()?.length) {
             errors.cargo_company_id = errorMessages.required;
@@ -493,9 +543,14 @@ function Payment() {
             if (!values.cc_no || !values.cc_no?.toString()?.length) {
                 errors.cc_no = errorMessages.required;
             }
-            if (!values.expires_at || !values.expires_at?.toString()?.length) {
+            if (
+                !values.expires_at
+                || !values.expires_at?.toString()?.length
+            ) {
                 errors.expires_at = errorMessages.required;
-            }
+            } else if (parseExpireDate(values.expires_at).length !== 2)
+                errors.expires_at = 'Hatalı son kullanım tarihi!';
+
             if (!values.cvc || !values.cvc?.toString()?.length) {
                 errors.cvc = errorMessages.required;
             }
@@ -521,7 +576,7 @@ function Payment() {
         }
 
         return errors;
-    }, [isLogged]);
+    }, [isLogged, getOrderCode, parseExpireDate]);
     const handleSubmit = useCallback((iValues, {
         setSubmitting,
     }) => {
@@ -596,13 +651,48 @@ function Payment() {
             },
         });
     }, [account, isUser, isGuest, placeOrder, clearLocalBasket, go, installmentFee, getOrderCode]);
+    const ccSubmit = useCallback((values) => (e) => {
+        const validate = validateForm(values)
+
+        if (
+            Object.keys(validate).length > 0
+            || !installmentFee
+            || !installmentFee?.installment
+            || Boolean(
+                typeof installmentFee?.tutar === 'undefined'
+                || installmentFee?.tutar === null
+                || !(installmentFee?.tutar >= 0)
+            )
+        ) {
+            e.preventDefault();
+        }
+    }, [validateForm, installmentFee])
 
     const isLoading = useCallback((isSubmitting = false) => (
         loading || isSubmitting || placeOrder?.isLoading
     ), [loading, placeOrder]);
+    const inputDisabled = useCallback((isSubmitting = false) => (
+        !basketArray.length || isLoading(isSubmitting)
+    ), [basketArray.length, isLoading])
     const submitIsDisabled = useCallback((isSubmitting, errors = {}, values) => (
-        isLoading(isSubmitting) || Boolean(Object.keys(errors).length) || Boolean(Object.keys(validateForm(values)).length)
-    ), [isLoading, validateForm]);
+        inputDisabled(isSubmitting) || Boolean(Object.keys(errors).length) || Boolean(Object.keys(validateForm(values)).length)
+    ), [validateForm, inputDisabled]);
+
+    const HiddenInput = useCallback((props) => {
+        const {
+            name,
+            value,
+        } = props;
+        return (
+            <input
+                name={name}
+                defaultValue={value}
+                type="hidden"
+                readOnly
+                style={{ display: 'none' }}
+            />
+        );
+    }, []);
 
     return (
         <div className="woocommerce-active single-product full-width normal">
@@ -619,7 +709,8 @@ function Payment() {
                                 <div className="type-page hentry">
                                     <div className="entry-content">
                                         {Boolean(
-                                            isLogged
+                                            basketArray.length
+                                            && isLogged
                                             && addressesList.isSuccess
                                             && !addressesOption.length
                                         ) && (
@@ -675,7 +766,10 @@ function Payment() {
                                                 </p>
                                             </div>
                                         )}
-                                        {!isLogged && (
+                                        {Boolean(
+                                            basketArray.length
+                                            && !isLogged
+                                        ) && (
                                             <div
                                                 style={{
                                                     display: 'flex',
@@ -728,6 +822,45 @@ function Payment() {
                                                 </p>
                                             </div>
                                         )}
+                                        {Boolean(
+                                            !basketArray.length
+                                            && temps.fetchedBasket
+                                        ) && (
+                                            <div
+                                                style={{
+                                                    display: 'flex',
+                                                    flexDirection: 'column',
+                                                    justifyContent: 'center',
+                                                    alignItems: 'flex-start',
+                                                    width: '100%',
+                                                    padding: '20px 20px',
+                                                    backgroundColor: '#FFE0B2',
+                                                    color: '#FB8C00',
+                                                    marginBottom: 20,
+                                                    borderRadius: 6,
+                                                }}
+                                            >
+                                                <h4
+                                                    style={{
+                                                        color: 'inherit',
+                                                        margin: 0,
+                                                        padding: 0,
+                                                        paddingBottom: 4,
+                                                    }}
+                                                >
+                                                    UYARI
+                                                </h4>
+                                                <p
+                                                    style={{
+                                                        color: 'inherit',
+                                                        margin: 0,
+                                                        padding: 0,
+                                                    }}
+                                                >
+                                                    Sepetiniz boş. Lütfen sepetinize ürün ekleyin.
+                                                </p>
+                                            </div>
+                                        )}
                                         <div className="woocommerce">
                                             <Formik
                                                 onSubmit={handleSubmit}
@@ -742,8 +875,70 @@ function Payment() {
                                                       handleBlur,
                                                       touched,
                                                       setTouched,
+                                                      handleSubmit: formSubmit
                                                   }) => (
-                                                    <Form className="checkout woocommerce-checkout" name="checkout">
+                                                    <form
+                                                        className="checkout woocommerce-checkout"
+                                                        name="checkout"
+                                                        method="POST"
+                                                        action={(
+                                                            values?.payment_method === 0 ?
+                                                                'https://garantili.com.tr/eticaretodeme/odeme'
+                                                                : '#'
+                                                        )}
+                                                        onSubmit={(
+                                                            values?.payment_method === 0
+                                                                ? ccSubmit(values)
+                                                                : formSubmit
+                                                        )}
+                                                    >
+                                                        {values?.payment_method === 0 && (
+                                                            <>
+                                                                {Boolean(
+                                                                    getOrderCode.isSuccess
+                                                                    && getOrderCode?.data?.data?.order_code
+                                                                ) && (
+                                                                    <HiddenInput
+                                                                        name="order_id"
+                                                                        value={getOrderCode?.data?.data?.order_code}
+                                                                    />
+                                                                )}
+                                                                <HiddenInput
+                                                                    name="expiryMM"
+                                                                    value={parseExpireDate(values.expires_at)[0] || ''}
+                                                                />
+                                                                <HiddenInput
+                                                                    name="expiryYY"
+                                                                    value={parseExpireDate(values.expires_at)[1] || ''}
+                                                                />
+                                                                <HiddenInput
+                                                                    name="banka"
+                                                                    value={values?.bank_id?.value || ''}
+                                                                />
+                                                                <HiddenInput
+                                                                    name="tutar"
+                                                                    value={
+                                                                        installmentFee
+                                                                            ? (
+                                                                                installmentFee?.tutar
+                                                                                || ''
+                                                                            )
+                                                                            : ''
+                                                                    }
+                                                                />
+                                                                <HiddenInput
+                                                                    name="taksit"
+                                                                    value={
+                                                                        installmentFee
+                                                                            ? (
+                                                                                installmentFee?.installment
+                                                                                || ''
+                                                                            )
+                                                                            : ''
+                                                                    }
+                                                                />
+                                                            </>
+                                                        )}
                                                         <div id="customer_details" className="col2-set">
                                                             <div className="col-1">
                                                                 <div className="woocommerce-billing-fields">
@@ -761,7 +956,7 @@ function Payment() {
                                                                                         name={'payment_method'}
                                                                                         component={SelectField}
                                                                                         options={bankAccounts}
-                                                                                        disabled={banksSelectBoxDisabled || isLoading(isSubmitting)}
+                                                                                        disabled={banksSelectBoxDisabled || inputDisabled(isSubmitting)}
                                                                                         loading={bankAccountList.isLoading}
                                                                                         onChange={() => {
                                                                                             if (values.receipt) {
@@ -772,7 +967,7 @@ function Payment() {
                                                                                             setTouched({...touched, installments: false});
 
                                                                                             setFieldValue('bank_id', null);
-                                                                                            setFieldValue('installments', null);
+                                                                                            setFieldValue('installments', '');
 
                                                                                             setLastBank('')
                                                                                             setInstallmentFee(0)
@@ -798,10 +993,12 @@ function Payment() {
                                                                                         name="bank_id"
                                                                                         component={SelectField}
                                                                                         options={banksOption}
-                                                                                        disabled={bankListSelectBoxDisabled || isLoading(isSubmitting)}
+                                                                                        disabled={bankListSelectBoxDisabled || inputDisabled(isSubmitting)}
                                                                                         loading={banks.isLoading}
                                                                                         onChange={(val) => {
+                                                                                            setFieldValue('installments', null);
                                                                                             setFieldValue("bank_id", val);
+                                                                                            setInstallmentFee(0);
                                                                                             handleChangeBank(val);
                                                                                         }}
                                                                                     />
@@ -817,12 +1014,12 @@ function Payment() {
                                                                                             <br />
                                                                                             <span className="wpcf7-form-control-wrap first-name">
                                                                                     <Field
-                                                                                        name={'installments'}
+                                                                                        name="installments"
                                                                                         component={SelectField}
                                                                                         options={installmentOptions}
                                                                                         disabled={Boolean(
                                                                                             banksSelectBoxDisabled
-                                                                                            || isLoading(isSubmitting)
+                                                                                            || inputDisabled(isSubmitting)
                                                                                             || !values.bank_id
                                                                                         )}
                                                                                         loading={getInstallments.isLoading}
@@ -861,7 +1058,7 @@ function Payment() {
                                                                                                 size="40"
                                                                                                 name="name_surname"
                                                                                                 autoComplete="cc-name"
-                                                                                                disabled={isLoading(isSubmitting)}
+                                                                                                disabled={inputDisabled(isSubmitting)}
                                                                                             />
                                                                                             <br/>
                                                                                             <ErrorMessage name="name_surname" />
@@ -882,7 +1079,7 @@ function Payment() {
                                                                                                 maxLength="16"
                                                                                                 name="cc_no"
                                                                                                 autoComplete="cc-number"
-                                                                                                disabled={isLoading(isSubmitting)}
+                                                                                                disabled={inputDisabled(isSubmitting)}
                                                                                             />
                                                                                             <br/>
                                                                                             <ErrorMessage name="cc_no" />
@@ -892,7 +1089,7 @@ function Payment() {
                                                                                         <div className="col-xs-12 col-md-6">
                                                                                             <label>
                                                                                                 Son Kullanım Tarihi
-                                                                                                <abbr title="required" className="required">*</abbr>
+                                                                                                <abbr title="Ay yıl şeklinde. ÖR: 03/25" className="required">*</abbr>
                                                                                             </label>
                                                                                             <br />
                                                                                             <Field
@@ -904,9 +1101,9 @@ function Payment() {
                                                                                                 size="40"
                                                                                                 name="expires_at"
                                                                                                 autoComplete="cc-exp"
-                                                                                                placeholder="MMYY"
-                                                                                                maxLength="4"
-                                                                                                disabled={isLoading(isSubmitting)}
+                                                                                                placeholder="AA/YY"
+                                                                                                maxLength="5"
+                                                                                                disabled={inputDisabled(isSubmitting)}
                                                                                             />
                                                                                             <br/>
                                                                                             <ErrorMessage name="expires_at" />
@@ -927,7 +1124,7 @@ function Payment() {
                                                                                                 maxLength="3"
                                                                                                 name="cvc"
                                                                                                 autoComplete="cc-csc"
-                                                                                                disabled={isLoading(isSubmitting)}
+                                                                                                disabled={inputDisabled(isSubmitting)}
                                                                                             />
                                                                                             <br/>
                                                                                             <ErrorMessage name="cvc" />
@@ -988,6 +1185,7 @@ function Payment() {
                                                                                                 name="receipt"
                                                                                                 placeholder="item"
                                                                                                 onBlur={handleBlur}
+                                                                                                disabled={inputDisabled(isSubmitting)}
                                                                                                 onChange={(event) => {
                                                                                                     setFieldValue("receipt", event.currentTarget.files[0]);
                                                                                                 }}
@@ -1026,8 +1224,7 @@ function Payment() {
                                                                                                 className="input-text w-100"
                                                                                                 size="40"
                                                                                                 name="delivery_full_name"
-                                                                                                autoComplete="cc-name"
-                                                                                                disabled={isLoading(isSubmitting)}
+                                                                                                disabled={inputDisabled(isSubmitting)}
                                                                                             />
                                                                                             <br/>
                                                                                             <ErrorMessage name="delivery_full_name" />
@@ -1046,8 +1243,7 @@ function Payment() {
                                                                                                 className="input-text w-100"
                                                                                                 size="40"
                                                                                                 name="delivery_phone"
-                                                                                                autoComplete="cc-name"
-                                                                                                disabled={isLoading(isSubmitting)}
+                                                                                                disabled={inputDisabled(isSubmitting)}
                                                                                             />
                                                                                             <br/>
                                                                                             <ErrorMessage name="delivery_phone" />
@@ -1064,7 +1260,7 @@ function Payment() {
                                                                                         name={'delivery_city_id'}
                                                                                         component={SelectField}
                                                                                         options={cities}
-                                                                                        disabled={citiesSelectBoxDisabled(false) || isLoading(isSubmitting)}
+                                                                                        disabled={citiesSelectBoxDisabled(false) || inputDisabled(isSubmitting)}
                                                                                         loading={getCities.isLoading}
                                                                                     />
                                                                                         <ErrorMessage name="delivery_city_id" />
@@ -1082,7 +1278,7 @@ function Payment() {
                                                                                         className="wpcf7-form-control wpcf7-text wpcf7-validates-as-required input-text"
                                                                                         name="delivery_address"
                                                                                         component="textarea"
-                                                                                        disabled={isLoading(isSubmitting)}
+                                                                                        disabled={inputDisabled(isSubmitting)}
                                                                                     />
                                                                                             <ErrorMessage name="delivery_address" />
                                                                                 </span>
@@ -1108,7 +1304,7 @@ function Payment() {
                                                                                                     name="empty_billing_address"
                                                                                                     className="woocommerce-form__input woocommerce-form__input-checkbox"
                                                                                                     type="checkbox"
-                                                                                                    disabled={isLoading(isSubmitting)}
+                                                                                                    disabled={inputDisabled(isSubmitting)}
                                                                                                 />
                                                                                                 Fatura, teslimat adresine kesilsin.
                                                                                             </label>
@@ -1131,8 +1327,7 @@ function Payment() {
                                                                                                         className="input-text w-100"
                                                                                                         size="40"
                                                                                                         name="invoice_full_name"
-                                                                                                        autoComplete="cc-name"
-                                                                                                        disabled={isLoading(isSubmitting) || values.empty_billing_address}
+                                                                                                        disabled={inputDisabled(isSubmitting) || values.empty_billing_address}
                                                                                                     />
                                                                                                     <br/>
                                                                                                     <ErrorMessage name="invoice_full_name" />
@@ -1151,8 +1346,7 @@ function Payment() {
                                                                                                         className="input-text w-100"
                                                                                                         size="40"
                                                                                                         name="invoice_phone"
-                                                                                                        autoComplete="cc-name"
-                                                                                                        disabled={isLoading(isSubmitting) || values.empty_billing_address}
+                                                                                                        disabled={inputDisabled(isSubmitting) || values.empty_billing_address}
                                                                                                     />
                                                                                                     <br/>
                                                                                                     <ErrorMessage name="invoice_phone" />
@@ -1169,7 +1363,7 @@ function Payment() {
                                                                                         name={'invoice_city_id'}
                                                                                         component={SelectField}
                                                                                         options={cities}
-                                                                                        disabled={citiesSelectBoxDisabled(values.empty_billing_address) || isLoading(isSubmitting)}
+                                                                                        disabled={citiesSelectBoxDisabled(values.empty_billing_address) || inputDisabled(isSubmitting)}
                                                                                         loading={getCities.isLoading}
                                                                                     />
                                                                                         <ErrorMessage name="invoice_city_id" />
@@ -1187,7 +1381,7 @@ function Payment() {
                                                                                         className="wpcf7-form-control wpcf7-text wpcf7-validates-as-required input-text"
                                                                                         name="invoice_address"
                                                                                         component="textarea"
-                                                                                        disabled={isLoading(isSubmitting) || values.empty_billing_address}
+                                                                                        disabled={inputDisabled(isSubmitting) || values.empty_billing_address}
                                                                                     />
                                                                                             <ErrorMessage name="invoice_address" />
                                                                                 </span>
@@ -1218,7 +1412,7 @@ function Payment() {
                                                                                         name="customer_address_id"
                                                                                         component={SelectField}
                                                                                         options={addressesOption}
-                                                                                        disabled={addressesSelectBoxDisabled || isLoading(isSubmitting)}
+                                                                                        disabled={addressesSelectBoxDisabled || inputDisabled(isSubmitting)}
                                                                                         loading={addressesList.isLoading}
                                                                                     />
                                                                                             <ErrorMessage name="customer_address_id" />
@@ -1236,7 +1430,7 @@ function Payment() {
                                                                                         name="invoice_address_id"
                                                                                         component={SelectField}
                                                                                         options={addressesOption}
-                                                                                        disabled={billingAddressDisabled(values.empty_billing_address) || isLoading(isSubmitting)}
+                                                                                        disabled={billingAddressDisabled(values.empty_billing_address) || inputDisabled(isSubmitting)}
                                                                                         loading={!values.empty_billing_address && addressesList.isLoading}
                                                                                     />
                                                                                         <ErrorMessage name="invoice_address_id" />
@@ -1254,28 +1448,10 @@ function Payment() {
                                                                                                 name="empty_billing_address"
                                                                                                 className="woocommerce-form__input woocommerce-form__input-checkbox"
                                                                                                 type="checkbox"
-                                                                                                disabled={isLoading(isSubmitting)}
+                                                                                                disabled={inputDisabled(isSubmitting)}
                                                                                             />
                                                                                             Fatura, teslimat adresine kesilsin.
                                                                                         </label>
-                                                                                    </div>
-                                                                                </div>
-                                                                                <div className="form-group row col-md-12">
-                                                                                    <div className="col-xs-12 col-md-12">
-                                                                                        <label>Kargo Şirketi
-                                                                                            <abbr title="required" className="required">*</abbr>
-                                                                                        </label>
-                                                                                        <br />
-                                                                                        <span className="wpcf7-form-control-wrap first-name">
-                                                                                    <Field
-                                                                                        name="cargo_company_id"
-                                                                                        component={SelectField}
-                                                                                        options={cargoCompaniesOption}
-                                                                                        disabled={cargoCompaniesSelectBoxDisabled || isLoading(isSubmitting)}
-                                                                                        loading={cargoCompanies.isLoading}
-                                                                                    />
-                                                                                        <ErrorMessage name="cargo_company_id" />
-                                                                                </span>
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
@@ -1299,7 +1475,7 @@ function Payment() {
                                                                                         name="cargo_company_id"
                                                                                         component={SelectField}
                                                                                         options={cargoCompaniesOption}
-                                                                                        disabled={cargoCompaniesSelectBoxDisabled || isLoading(isSubmitting)}
+                                                                                        disabled={cargoCompaniesSelectBoxDisabled || inputDisabled(isSubmitting)}
                                                                                         loading={cargoCompanies.isLoading}
                                                                                     />
                                                                                         <ErrorMessage name="cargo_company_id" />
@@ -1315,14 +1491,13 @@ function Payment() {
                                                             disabled={submitIsDisabled(isSubmitting, errors, values)}
                                                             installmentFee={installmentFee}
                                                         />
-                                                    </Form>
+                                                    </form>
                                                 )}
                                             </Formik>
                                         </div>
                                     </div>
                                 </div>
                             </main>
-
                         </div>
                     </div>
                 </div>
