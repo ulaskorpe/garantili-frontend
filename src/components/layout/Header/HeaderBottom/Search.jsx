@@ -1,14 +1,6 @@
 import React, {useCallback, useEffect, useState} from "react";
 import {useLocation, useNavigate, useSearchParams} from "react-router-dom";
 
-const INITIAL_CATEGORIES = [
-    { id: 0, title: 'Mağaza', url: '/urunler' },
-    { id: 1, title: 'Süper Teklifler', url: '/super-teklifler' },
-    { id: 2, title: 'Telefonlar', url: '/urunler/telefonlar/2'},
-    { id: 3, title: 'Tabletler', url: '/urunler/tabletler/3' },
-    { id: 4, title: 'Aksesuarlar', url: '/urunler/aksesuarlar/4' },
-];
-
 let timer = null;
 const Search = (props) => {
     const {
@@ -38,7 +30,7 @@ const Search = (props) => {
                     && searchParams.get('q')
                 ) setSearchParams({})
             }
-        }, [250]);
+        }, [350]);
     }, [deg, setSearchKeyword, setSearchParams, searchParams]);
 
     const goSearch = useCallback((e) => {

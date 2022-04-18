@@ -10,6 +10,7 @@ import {CUSTOMER_UPDATE_PASSWORD, DEFAULT_API_KEY, fetchThis} from "../../api";
 import sweetalert from "sweetalert";
 import useAuth from "../../store/hooks/useAuth";
 import {useLocation, useNavigate} from "react-router-dom";
+import useRouterDOM from "../../hooks/useRouterDOM";
 
 const initialValues = {
     current_password: '',
@@ -21,6 +22,7 @@ function PasswordUpdate() {
     const location = useLocation();
     const [loading, setLoading] = useState(false);
     const { account, isLogged = false } = useAuth();
+    const { go } = useRouterDOM();
     const [crumb] = useState([
         { url: '#', title: 'Şifre Güncelleme' }
     ]);
@@ -66,6 +68,7 @@ function PasswordUpdate() {
                         },
                     }).then(() => {
                         resetForm();
+                        go('/uyelik-bilgilerim');
                     });
                 }
                 setSubmitting(false);
@@ -86,7 +89,7 @@ function PasswordUpdate() {
                 setLoading(false);
             },
         });
-    }, [account, isLogged, updatePasswordMutation]);
+    }, [account, isLogged, updatePasswordMutation, go]);
 
     const validateForm = (values) => {
         const errors = {};

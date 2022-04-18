@@ -1,4 +1,4 @@
-import React, {useCallback, useMemo} from 'react';
+import React, {useCallback, useEffect, useMemo} from 'react';
 import { useState } from "react"
 import OrderReview from "../cart/OrderReview"
 import BreadCrumb from "../layout/BreadCrumb"
@@ -9,6 +9,7 @@ import {Formik, Field, ErrorMessage} from "formik";
 import useAuth from "../../store/hooks/useAuth";
 import Select from "react-select";
 import {useMutation, useQuery, useQueryClient} from "react-query";
+
 import {
     CALC_INSTALLMENT_FEE,
     DEFAULT_API_KEY,
@@ -24,6 +25,7 @@ import sweetalert from "sweetalert";
 import useRouterDOM from "../../hooks/useRouterDOM";
 import * as moment from "moment";
 import useTemp from "../../store/hooks/useTemp";
+import {useSearchParams} from "react-router-dom";
 
 const initialInputValues = {
     customer_address_id: null,
@@ -32,18 +34,46 @@ const initialInputValues = {
     empty_billing_address: true,
     payment_method: '',
     bank_id: null,
-    name_surname: '',
-    cc_no: '',
-    expires_at: '',
-    cvc: '',
+    name_surname: (
+        process.env.NODE_ENV === 'development'
+            ? 'Emin TAYFUR'
+            : ''
+    ),
+    cc_no: (
+        process.env.NODE_ENV === 'development'
+            ? '4506347049583145'
+            : ''
+    ),
+    expires_at: (
+        process.env.NODE_ENV === 'development'
+            ? '05/24'
+            : ''
+    ),
+    cvc: (
+        process.env.NODE_ENV === 'development'
+            ? '000'
+            : ''
+    ),
     cargo_company_id: null,
     receipt: null,
     installments: null,
     // delivery
-    delivery_full_name: '',
+    delivery_full_name: (
+        process.env.NODE_ENV === 'development'
+            ? 'Emin TAYFUR'
+            : ''
+    ),
     delivery_city_id: '',
-    delivery_phone: '',
-    delivery_address: '',
+    delivery_phone: (
+        process.env.NODE_ENV === 'development'
+            ? '5432206528'
+            : ''
+    ),
+    delivery_address: (
+        process.env.NODE_ENV === 'development'
+            ? 'Mahfesığmaz mah. XXXX sok. Kat: X Daire: X'
+            : ''
+    ),
     // invoice
     invoice_full_name: '',
     invoice_city_id: '',
@@ -98,6 +128,7 @@ function Payment() {
     const { clearLocalBasket, totalPrice } = useBasket();
     const [installmentFee, setInstallmentFee] = useState(0);
     const [lastBank, setLastBank] = useState('');
+    const [searchParams, setSearchParams] = useSearchParams();
 
     const getOrderCode = useQuery(
         [
@@ -290,12 +321,13 @@ function Payment() {
         fetchThis(
             PLACE_ORDER,
             {
-                order_code: data?.order_code?.toString(),
                 customer_id: data?.customer_id?.toString(),
                 guid: data?.guid?.toString(),
                 customer_address_id: data?.customer_address_id?.toString(),
                 invoice_address_id: data?.invoice_address_id?.toString(),
                 cargo_company_id: data?.cargo_company_id?.toString(),
+                bank_id: data?.bank_id?.toString(),
+                taksit: data?.taksit?.toString(),
 
                 amount: data?.amount?.toString(),
                 payment_method: data?.payment_method?.toString(),
@@ -578,8 +610,8 @@ function Payment() {
         return errors;
     }, [isLogged, getOrderCode, parseExpireDate]);
     const handleSubmit = useCallback((iValues, {
-        setSubmitting,
-    }) => {
+        setSubmitting = (q) => null,
+    }, onlyReturnValues = false) => {
         if (getOrderCode.isSuccess && !getOrderCode?.data?.data?.order_code) return;
         if (!isUser && !isGuest) return;
         const values = JSON.parse(JSON.stringify(iValues));
@@ -594,6 +626,8 @@ function Payment() {
         values.customer_address_id = values.customer_address_id?.toString();
         values.invoice_address_id = values.invoice_address_id?.toString();
         values.cargo_company_id = values.cargo_company_id?.toString();
+        values.bank_id = values?.bank_id?.value?.toString();
+        values.taksit = values?.installments?.toString();
 
         values.amount = 0;
         if (installmentFee?.tutar) values.amount = installmentFee?.tutar?.toString();
@@ -610,48 +644,54 @@ function Payment() {
         values.invoice_phone = values?.invoice_phone?.toString();
         values.invoice_city_id = values?.invoice_city_id?.toString();
 
-        setSubmitting(true);
-        setLoading(true);
-        placeOrder?.mutate(values, {
-            onSuccess: ({ status = false, order_code, errors = { msg: '' }}) => {
-                if (!status) {
+        if (!onlyReturnValues) {
+            placeOrder?.mutate(values, {
+                onSuccess: ({ status = false, order_code, errors = { msg: '' }}) => {
+                    if (!status) {
+                        sweetalert({
+                            icon: 'error',
+                            title: 'Hata',
+                            text: errors?.msg || 'Bilinmeyen bir hata ile karşılaşıldı!',
+                            button: {
+                                text: 'Tamam',
+                            },
+                        }).then();
+                    } else {
+                        clearLocalBasket();
+                        if (order_code) {
+                            go(
+                                `/siparis-ozeti/${order_code}`,
+                                false
+                            );
+                        } else {
+                            go(`/siparislerim`);
+                        }
+                    }
+                    setSubmitting(false);
+                    setLoading(false);
+                },
+                onError: (error) => {
                     sweetalert({
                         icon: 'error',
                         title: 'Hata',
-                        text: errors?.msg || 'Bilinmeyen bir hata ile karşılaşıldı!',
+                        text: error?.message || error || 'Bilinmeyen bir hata ile karşılaşıldı!',
                         button: {
                             text: 'Tamam',
                         },
                     }).then();
-                } else {
-                    clearLocalBasket();
-                    if (order_code) {
-                        go(
-                            `/siparis-ozeti/${order_code}`,
-                            false
-                        );
-                    } else {
-                        go(`/siparislerim`);
-                    }
-                }
-                setSubmitting(false);
-                setLoading(false);
-            },
-            onError: (error) => {
-                sweetalert({
-                    icon: 'error',
-                    title: 'Hata',
-                    text: error?.message || error || 'Bilinmeyen bir hata ile karşılaşıldı!',
-                    button: {
-                        text: 'Tamam',
-                    },
-                }).then();
-                setSubmitting(false);
-                setLoading(false);
-            },
-        });
+                    setSubmitting(false);
+                    setLoading(false);
+                },
+            });
+            setSubmitting(true);
+            setLoading(true);
+        }
+
+        if (onlyReturnValues) {
+            return values;
+        }
     }, [account, isUser, isGuest, placeOrder, clearLocalBasket, go, installmentFee, getOrderCode]);
-    const ccSubmit = useCallback((values) => (e) => {
+    const ccSubmit = useCallback((values) => async (e) => {
         const validate = validateForm(values)
 
         if (
@@ -663,10 +703,20 @@ function Payment() {
                 || installmentFee?.tutar === null
                 || !(installmentFee?.tutar >= 0)
             )
+            || !placeOrder
+            || !placeOrder?.mutateAsync
+            || !placeOrder?.isIdle
         ) {
             e.preventDefault();
         }
-    }, [validateForm, installmentFee])
+
+        const formValues = handleSubmit(values, {}, true);
+        const response = await placeOrder?.mutateAsync(formValues);
+        if (!response?.status) {
+            console.log(response);
+            e.preventDefault();
+        }
+    }, [validateForm, installmentFee, handleSubmit, placeOrder])
 
     const isLoading = useCallback((isSubmitting = false) => (
         loading || isSubmitting || placeOrder?.isLoading
@@ -693,6 +743,25 @@ function Payment() {
             />
         );
     }, []);
+
+    useEffect(() => {
+        const paymentFail = searchParams.has('payment_failure');
+
+        if (paymentFail) {
+            const paymentFailMessage = searchParams.get('payment_failure');
+            sweetalert({
+                icon: 'error',
+                title: 'Ödeme Alınamadı',
+                text: paymentFailMessage || 'Ödeme alınırken bilinmeyen bir hata ile karşılaşıldı!',
+                button: {
+                    text: 'Tamam',
+                },
+            }).then(() => {
+                searchParams.delete('payment_failure');
+                setSearchParams(searchParams);
+            });
+        }
+    }, [searchParams, setSearchParams]);
 
     return (
         <div className="woocommerce-active single-product full-width normal">
@@ -899,7 +968,7 @@ function Payment() {
                                                                     && getOrderCode?.data?.data?.order_code
                                                                 ) && (
                                                                     <HiddenInput
-                                                                        name="order_id"
+                                                                        name="siparis_no"
                                                                         value={getOrderCode?.data?.data?.order_code}
                                                                     />
                                                                 )}
@@ -926,7 +995,11 @@ function Payment() {
                                                                             : ''
                                                                     }
                                                                 />
-                                                                <HiddenInput
+                                                                {Boolean(
+                                                                    installmentFee
+                                                                    && installmentFee?.installment
+                                                                    && installmentFee.installment !== 1
+                                                                ) && (<HiddenInput
                                                                     name="taksit"
                                                                     value={
                                                                         installmentFee
@@ -936,7 +1009,15 @@ function Payment() {
                                                                             )
                                                                             : ''
                                                                     }
-                                                                />
+                                                                />)}
+                                                                {Boolean(
+                                                                    installmentFee
+                                                                    && installmentFee?.installment
+                                                                    && installmentFee.installment === 1
+                                                                ) && (<HiddenInput
+                                                                    name="tekcekim"
+                                                                    value="1"
+                                                                />)}
                                                             </>
                                                         )}
                                                         <div id="customer_details" className="col2-set">
@@ -1058,7 +1139,7 @@ function Payment() {
                                                                                                 size="40"
                                                                                                 name="name_surname"
                                                                                                 autoComplete="cc-name"
-                                                                                                disabled={inputDisabled(isSubmitting)}
+                                                                                                disabled={inputDisabled(isSubmitting) || !values.installments}
                                                                                             />
                                                                                             <br/>
                                                                                             <ErrorMessage name="name_surname" />
@@ -1079,7 +1160,7 @@ function Payment() {
                                                                                                 maxLength="16"
                                                                                                 name="cc_no"
                                                                                                 autoComplete="cc-number"
-                                                                                                disabled={inputDisabled(isSubmitting)}
+                                                                                                disabled={inputDisabled(isSubmitting) || !values.installments}
                                                                                             />
                                                                                             <br/>
                                                                                             <ErrorMessage name="cc_no" />
@@ -1103,7 +1184,46 @@ function Payment() {
                                                                                                 autoComplete="cc-exp"
                                                                                                 placeholder="AA/YY"
                                                                                                 maxLength="5"
-                                                                                                disabled={inputDisabled(isSubmitting)}
+                                                                                                disabled={inputDisabled(isSubmitting) || !values.installments}
+                                                                                                onKeyPress={(event) => {
+                                                                                                    if (!(
+                                                                                                        ['0', '1','2','3','4','5','6','7','8','9']
+                                                                                                            .includes(event?.key)
+                                                                                                    )) {
+                                                                                                        event.preventDefault();
+                                                                                                    }
+
+                                                                                                    if (
+                                                                                                        event?.key === '/'
+                                                                                                        && event?.target?.value?.length !== 2
+                                                                                                    ) {
+                                                                                                        event?.preventDefault();
+                                                                                                    }
+
+                                                                                                    if (
+                                                                                                        event?.target?.value?.length === 2
+                                                                                                        && event?.key !== '/'
+                                                                                                    ) {
+                                                                                                        event.target.value += `/`;
+                                                                                                    }
+                                                                                                }}
+                                                                                                onPaste={(event) => {
+                                                                                                    const deg = (event?.clipboardData || window?.clipboardData)?.getData('text');
+
+                                                                                                    if (
+                                                                                                        (deg?.length === 4 || deg?.length === 5)
+                                                                                                        && (
+                                                                                                            (deg?.length === 4 && !Number.isNaN(parseInt(deg)))
+                                                                                                            || (deg?.length === 5 && deg?.split('/')?.length === 2)
+                                                                                                        )
+                                                                                                    ) {
+                                                                                                        let expire = deg;
+                                                                                                        if (deg?.length === 4) expire = `${deg.slice(0, 2)}/${deg.slice(2)}`
+                                                                                                        if (parseExpireDate(expire).length !== 2) event?.preventDefault();
+                                                                                                    } else {
+                                                                                                        event?.preventDefault();
+                                                                                                    }
+                                                                                                }}
                                                                                             />
                                                                                             <br/>
                                                                                             <ErrorMessage name="expires_at" />
@@ -1124,7 +1244,7 @@ function Payment() {
                                                                                                 maxLength="3"
                                                                                                 name="cvc"
                                                                                                 autoComplete="cc-csc"
-                                                                                                disabled={inputDisabled(isSubmitting)}
+                                                                                                disabled={inputDisabled(isSubmitting) || !values.installments}
                                                                                             />
                                                                                             <br/>
                                                                                             <ErrorMessage name="cvc" />

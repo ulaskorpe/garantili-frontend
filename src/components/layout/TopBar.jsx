@@ -25,7 +25,12 @@ const TopBar = () => {
 
         return (
             <li className={className}>
-                <a title={title} href={path} onClick={go} style={{ cursor: path ? 'pointer' : 'default' }}>
+                <a
+                    title={title}
+                    href={path}
+                    onClick={go}
+                    style={{ cursor: path ? 'pointer' : 'default' }}
+                >
                     {icon}
                     <span>{title}</span>
                 </a>

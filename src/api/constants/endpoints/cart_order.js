@@ -99,22 +99,23 @@ export const PLACE_ORDER = {
     pathVars: [],
     body: [
         /**/
-        { name: 'order_code', type: String, default: '',  isRequired: true },
         { name: 'customer_id', type: String, default: '',  isRequired: false },
         { name: 'guid', type: String, default: '',  isRequired: false },
-        { name: 'customer_address_id', type: String, default: '',  isRequired: true },
+        { name: 'customer_address_id', type: String, default: '',  isRequired: false },
         { name: 'invoice_address_id', type: String, default: '',  isRequired: false },
         { name: 'cargo_company_id', type: String, default: '',  isRequired: true },
+        { name: 'bank_id', type: String, default: '',  isRequired: true },
+        { name: 'taksit', type: String, default: '',  isRequired: true },
 
         { name: 'amount', type: String, default: '0',  isRequired: true },
         { name: 'payment_method', type: String, default: '0',  isRequired: true },
         { name: 'receipt', type: 'file', default: null,  isRequired: false },
 
         /**/
-        { name: 'delivery_full_name', type: String, default: '',  isRequired: true },
-        { name: 'delivery_city_id', type: String, default: '',  isRequired: true },
-        { name: 'delivery_phone', type: String, default: '',  isRequired: true },
-        { name: 'delivery_address', type: String, default: '',  isRequired: true },
+        { name: 'delivery_full_name', type: String, default: '',  isRequired: false },
+        { name: 'delivery_city_id', type: String, default: '',  isRequired: false },
+        { name: 'delivery_phone', type: String, default: '',  isRequired: false },
+        { name: 'delivery_address', type: String, default: '',  isRequired: false },
 
         /**/
         { name: 'invoice_full_name', type: String, default: '',  isRequired: false },

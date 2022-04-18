@@ -12,10 +12,10 @@ const OrderReviewItemList = (props) => {
     } = useBasket();
 
     let totalPrice = subTotal;
-
-    let installmentFeeCalc = (installmentFee?.fee || 0) - totalPrice;
-    if (installmentFeeCalc < 0) installmentFeeCalc = 0;
-    else totalPrice += installmentFeeCalc;
+    if (
+        typeof installmentFee !== 'number'
+        && installmentFee?.tutar
+    ) totalPrice = installmentFee.tutar;
 
     return (
         <table className="shop_table woocommerce-checkout-review-order-table">
@@ -52,12 +52,16 @@ const OrderReviewItemList = (props) => {
                             </span>
                 </td>
             </tr>
-            {Boolean(installmentFeeCalc) && (
+            {Boolean(
+                installmentFee?.installment
+                && installmentFee?.taksit
+                && installmentFee.installment > 1
+            ) && (
                 <tr className="cart-subtotal">
-                    <th>Taksit Ücreti</th>
+                    <th>Taksitlendirme</th>
                     <td>
                             <span className="woocommerce-Price-amount amount">
-                                {ayir(installmentFeeCalc)}
+                                {installmentFee?.installment} x {ayir(installmentFee?.taksit || 0)}
                                 <span className="woocommerce-Price-currencySymbol">₺</span>
                             </span>
                     </td>

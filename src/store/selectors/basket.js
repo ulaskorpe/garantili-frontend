@@ -2,7 +2,7 @@ import {createDraftSafeSelector} from "@reduxjs/toolkit";
 import {selectSelf} from "./index";
 
 export const getItemPrice = (item) => (
-    parseFloat(item.listPrice || item.price)
+    parseFloat(item.price || item.listPrice)
 )
 
 const BINLIK_AYRACI = ',';

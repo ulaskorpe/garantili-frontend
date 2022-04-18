@@ -209,8 +209,6 @@ function ShopPage() {
         if (JSON.stringify(selectedCategory) !== JSON.stringify(category)) setSelectedCategory(category);
     }, [selectedCategory, categoryId])
 
-
-
     useEffect(() => {
         if (
             products?.data?.item_count
@@ -233,7 +231,13 @@ function ShopPage() {
         }}>
             <span>{text}</span>
         </div>
-    )
+    );
+    useEffect(() => {
+        setPagination({
+            perPage: perPages[0],
+            page: { value: 1 },
+        })
+    }, [searchKeyword]);
 
     return (
         <div className="woocommerce-active left-sidebar" >
@@ -241,6 +245,8 @@ function ShopPage() {
             <div id="page" className="hfeed site">
                 <TopBar />
                 <HeaderMain
+                    pagination={pagination}
+                    setPagination={setPagination}
                     searchKeyword={searchKeyword}
                     setSearchKeyword={setSearchKeyword}
                 />

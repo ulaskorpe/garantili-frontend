@@ -26,20 +26,34 @@ const MenuItemWithChild = (props) => {
 
 const SubItem = (props) => {
     const navigate = useNavigate();
+    const urlController = new RegExp(/https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/, 'g');
+    const isLink = urlController.test(props.data.url);
 
     return props.row.map((item, index) => {
         return (
             <li className="menu-item animate-dropdown" key={index}>
-                <a
-                    title={item.title}
-                    href={item.url}
-                    onClick={(e) => {
-                        e.preventDefault();
-                        navigate(item.url)
-                    }}
-                >
-                    {item.title}
-                </a>
+                {isLink && (
+                    <a
+                        title={item.title}
+                        href={item.url}
+                        target="_blank"
+                        rel="noreferrer"
+                    >
+                        {item.title}
+                    </a>
+                )}
+                {!isLink && (
+                    <a
+                        title={item.title}
+                        href={item.url}
+                        onClick={(e) => {
+                            e.preventDefault();
+                            navigate(item.url)
+                        }}
+                    >
+                        {item.title}
+                    </a>
+                )}
             </li>
         )
     })
@@ -47,18 +61,33 @@ const SubItem = (props) => {
 
 const MenuItemNoChild = (props) => {
     const navigate = useNavigate();
+    const urlController = new RegExp(/https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/, 'g');
+    const isLink = urlController.test(props.data.url);
+
     return (
         <li className="menu-item animate-dropdown">
-            <a
-                title={props.data.title}
-                href={props.data.url}
-                onClick={(e) => {
-                    e.preventDefault();
-                    navigate(props.data.url)
-                }}
-            >
-                {props.data.title}
-            </a>
+            {isLink && (
+                <a
+                    title={props.data.title}
+                    href={props.data.url}
+                    target="_blank"
+                    rel="noreferrer"
+                >
+                    {props.data.title}
+                </a>
+            )}
+            {!isLink && (
+                <a
+                    title={props.data.title}
+                    href={props.data.url}
+                    onClick={(e) => {
+                        e.preventDefault();
+                        navigate(props.data.url)
+                    }}
+                >
+                    {props.data.title}
+                </a>
+            )}
         </li>
     )
 }

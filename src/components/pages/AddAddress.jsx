@@ -255,7 +255,8 @@ function AddAddress() {
                             text: 'Tamam',
                         },
                     }).then(() => {
-                        go(location?.state['redirect'] || '/adreslerim');
+                        console.log(location?.state)
+                        go(location?.state?.redirect || '/adreslerim');
                     });
                 }
                 setSubmitting(false);

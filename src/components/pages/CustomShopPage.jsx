@@ -1,5 +1,5 @@
 import React, {useState, useCallback, useMemo, useEffect} from 'react';
-import {useLocation, useSearchParams} from 'react-router-dom';
+import {useLocation} from 'react-router-dom';
 import BreadCrumb from '../layout/BreadCrumb';
 import Footer from '../layout/Footer/Footer';
 import HeaderMain from '../layout/Header/Header';
@@ -244,7 +244,14 @@ function CustomShopPage(props) {
         }}>
             <span>{text}</span>
         </div>
-    )
+    );
+
+    useEffect(() => {
+        setPagination({
+            page: { value: 1 },
+            perPage: perPages[0],
+        })
+    }, [searchKeyword]);
 
     return (
         <div className="woocommerce-active left-sidebar" >
