@@ -26,7 +26,7 @@ const LoginForm = (props) => {
     }, [location, formikRef]);
 
     return (
-        <div className="u-column1 col-1">
+        <div className="u-column1 col-1 login-form-in">
             <h2>Giriş Yap</h2>
             <Formik
                 initialValues={initialValues}

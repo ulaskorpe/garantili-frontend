@@ -53,7 +53,7 @@ const MobileNav = () => {
                     <div className="handheld-header-links">
                         <ul className="columns-3">
                             <li className="my-account">
-                                <a href="/login" className="has-icon">
+                                <a href="/uyelik-bilgilerim" className="has-icon">
                                     <i className="tm tm-login-register" />
                                 </a>
                             </li>

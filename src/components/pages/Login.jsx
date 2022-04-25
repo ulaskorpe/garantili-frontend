@@ -253,7 +253,7 @@ function Login() {
                                     <div className="entry-content">
                                         <div className="woocommerce">
                                             <div className="customer-login-form">
-                                                <div className="u-columns col2-set">
+                                                <div className="u-columns col2-set no-margin">
                                                     <LoginForm
                                                         handleSubmit={handleLoginFormSubmit}
                                                         validateForm={validateLoginForm}

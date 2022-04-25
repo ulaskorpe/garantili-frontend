@@ -39,7 +39,7 @@ const initialInputValues = {
             ? 'Emin TAYFUR'
             : ''
     ),
-    cc_no: (
+    cc_number: (
         process.env.NODE_ENV === 'development'
             ? '4506347049583145'
             : ''
@@ -49,7 +49,7 @@ const initialInputValues = {
             ? '05/24'
             : ''
     ),
-    cvc: (
+    csc: (
         process.env.NODE_ENV === 'development'
             ? '000'
             : ''
@@ -572,8 +572,8 @@ function Payment() {
             if (!values.bank_id) {
                 errors.bank_id = errorMessages.required;
             }
-            if (!values.cc_no || !values.cc_no?.toString()?.length) {
-                errors.cc_no = errorMessages.required;
+            if (!values.cc_number || !values.cc_number?.toString()?.length) {
+                errors.cc_number = errorMessages.required;
             }
             if (
                 !values.expires_at
@@ -583,8 +583,8 @@ function Payment() {
             } else if (parseExpireDate(values.expires_at).length !== 2)
                 errors.expires_at = 'Hatalı son kullanım tarihi!';
 
-            if (!values.cvc || !values.cvc?.toString()?.length) {
-                errors.cvc = errorMessages.required;
+            if (!values.csc || !values.csc?.toString()?.length) {
+                errors.csc = errorMessages.required;
             }
             if (!values.cargo_company_id || !values.cargo_company_id?.toString()?.length) {
                 errors.cargo_company_id = errorMessages.required;
@@ -713,7 +713,6 @@ function Payment() {
         const formValues = handleSubmit(values, {}, true);
         const response = await placeOrder?.mutateAsync(formValues);
         if (!response?.status) {
-            console.log(response);
             e.preventDefault();
         }
     }, [validateForm, installmentFee, handleSubmit, placeOrder])
@@ -1018,6 +1017,18 @@ function Payment() {
                                                                     name="tekcekim"
                                                                     value="1"
                                                                 />)}
+                                                                {Boolean(values.cc_number) && (
+                                                                    <HiddenInput
+                                                                        name="cc_no"
+                                                                        value={values?.cc_number || ''}
+                                                                    />
+                                                                )}
+                                                                {Boolean(values.csc) && (
+                                                                    <HiddenInput
+                                                                        name="CCV"
+                                                                        value={values?.csc || ''}
+                                                                    />
+                                                                )}
                                                             </>
                                                         )}
                                                         <div id="customer_details" className="col2-set">
@@ -1158,12 +1169,12 @@ function Payment() {
                                                                                                 className="input-text w-100"
                                                                                                 size="40"
                                                                                                 maxLength="16"
-                                                                                                name="cc_no"
+                                                                                                name="cc_number"
                                                                                                 autoComplete="cc-number"
                                                                                                 disabled={inputDisabled(isSubmitting) || !values.installments}
                                                                                             />
                                                                                             <br/>
-                                                                                            <ErrorMessage name="cc_no" />
+                                                                                            <ErrorMessage name="cc_number" />
                                                                                         </div>
                                                                                     </div>
                                                                                     <div className="form-group row col-md-12">
@@ -1230,7 +1241,7 @@ function Payment() {
                                                                                         </div>
                                                                                         <div className="col-xs-12 col-md-6">
                                                                                             <label>
-                                                                                                CVC
+                                                                                                cvc
                                                                                                 <abbr title="required" className="required">*</abbr>
                                                                                             </label>
                                                                                             <br />
@@ -1242,12 +1253,12 @@ function Payment() {
                                                                                                 className="input-text w-100"
                                                                                                 size="40"
                                                                                                 maxLength="3"
-                                                                                                name="cvc"
+                                                                                                name="csc"
                                                                                                 autoComplete="cc-csc"
                                                                                                 disabled={inputDisabled(isSubmitting) || !values.installments}
                                                                                             />
                                                                                             <br/>
-                                                                                            <ErrorMessage name="cvc" />
+                                                                                            <ErrorMessage name="csc" />
                                                                                         </div>
                                                                                     </div>
 

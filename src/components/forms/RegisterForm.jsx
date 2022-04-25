@@ -28,7 +28,7 @@ const RegisterForm = (props) => {
     } = props;
 
     return (
-        <div className="u-column2 col-2">
+        <div className="u-column2 col-2 login-form-in">
             <h2>Kayıt Ol</h2>
             <Formik
                 initialValues={initialValues}
